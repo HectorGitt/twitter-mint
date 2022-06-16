@@ -1,0 +1,1 @@
+web: gunicorn twittermint.wsgi --log-file -
