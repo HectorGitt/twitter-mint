@@ -4,26 +4,28 @@
 Home
 {% endblock  %}
 {% block content %}
+<div class="container my-5">
+  <div class="d-flex flex-column align-items-center ">
+    {% for project in context  %}
+        <div class="card my-5 text-center shadow-lg border border-dark" style="max-width:700px">
+          <img src="{{project.project_image.url}}" class="card-img-top" alt="...">
+          <div class="card-header">
+            {{project.project_name}}
+          </div>
 
-{% for project in context  %}
-<div class='container my-5'>
-  <div class="card text-center">
-    <img src="{{project.project_image}}" class="card-img-top" alt="...">
-    <div class="card-header">
-      {{project.project_name}}
-    </div>
-
-    <div class="card-body">
-      <h5 class="card-title">Special title treatment</h5>
-      <p class="card-text"> {{project.project_description}} </p>
-      <a href="/project/{{project.project_id}}" class="btn btn-primary">Check out</a>
-    </div>
-    <div class="card-footer text-muted">
-      {{project.project_date}}
-    </div>
+          <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text"> {{project.project_description}} </p>
+            <a href="/project/{{project.project_id}}" class="btn btn-primary">Check out</a>
+          </div>
+          <div class="card-footer text-muted">
+            {{project.project_date}}
+          </div>
+        </div>
+    {% endfor %}
   </div>
 </div>
-{% endfor %}
+
 
 
 

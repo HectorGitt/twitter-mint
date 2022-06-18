@@ -12,7 +12,7 @@ from .models import Project
 
 # Create your views here.
 def home(request):
-    projects = Project.objects.all()
+    projects = Project.objects.all().order_by('-project_date')
     return render(request, 'mint/home.html', {'context': projects})
 def project(request, project_id):
     project = Project.objects.filter(project_id=project_id).first()
