@@ -7,11 +7,16 @@ from .decorators import twitter_login_required
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter, check_token_still_valid
 from twitter_api.twitter_api import TwitterAPI
+from .models import Project
 
 
 # Create your views here.
 def home(request):
-    return render(request, 'mint/home.html')
+    projects = Project.objects.all()
+    return render(request, 'mint/home.html', {'context': projects})
+def project(request, project_id):
+    project = Project.objects.filter(project_id=project_id).first()
+    return render(request, 'mint/project.html', {'context': project})
 def login_user(request):
     twitter_api = TwitterAPI()
     url, oauth_token, oauth_token_secret = twitter_api.twitter_login()

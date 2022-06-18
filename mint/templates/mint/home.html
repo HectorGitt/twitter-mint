@@ -5,51 +5,26 @@ Home
 {% endblock  %}
 {% block content %}
 
-<div class="container-fluid">
-    
-    <img class='my-2 container-fluid' src="https://picsum.photos/1500/150" alt="">
-    
-    <div class="row mx-3">
-        <div class="col">
-            <h1>hi</h1>
-            {% if user.is_authenticated %}
-            Hi {{ user.username }}!
-            <a href="{% url 'logout' %}">Log Out</a>
-            {% else %}
-                You are not logged in
-                <a href="{% url 'login' %}">Log In</a>
-            {% endif %}
-        </div>
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Register</h5>
-                  <p class="card-text">Follow the steps to add yourself to this list.</p>
-                  <p> Required fields are marked with an asterisk (*).</p>
-                  <ul>
-                    <li>Have at least 0.1Eth in your wallet</li>
-                    <li>Follow @bitGans on Twitter</li>
-                    <li>Join the bitGans discord and have the bitgang role</li>
-                  </ul>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    <a href="{% url 'login' %}" class="btn btn-primary">Connect Twitter</a>
-                    {% if user.is_authenticated %}
-                    {{ user.username }}
-                    {% else %}
-                    {% endif %}
-                  </li>
-                  <li class="list-group-item">
-                    <a href="#" class="btn btn-primary">Connect Wallet</a>
-                  </li>
-                  <li class="list-group-item"><a href="#" class="btn btn-primary">Connect Discord</a></li>
-                </ul>
-                <div class="card-body text-center">
-                    <a href="#" class="btn btn-success">Complete Registration</a>
-                </div>
-              </div>
-        </div>
-      </div>
+{% for project in context  %}
+<div class='container my-5'>
+  <div class="card text-center">
+    <img src="{{project.project_image}}" class="card-img-top" alt="...">
+    <div class="card-header">
+      {{project.project_name}}
+    </div>
+
+    <div class="card-body">
+      <h5 class="card-title">Special title treatment</h5>
+      <p class="card-text"> {{project.project_description}} </p>
+      <a href="/project/{{project.project_id}}" class="btn btn-primary">Check out</a>
+    </div>
+    <div class="card-footer text-muted">
+      {{project.project_date}}
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
 
 {% endblock  %}

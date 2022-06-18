@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock  %}
+{% block content %}
+
+<div class="container-fluid">
+    
+    <img class='my-2 container-fluid' src="https://picsum.photos/1500/150" alt="">
+    
+    <div class="row mx-3">
+        <div class="col-xs-12 col-md-6 ">
+           {% comment %}  <h1>hi</h1>
+            {% if user.is_authenticated %}
+            Hi {{ user.username }}!
+            <a href="{% url 'logout' %}">Log Out</a>
+            {% else %}
+                You are not logged in
+                <a href="{% url 'login' %}">Log In</a>
+            {% endif %} {% endcomment %}
+            <div class="card">
+              <img src="{{context.project_image}}" class="card-img-top" alt="...">
+              <h5 class="card-header">
+                {{context.project_name}}
+              </h5>
+              <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text"> {{context.project_description}} </p>
+                
+              </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6 ">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Register</h5>
+                  <p class="card-text">Follow the steps to add yourself to this list.</p>
+                  <p> Required fields are marked with an asterisk (*).</p>
+                  <ul>
+                    <li>Have at least 0.1Eth in your wallet</li>
+                    <li>Follow @bitGans on Twitter</li>
+                    <li>Join the bitGans discord and have the bitgang role</li>
+                  </ul>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <a href="{% url 'login' %}" class="btn btn-primary">Connect Twitter</a>
+                    {% if user.is_authenticated %}
+                    {{ user.username }}
+                    {% else %}
+                    {% endif %}
+                  </li>
+                  <li class="list-group-item">
+                    <a href="#" class="btn btn-primary">Connect Wallet</a>
+                  </li>
+                  <li class="list-group-item"><a href="#" class="btn btn-primary">Connect Discord</a></li>
+                  
+                </ul>
+                <div class="card-body text-center">
+                    <a href="#" class="btn btn-success btn-block btn-large">Complete Registration</a>
+                </div>
+              </div>
+        </div>
+      </div>
+
+{% endblock  %}
