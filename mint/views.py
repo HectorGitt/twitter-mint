@@ -49,8 +49,7 @@ def callback(request):
             # Create user
             info = twitter_api.get_me(access_token, access_token_secret)
             if info is not None:
-                twitter_user_new = TwitterUser(twitter_id=info[0]['id'], screen_name=info[0]['username'],
-                                               name=info[0]['name'], profile_image_url=info[0]['profile_image_url'])
+                twitter_user_new = TwitterUser(twitter_id=info[0]['id'], screen_name=info[0]['username'], name=info[0]['name'], profile_image_url=info[0]['profile_image_url'])
                 twitter_user_new.twitter_oauth_token = twitter_auth_token
                 user, twitter_user = create_update_user_from_twitter(twitter_user_new)
                 if user is not None:
@@ -70,3 +69,17 @@ def callback(request):
 def twitter_logout(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def comfirm(request):
+    twitter_api = TwitterAPI()
+    url = 'https://twitter.com/NASA/status/1538244858451828736?s=20&t=g5wBhLeSXwGeWBAyVwyT3A'
+    tweet_id = url.split('/')[-1].split('?')[0]
+    oauth_verifier = request.GET.get('oauth_verifier')
+    oauth_token = request.GET.get('oauth_token')
+    print(oauth_verifier)
+    twitter_auth_token = TwitterAuthToken.objects.filter(oauth_token=oauth_token).first()
+    access_token, access_token_secret = twitter_api.twitter_callback(oauth_verifier, oauth_token, twitter_auth_token.oauth_token_secret)
+    like_state = twitter_api.check_like(access_token, access_token_secret, tweet_id)
+    print(like_state)
+    

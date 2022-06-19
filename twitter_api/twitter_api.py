@@ -35,3 +35,12 @@ class TwitterAPI:
         except Exception as e:
             print(e)
             return None
+    def check_like(self, access_token, access_token_secret, tweet_id):
+        try:
+            client = tweepy.Client(consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=access_token, access_token_secret=access_token_secret)
+            tweet = client.get_status(tweet_id)
+            return tweet.favorited
+        except Exception as e:
+            print(e)
+            return None
+        
