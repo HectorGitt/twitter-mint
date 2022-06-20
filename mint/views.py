@@ -12,11 +12,16 @@ from .models import Project
 
 # Create your views here.
 def home(request):
-    projects = Project.objects.all().order_by('-project_date')
-    return render(request, 'mint/home.html', {'context': projects})
+    projects_all = Project.objects.all().order_by('-project_date')
+    
+    return render(request, 'mint/home.html', {'context': projects_all})
 def project(request, project_id):
+    username = request.user
+    twitter_user = TwitterUser.objects.filter(screen_name=username).first()
     project = Project.objects.filter(project_id=project_id).first()
-    return render(request, 'mint/project.html', {'context': project})
+    registered = twitter_user.projects.all().filter(project_id=project_id).first()
+    registered_count = project.registered.all().count()
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count})
 def login_user(request):
     twitter_api = TwitterAPI()
     url, oauth_token, oauth_token_secret = twitter_api.twitter_login()
@@ -71,15 +76,49 @@ def twitter_logout(request):
     return redirect('home')
 
 @login_required
-def comfirm(request):
+def verify(request, project_id):
+    username = request.user
+    twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+    
+    if request.method == 'POST':
+        form_email = request.POST.get('email')
+        print(twitter_user)
+        print(form_email)
+        twitter_user.email = str(form_email)
+        twitter_user.save()
+        return redirect('home')
+    else:
+        email = twitter_user.email
+        print(email)
+        if email is None or email == '':
+            return render (request, 'mint/verify.html')
+        else:
+            return redirect('comfirm', project_id)
+        
+@login_required
+def comfirm(request, project_id):
+    project = Project.objects.filter(project_id=project_id).first()
+    username = request.user
+    twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+    oauth_token = str(twitter_user.twitter_oauth_token)
+    oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
     twitter_api = TwitterAPI()
-    url = 'https://twitter.com/NASA/status/1538244858451828736?s=20&t=g5wBhLeSXwGeWBAyVwyT3A'
-    tweet_id = url.split('/')[-1].split('?')[0]
-    oauth_verifier = request.GET.get('oauth_verifier')
-    oauth_token = request.GET.get('oauth_token')
-    print(oauth_verifier)
-    twitter_auth_token = TwitterAuthToken.objects.filter(oauth_token=oauth_token).first()
-    access_token, access_token_secret = twitter_api.twitter_callback(oauth_verifier, oauth_token, twitter_auth_token.oauth_token_secret)
-    like_state = twitter_api.check_like(access_token, access_token_secret, tweet_id)
-    print(like_state)
+    tweet_url = project.twitter_like_link
+    profile_url = project.twitter_follow_link
+    retweet_url = project.twitter_retweet_link
+    tweet_id = tweet_url.split('/')[-1].split('?')[0]
+    screen_name = profile_url.split('/')[-1]
+    retweet_id = retweet_url.split('/')[-1].split('?')[0]
+    like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
+    retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, retweet_id)
+
+    follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
+
+    if like_state and retweet_state and follow_state:
+        project = Project.objects.filter(project_id=project_id).first()
+        twitter_user.projects.add(project)
+        return render(request, 'mint/comfirm.html', {'context': project})
+    else:
+        context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state}
+        return render(request, 'mint/error_page.html', context)
     

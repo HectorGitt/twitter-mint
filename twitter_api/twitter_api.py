@@ -37,10 +37,34 @@ class TwitterAPI:
             return None
     def check_like(self, access_token, access_token_secret, tweet_id):
         try:
-            client = tweepy.Client(consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=access_token, access_token_secret=access_token_secret)
-            tweet = client.get_status(tweet_id)
+            auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+            auth.set_access_token(access_token, access_token_secret)
+            api = tweepy.API(auth, wait_on_rate_limit=True)
+            tweet = api.get_status(tweet_id)
             return tweet.favorited
         except Exception as e:
             print(e)
             return None
         
+        
+        
+    def check_follow(self, access_token, access_token_secret, screen_name):
+        try:
+            auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+            auth.set_access_token(access_token, access_token_secret)
+            api = tweepy.API(auth, wait_on_rate_limit=True)
+            user = api.get_user(screen_name=screen_name)
+            return user.following
+        except Exception as e:
+            print(e)
+            return None
+    def check_retweet(self, access_token, access_token_secret, retweet_id):
+        try:
+            auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+            auth.set_access_token(access_token, access_token_secret)
+            api = tweepy.API(auth, wait_on_rate_limit=True)
+            tweet = api.get_status(retweet_id)
+            return tweet.retweeted
+        except Exception as e:
+            print(e)
+            return None

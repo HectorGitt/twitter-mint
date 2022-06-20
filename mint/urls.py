@@ -25,6 +25,7 @@ urlpatterns = [
     path('login', views.login_user, name='login'),
     path('twitter_logout', views.twitter_logout, name='logout'),
     path('callback', views.callback, name='callback'),
-    path('comfirm', views.comfirm, name='comfirm'),
+    path('project/<slug:project_id>/verify',views.verify, name='verify'),
+    path('project/<slug:project_id>/comfirm', views.comfirm, name='comfirm'),
 ]
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

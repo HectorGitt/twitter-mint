@@ -7,8 +7,6 @@ Home
 
 <div class="container-fluid">
     
-    <img class='my-2 container-fluid' src="https://picsum.photos/1500/150" alt="">
-    
     <div class="row mx-3">
         <div class="col-xs-12 col-md-6 ">
            {% comment %}  <h1>hi</h1>
@@ -25,7 +23,15 @@ Home
                 {{context.project_name}}
               </h5>
               <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
+                <h5 class="card-title">
+                  <button type="button" class="btn btn-primary position-relative">
+                    Registered
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {{count}}
+                      <span class="visually-hidden">Registered</span>
+                    </span>
+                  </button> 
+                </h5>
                 <p class="card-text"> {{context.project_description}} </p>
                 
               </div>
@@ -35,12 +41,25 @@ Home
             <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Register</h5>
+                  
                   <p class="card-text">Follow the steps to add yourself to this list.</p>
                   <p> Required fields are marked with an asterisk (*).</p>
                   <ul>
-                    <li>Have at least 0.1Eth in your wallet</li>
-                    <li>Follow @bitGans on Twitter</li>
-                    <li>Join the bitGans discord and have the bitgang role</li>
+                    {% if context.twitter_follow %}
+                    <li>* Follow {{context.twitter_follow_link}} on Twitter</li>
+                    {% else %}
+              
+                    {% endif %}
+                    {% if context.twitter_like %}
+                    <li>* Like this tweet {{context.twitter_like_link}} on Twitter</li>
+                    {% else %}
+              
+                    {% endif %}
+                    {% if context.twitter_retweet %}
+                    <li>* Retweet this tweet {{context.twitter_retweet_link}} on Twitter</li>
+                    {% else %}
+              
+                    {% endif %}
                   </ul>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -60,7 +79,12 @@ Home
                   
                 </ul>
                 <div class="card-body text-center">
-                    <a href="{% url 'comfirm' %}" class="btn btn-success btn-block btn-large">Complete Registration</a>
+                    {% comment %} <a href="/project/{{context.project_id}}/comfirm" class="btn btn-success btn-block btn-large">Complete Registration</a> {% endcomment %}
+                    {% if registered %}
+                      <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>
+                    {% else %}
+                    <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block btn-large">Complete Registration</a>
+                    {% endif %}
                 </div>
               </div>
         </div>

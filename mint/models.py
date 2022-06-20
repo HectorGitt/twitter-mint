@@ -52,7 +52,8 @@ class TwitterUser(models.Model):
     profile_image_url = models.CharField(max_length=255, null=True)
     twitter_oauth_token = models.ForeignKey(TwitterAuthToken, on_delete=models.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    projects = models.ManyToManyField(Project, blank=True)
+    projects = models.ManyToManyField(Project, blank=True, symmetrical=False, related_name='registered')
+    email = models.CharField(max_length=255, null=True, blank=True)
     
     def __str__(self):
         return self.screen_name
