@@ -19,7 +19,7 @@ def project(request, project_id):
     username = request.user
     project = Project.objects.filter(project_id=project_id).first()
     registered_count = project.registered.all().count()
-    if username is not None:
+    if username:
         twitter_user = TwitterUser.objects.filter(screen_name=username).first()
         
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
