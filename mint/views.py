@@ -17,10 +17,15 @@ def home(request):
     return render(request, 'mint/home.html', {'context': projects_all})
 def project(request, project_id):
     username = request.user
-    twitter_user = TwitterUser.objects.filter(screen_name=username).first()
     project = Project.objects.filter(project_id=project_id).first()
-    registered = twitter_user.projects.all().filter(project_id=project_id).first()
     registered_count = project.registered.all().count()
+    if username is not None:
+        twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+        
+        registered = twitter_user.projects.all().filter(project_id=project_id).first()
+        
+    else:
+        registered = False
     return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count})
 def login_user(request):
     twitter_api = TwitterAPI()
