@@ -128,17 +128,17 @@ def comfirm(request, project_id):
             print(check_comment)
             like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
         else:
-            like_state = True
+            like_state = 'none'
         if project.twitter_retweet:
             retweet_id = retweet_url.split('/')[-1].split('?')[0]
             retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, retweet_id)
         else:
-            retweet_state = True
+            retweet_state = 'none'
         if project.twitter_follow:
             screen_name = profile_url.split('/')[-1].split('?')[0]
             follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
         else:
-            follow_state = True
+            follow_state = 'none'
 
         if like_state and retweet_state and follow_state:
             project = Project.objects.filter(project_id=project_id).first()
