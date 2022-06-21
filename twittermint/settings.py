@@ -99,6 +99,8 @@ DATABASES = {
         'PASSWORD': 'admin',
 
         'HOST': config('HOST'),
+        
+        'PORT': config('PORT', cast=int),
 
     }
 
