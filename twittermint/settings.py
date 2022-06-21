@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-import dj_database_url
 import django_heroku
 from pathlib import Path
 import os
@@ -43,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mint',
 ]
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,11 +94,11 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': 'TwitterMint',
+        'NAME': config('NAME'),
 
-        'USER': 'postgres',
+        'USER': config('USER'),
 
-        'PASSWORD': 'admin',
+        'PASSWORD': config('PASSWORD'),
 
         'HOST': config('HOST'),
         
@@ -105,6 +107,7 @@ DATABASES = {
     }
 
 }
+
 
 
 # Password validation
