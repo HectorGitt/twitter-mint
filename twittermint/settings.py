@@ -98,7 +98,7 @@ DATABASES = {
 
         'PASSWORD': 'admin',
 
-        'HOST': 'localhost',
+        'HOST': config('HOST'),
 
     }
 
