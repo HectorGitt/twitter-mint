@@ -116,18 +116,21 @@ def comfirm(request, project_id):
     tweet_url = project.twitter_like_link
     profile_url = project.twitter_follow_link
     retweet_url = project.twitter_retweet_link
-    tweet_id = tweet_url.split('/')[-1].split('?')[0]
-    screen_name = profile_url.split('/')[-1]
-    retweet_id = retweet_url.split('/')[-1].split('?')[0]
+    
+    
+    
     if project.twitter_like:
+        tweet_id = tweet_url.split('/')[-1].split('?')[0]
         like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
     else:
         like_state = False
     if project.twitter_retweet:
+        retweet_id = retweet_url.split('/')[-1].split('?')[0]
         retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, retweet_id)
     else:
         retweet_state = False
     if project.twitter_follow:
+        screen_name = profile_url.split('/')[-1].split('?')[0]
         follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
     else:
         follow_state = False
