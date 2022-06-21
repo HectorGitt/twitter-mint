@@ -68,3 +68,35 @@ class TwitterAPI:
         except Exception as e:
             print(e)
             return None
+    def check_comment(self, access_token, access_token_secret, tweet_id):
+        try:
+            auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+            auth.set_access_token(access_token, access_token_secret)
+            api = tweepy.API(auth, wait_on_rate_limit=True)
+            tweet = api.get_status(tweet_id)
+            me = api.verify_credentials()
+            status = me.status
+            return status
+        except Exception as e:
+            print(e)
+            return None
+    def check_followers(self, access_token, access_token_secret):
+        try:
+            auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+            auth.set_access_token(access_token, access_token_secret)
+            api = tweepy.API(auth, wait_on_rate_limit=True)
+            me = api.me()
+            return me.followers_count
+        except Exception as e:
+            print(e)
+            return None
+    def check_created_at(self, access_token, access_token_secret):
+        try:
+            auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+            auth.set_access_token(access_token, access_token_secret)
+            api = tweepy.API(auth, wait_on_rate_limit=True)
+            me = api.me()
+            return me.created_at
+        except Exception as e:
+            print(e)
+            return None

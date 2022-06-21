@@ -8,6 +8,7 @@ from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter, check_token_still_valid
 from twitter_api.twitter_api import TwitterAPI
 from .models import Project
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -20,9 +21,12 @@ def project(request, project_id):
     project = Project.objects.filter(project_id=project_id).first()
     registered_count = project.registered.all().count()
     if username.is_authenticated:
-        twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-        
-        registered = twitter_user.projects.all().filter(project_id=project_id).first()
+        try:
+            twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+            
+            registered = twitter_user.projects.all().filter(project_id=project_id).first()
+        except:
+            return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
         
     else:
         registered = False
@@ -99,7 +103,6 @@ def verify(request, project_id):
         return redirect('home')
     else:
         email = twitter_user.email
-        print(email)
         if email is None or email == '':
             return render (request, 'mint/verify.html')
         else:
@@ -109,37 +112,41 @@ def verify(request, project_id):
 def comfirm(request, project_id):
     project = Project.objects.filter(project_id=project_id).first()
     username = request.user
-    twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-    oauth_token = str(twitter_user.twitter_oauth_token)
-    oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
-    twitter_api = TwitterAPI()
-    tweet_url = project.twitter_like_link
-    profile_url = project.twitter_follow_link
-    retweet_url = project.twitter_retweet_link
-    
-    
-    
-    if project.twitter_like:
-        tweet_id = tweet_url.split('/')[-1].split('?')[0]
-        like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
-    else:
-        like_state = True
-    if project.twitter_retweet:
-        retweet_id = retweet_url.split('/')[-1].split('?')[0]
-        retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, retweet_id)
-    else:
-        retweet_state = True
-    if project.twitter_follow:
-        screen_name = profile_url.split('/')[-1].split('?')[0]
-        follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
-    else:
-        follow_state = True
+    try:
+        twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        twitter_api = TwitterAPI()
+        tweet_url = project.twitter_like_link
+        profile_url = project.twitter_follow_link
+        retweet_url = project.twitter_retweet_link
+        
+        
+        if project.twitter_like:
+            tweet_id = tweet_url.split('/')[-1].split('?')[0]
+            check_comment = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
+            print(check_comment)
+            like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
+        else:
+            like_state = True
+        if project.twitter_retweet:
+            retweet_id = retweet_url.split('/')[-1].split('?')[0]
+            retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, retweet_id)
+        else:
+            retweet_state = True
+        if project.twitter_follow:
+            screen_name = profile_url.split('/')[-1].split('?')[0]
+            follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
+        else:
+            follow_state = True
 
-    if like_state and retweet_state and follow_state:
-        project = Project.objects.filter(project_id=project_id).first()
-        twitter_user.projects.add(project)
-        return render(request, 'mint/comfirm.html', {'context': project})
-    else:
-        context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state}
-        return render(request, 'mint/error_page.html', context)
-    
+        if like_state and retweet_state and follow_state:
+            project = Project.objects.filter(project_id=project_id).first()
+            twitter_user.projects.add(project)
+            return render(request, 'mint/comfirm.html', {'context': project})
+        else:
+            context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state}
+            return render(request, 'mint/error_page.html', context)
+        
+    except AttributeError: 
+        return HttpResponse('You are logged in as a Staff and not a twitter user!!!')

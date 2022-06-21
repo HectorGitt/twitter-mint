@@ -44,6 +44,7 @@ Home
                   
                   <p class="card-text">Follow the steps to add yourself to this list.</p>
                   <p> Required fields are marked with an asterisk (*).</p>
+                  
                   <ul>
                     {% if context.twitter_follow %}
                     <li>* Follow {{context.twitter_follow_link}} on Twitter</li>
@@ -62,6 +63,7 @@ Home
                     {% endif %}
                   </ul>
                 </div>
+                {{context.twitter_embed_html | safe }}
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     
@@ -69,16 +71,18 @@ Home
                     <a href="{% url 'login' %}" class="btn btn-primary disabled">Connected</a>
                     {{ user.username }}
                     {% else %}
-                      <a href="{% url 'login' %}" class="btn btn-primary">Connect Twitter</a>
+                      <a href="{% url 'twitter_login' %}" class="btn btn-primary">Connect Twitter</a>
                     {% endif %}
                   </li>
-                  <li class="list-group-item">
+                  {% comment %} <li class="list-group-item">
                     <a href="#" class="btn btn-primary">Connect Wallet</a>
                   </li>
-                  <li class="list-group-item"><a href="#" class="btn btn-primary">Connect Discord</a></li>
+                  <li class="list-group-item"><a href="#" class="btn btn-primary">Connect Discord</a></li> {% endcomment %}
                   
                 </ul>
+                
                 <div class="card-body text-center">
+                
                     {% comment %} <a href="/project/{{context.project_id}}/comfirm" class="btn btn-success btn-block btn-large">Complete Registration</a> {% endcomment %}
                     {% if registered %}
                       <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>

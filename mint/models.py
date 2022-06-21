@@ -2,7 +2,8 @@ from django.db import models
 import uuid
 import datetime
 from django.core.exceptions import ValidationError
-
+import json
+import requests
 # Create your models here.
 
 class TwitterAuthToken(models.Model):
@@ -30,20 +31,44 @@ class Project(models.Model):
     twitter_like_link = models.URLField(max_length=255, null=True, blank=True)
     twitter_retweet = models.BooleanField(default=False)
     twitter_retweet_link = models.URLField(max_length=255, null=True, blank=True)
+    twitter_comment = models.BooleanField(default=False)
+    twitter_embed_html = models.TextField(editable=False,null=True, blank=True, max_length=1000)
+    twitter_account_created = models.BooleanField(default=False)
+    twitter_account_years = models.PositiveIntegerField(default=None, null=True, blank=True)
+    twitter_followers = models.BooleanField(default=False)
+    twitter_least_followers = models.PositiveIntegerField(default=None, null=True, blank=True)
     
     
     def clean(self):
         # check if the booleans fields ticked have a corresponding link
-        print(self.twitter_follow, self.twitter_follow_link)
         if (self.twitter_follow) != (self.twitter_follow_link is not None):
             raise ValidationError('Twitter follow link is required if twitter follow is checked.')
         if (self.twitter_like) != (self.twitter_like_link is not None):
             raise ValidationError('Twitter like link is required if twitter like is checked.')
         if (self.twitter_retweet) != (self.twitter_retweet_link is not None):
             raise ValidationError('Twitter retweet link is required if twitter retweet is checked.')
-    
+        if (self.twitter_followers) != (self.twitter_least_followers is not None):
+            raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
+        if (self.twitter_account_created) != (self.twitter_account_years is not None):
+            raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
     def __str__(self):
         return self.project_name
+    
+    def save(self):
+        if self.twitter_follow_link is not None and self.twitter_embed_html is None:
+            self.tweet_embed_html = self.get_tweet_embed_html(self.twitter_follow_link)
+        if self.twitter_like_link is not None and self.twitter_embed_html is None:
+            self.tweet_embed_html = self.get_tweet_embed_html(self.twitter_like_link)
+        if self.twitter_retweet_link is not None and self.twitter_embed_html is None:
+            self.tweet_embed_html = self.get_tweet_embed_html(self.twitter_retweet_link)
+        super().save()
+    def get_tweet_embed_html(self, tweet_url):
+        x = requests.get('https://publish.twitter.com/oembed?url={url}'.format(url=tweet_url))
+        json_str = x.text
+        json_object = json.loads(json_str)
+        return json_object['html']
+    class Meta:
+        ordering = (["-project_date"])
     
 class TwitterUser(models.Model):
     twitter_id = models.CharField(max_length=255)
