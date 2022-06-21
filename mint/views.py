@@ -19,7 +19,6 @@ def project(request, project_id):
     username = request.user
     project = Project.objects.filter(project_id=project_id).first()
     registered_count = project.registered.all().count()
-    print(username.is_authenticated)
     if username.is_authenticated:
         twitter_user = TwitterUser.objects.filter(screen_name=username).first()
         
@@ -29,6 +28,11 @@ def project(request, project_id):
         registered = False
     return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count})
 def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        return render(request, 'mint/login.html')
+def twitter_login(request):
     twitter_api = TwitterAPI()
     url, oauth_token, oauth_token_secret = twitter_api.twitter_login()
     if url is None or url == '':

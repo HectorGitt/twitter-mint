@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -104,6 +105,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+JAZZMIN_SETTINGS = {
+    # title of the window (Will default to current_admin_site.site_title if absent or None)
+    "site_title": "Mint Admin",
+}
+JAZZMIN_UI_TWEAKS = {
+    'theme': 'darkly',
+    "navbar": "navbar-dark",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-outline-info",
+        "warning": "btn-outline-warning",
+        "danger": "btn-outline-danger",
+        "success": "btn-success"
+    }
+}
+JAZZMIN_SETTINGS["show_ui_builder"] = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
