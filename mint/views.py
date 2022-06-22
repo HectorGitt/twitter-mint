@@ -150,10 +150,10 @@ def comfirm(request, project_id):
             if value is None or value:
                 return True
             else: return False
-        print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(year_state) , check_none_true(followers_state) , check_none_true(comment_state))
+        #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(year_state) , check_none_true(followers_state) , check_none_true(comment_state))
         if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(year_state) and check_none_true(followers_state) and check_none_true(comment_state) :
             project = Project.objects.filter(project_id=project_id).first()
-            #twitter_user.projects.add(project)
+            twitter_user.projects.add(project)
             return render(request, 'mint/comfirm.html', {'context': project})
         else:
             context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'year_state': year_state, 'comment_state': comment_state, 'followers_state': followers_state}
