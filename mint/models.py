@@ -58,13 +58,10 @@ class Project(models.Model):
         
         if  self.twitter_like_link and not self.twitter_embed_html:
             self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_like_link)
-            print('there')
         elif  self.twitter_retweet_link and not self.twitter_embed_html:
             self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_retweet_link)
-            print('come')
         elif  self.twitter_follow_link and not self.twitter_embed_html:
             self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_follow_link)
-            print('here')
         super().save()
         
     def get_tweet_embed_html(self, tweet_url):
