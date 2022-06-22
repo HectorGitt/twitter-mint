@@ -32,7 +32,7 @@ class Project(models.Model):
     twitter_retweet = models.BooleanField(default=False)
     twitter_retweet_link = models.URLField(max_length=255, null=True, blank=True)
     twitter_comment = models.BooleanField(default=False)
-    twitter_embed_html = models.TextField(editable=False,null=True, blank=True, default=None)
+    twitter_embed_html = models.TextField(editable=False,null=True, blank=True)
     twitter_account_created = models.BooleanField(default=False)
     twitter_account_years = models.PositiveIntegerField(default=None, null=True, blank=True)
     twitter_followers = models.BooleanField(default=False)
@@ -55,18 +55,17 @@ class Project(models.Model):
         return self.project_name
     
     def save(self):
-        if  self.twitter_follow_link and self.twitter_embed_html is None:
-            self.tweet_embed_html = self.get_tweet_embed_html(self.twitter_follow_link)
-            super().save()
-        if  self.twitter_like_link and self.twitter_embed_html is None:
-            self.tweet_embed_html = self.get_tweet_embed_html(self.twitter_like_link)
-            super().save()
-            
-            
-        if  self.twitter_retweet_link and self.twitter_embed_html is None:
-            self.tweet_embed_html = self.get_tweet_embed_html(self.twitter_retweet_link)
-            super().save()
         
+        if  self.twitter_like_link and not self.twitter_embed_html:
+            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_like_link)
+            print('there')
+        elif  self.twitter_retweet_link and not self.twitter_embed_html:
+            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_retweet_link)
+            print('come')
+        elif  self.twitter_follow_link and not self.twitter_embed_html:
+            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_follow_link)
+            print('here')
+        super().save()
         
     def get_tweet_embed_html(self, tweet_url):
         x = requests.get('https://publish.twitter.com/oembed?url={url}'.format(url=tweet_url))

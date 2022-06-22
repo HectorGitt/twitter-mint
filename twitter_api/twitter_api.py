@@ -1,6 +1,7 @@
 import tweepy
 from decouple import config
-
+from dateutil.relativedelta import relativedelta
+import datetime
 
 class TwitterAPI:
     def __init__(self):
@@ -76,27 +77,37 @@ class TwitterAPI:
             tweet = api.get_status(tweet_id)
             me = api.verify_credentials()
             status = me.status
-            return status
+            if status.id == tweet_id:
+                return true
+            else: return False
         except Exception as e:
             print(e)
             return None
-    def check_followers(self, access_token, access_token_secret):
+    def check_followers(self, access_token, access_token_secret, min_follow):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(access_token, access_token_secret)
             api = tweepy.API(auth, wait_on_rate_limit=True)
-            me = api.me()
-            return me.followers_count
+            me = api.verify_credentials()
+            followers = me.followers_count
+            if followers >= min_follow:
+                return True
+            else: return False
         except Exception as e:
             print(e)
             return None
-    def check_created_at(self, access_token, access_token_secret):
+    def check_created_at(self, access_token, access_token_secret, min_years):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(access_token, access_token_secret)
             api = tweepy.API(auth, wait_on_rate_limit=True)
-            me = api.me()
-            return me.created_at
+            me = api.verify_credentials()
+            date = me.created_at
+            account_years = relativedelta(date.date(), datetime.date.today()).years
+            if account_years >= min_years:
+                return True
+            else: return False
+            
         except Exception as e:
             print(e)
             return None
