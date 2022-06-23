@@ -164,3 +164,48 @@ def comfirm(request, project_id):
         
     except AttributeError as e: 
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
+def checkfollow(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        
+        username = Project.objects.filter(project_id=project_id).first().twitter_follow_link
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, username)
+        return HttpResponse(follow_state)
+    else: 
+        return HttpResponse('')
+def checklike(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        
+        tweet_url = Project.objects.filter(project_id=project_id).first().twitter_like_link
+        tweet_id = tweet_url.split('/')[-1].split('?')[0]
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
+        return HttpResponse(like_state)
+    else: 
+        return HttpResponse('')
+     
+def checkretweet(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        
+        tweet_url = Project.objects.filter(project_id=project_id).first().twitter_retweet_link
+        tweet_id = tweet_url.split('/')[-1].split('?')[0]
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
+        print(retweet_state)
+        return HttpResponse(retweet_state)
+        
+    else: 
+        return HttpResponse('')
+    

@@ -28,5 +28,8 @@ urlpatterns = [
     path('callback', views.callback, name='callback'),
     path('project/<slug:project_id>/verify',views.verify, name='verify'),
     path('project/<slug:project_id>/comfirm', views.comfirm, name='comfirm'),
+    path('checkfollow/<slug:project_id>', views.checkfollow, name='checkfollow'),
+    path('checklike/<slug:project_id>', views.checklike, name='checklike'),
+    path('checkretweet/<slug:project_id>', views.checkretweet, name='checkretweet'),
 ]
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
