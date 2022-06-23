@@ -26,7 +26,7 @@ class Project(models.Model):
     project_description = models.TextField()
     project_image = models.ImageField(upload_to='media/uploads/', null=False)
     twitter_follow = models.BooleanField(default=False)
-    twitter_follow_link = models.URLField(max_length=255, null=True, blank=True)
+    twitter_follow_link = models.CharField(max_length=255, null=True, blank=True)
     twitter_like = models.BooleanField(default=False)
     twitter_like_link = models.URLField(max_length=255, null=True, blank=True)
     twitter_retweet = models.BooleanField(default=False)

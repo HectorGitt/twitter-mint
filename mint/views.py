@@ -31,7 +31,10 @@ def project(request, project_id):
         
     else:
         registered = False
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count})
+    if project.twitter_like_link:
+        tweet_id = project.twitter_like_link.split('/')[-1].split('?')[0]
+    else: tweet_id = None
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id})
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('home')
