@@ -9,14 +9,6 @@ Home
     
     <div class="row mx-3">
         <div class="col-xs-12 col-md-6 ">
-           {% comment %}  <h1>hi</h1>
-            {% if user.is_authenticated %}
-            Hi {{ user.username }}!
-            <a href="{% url 'logout' %}">Log Out</a>
-            {% else %}
-                You are not logged in
-                <a href="{% url 'login' %}">Log In</a>
-            {% endif %} {% endcomment %}
             <div class="card">
               <img src="{{context.project_image.url}}" class="card-img-top" alt="...">
               <h5 class="card-header">
@@ -106,16 +98,9 @@ Home
                       <a href="{% url 'twitter_login' %}" class="btn btn-primary">Connect Twitter</a>
                     {% endif %}
                   </li>
-                  {% comment %} <li class="list-group-item">
-                    <a href="#" class="btn btn-primary">Connect Wallet</a>
-                  </li>
-                  <li class="list-group-item"><a href="#" class="btn btn-primary">Connect Discord</a></li> {% endcomment %}
-                  
                 </ul>
                 
                 <div class="card-body text-center">
-                
-                    {% comment %} <a href="/project/{{context.project_id}}/comfirm" class="btn btn-success btn-block btn-large">Complete Registration</a> {% endcomment %}
                     {% if registered %}
                       <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>
                     {% else %}
