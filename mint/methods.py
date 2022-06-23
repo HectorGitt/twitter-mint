@@ -9,7 +9,7 @@ class methods():
         project = Project.objects.filter(project_id=obj.project_id).first()
         count = project.registered.all().count()
         return count
-    def view_registered_users(self, obj):
+    def view_users(self, obj):
         url = (
             reverse("admin:mint_twitteruser_changelist")
             + "?"
@@ -17,7 +17,7 @@ class methods():
         )
         return format_html('<a class="btn btn-success" href="{}">Check Registered Users</a>', url)
         
-    def generate_winner(self, obj):
+    def end_project(self, obj):
         project = Project.objects.filter(project_id=obj.project_id).first()
         registered = project.registered.all()
         url = (
@@ -25,5 +25,5 @@ class methods():
             + "?"
             + urlencode({"projects__project_id": f"{obj.project_id}"})
         )
-        return format_html('<a class="btn btn-success" href="{}">Generate</a>', url)
+        return format_html('<a class="btn btn-success" href="{}">End</a>', url)
         
