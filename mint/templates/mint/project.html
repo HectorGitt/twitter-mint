@@ -95,7 +95,8 @@ Home
                     <a href="{% url 'login' %}" class="btn btn-primary disabled">Connected</a>
                     {{ user.username }}
                     {% else %}
-                      <a href="{% url 'twitter_login' %}" class="btn btn-primary">Connect Twitter</a>
+                      <a href="/connect_twitter?next={{request.path}}" class="btn btn-primary">Connect Twitter</a>
+
                     {% endif %}
                   </li>
                 </ul>
@@ -111,6 +112,7 @@ Home
               </div>
         </div>
       </div>
+      {% if user.is_authenticated %}
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
       <script type="text/javascript">
         $('.checklike').click(function(){
@@ -198,4 +200,5 @@ Home
 
         
       </script>
+      {% endif %}
 {% endblock  %}

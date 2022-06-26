@@ -24,6 +24,7 @@ urlpatterns = [
     path('project/<slug:project_id>/', views.project, name='project'),
     path('login/', views.login_user, name='login'),
     path('twitter_login', views.twitter_login, name='twitter_login'),
+    path('connect_twitter', views.connect_twitter, name='connect_twitter'),
     path('twitter_logout', views.twitter_logout, name='logout'),
     path('callback', views.callback, name='callback'),
     path('project/<slug:project_id>/verify',views.verify, name='verify'),

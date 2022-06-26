@@ -35,12 +35,16 @@ def project(request, project_id):
         tweet_id = project.twitter_like_link.split('/')[-1].split('?')[0]
     else: tweet_id = None
     return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id})
+
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('home')
+    
     else:
-        return render(request, 'mint/login.html')
+        request.session['next'] = request.GET.get('next', '/')
+        return render(request, 'mint/login.html', {'next': next})
 def twitter_login(request):
+        
     twitter_api = TwitterAPI()
     url, oauth_token, oauth_token_secret = twitter_api.twitter_login()
     if url is None or url == '':
@@ -77,7 +81,9 @@ def callback(request):
                 user, twitter_user = create_update_user_from_twitter(twitter_user_new)
                 if user is not None:
                     login(request, user)
-                    return redirect('home')
+                    print(request.session['next'])
+                    return redirect(request.session['next'])
+                    
             else:
                 messages.add_message(request, messages.ERROR, 'Unable to get profile details. Please try again.')
                 return render(request, 'mint/error_page.html')
@@ -92,6 +98,11 @@ def callback(request):
 def twitter_logout(request):
     logout(request)
     return redirect('home')
+
+def connect_twitter(request):
+    request.session['next'] = request.GET.get('next', '/')
+    return redirect('twitter_login')
+    
 
 @login_required
 def verify(request, project_id):
