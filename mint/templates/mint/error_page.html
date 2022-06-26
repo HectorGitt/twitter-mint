@@ -11,11 +11,8 @@
         </symbol>
     </svg>
     <div class="d-flex flex-column align-items-center ">
-        <div class="card my-5 text-center shadow-lg border border-dark" style="max-width:700px">
-            <div class="card-header">
-                {{context.project_name}}
-            </div>
-            <p class="card-text"> {{project.project_description}} </p>
+        <div class="card w-75 my-5 text-center shadow-lg border border-dark" style="max-width:700px">
+            
             {% if like_state  %}
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
@@ -129,6 +126,12 @@
             </div>
             {% endif %}
             {% endif %}
+            <img src="{{context.project_image.url}}" class="card-img-top" alt="..."/>
+            <div class="card-header">
+                
+                {{context.project_name}}
+            </div>
+            <p class="card-text"> {{project.project_description}} </p>
         </div>
     </div>
 </div>
