@@ -143,7 +143,7 @@ def comfirm(request, project_id):
             like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
         else: like_state = None
         if project.twitter_comment:
-            tweet_id = tweet_url.split('/')[-1].split('?')[0]
+            tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
             comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
         else: comment_state = None
         if project.twitter_retweet:
@@ -164,7 +164,7 @@ def comfirm(request, project_id):
             if value is None or value:
                 return True
             else: return False
-        #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(year_state) , check_none_true(followers_state) , check_none_true(comment_state))
+        print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(year_state) , check_none_true(followers_state) , check_none_true(comment_state))
         if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(year_state) and check_none_true(followers_state) and check_none_true(comment_state) :
             project = Project.objects.filter(project_id=project_id).first()
             twitter_user.projects.add(project)

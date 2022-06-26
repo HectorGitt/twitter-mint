@@ -77,8 +77,9 @@ class TwitterAPI:
             tweet = api.get_status(tweet_id)
             me = api.verify_credentials()
             status = me.status
-            if status.id == tweet_id:
-                return true
+            print(type(status.in_reply_to_status_id), type(tweet_id))
+            if status.in_reply_to_status_id == tweet_id:
+                return True
             else: return False
         except Exception as e:
             print(e)
