@@ -43,13 +43,13 @@ Home
                       <h2  class="accordion-header checkfollow" id="headingOne">
                         <button 
                           class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                          Follow @{{context.twitter_follow_link}}
+                          Follow @{{context.twitter_follow_username}}
                         </button>
                         <p id='tooltip' class='tooltipOne' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
                       </h2>
                       <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button" href="https://twitter.com/{{context.twitter_follow_link}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
+                          <a class="twitter-follow-button" href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
                         </div>
                       </div>
                     </div>
@@ -151,17 +151,18 @@ Home
               {
                 
                 if (data === 'True') {
-                  $('.tooltipOne').attr('title','You have followed this user').tooltip('show');
+                  $('.tooltipOne').attr('title','You have followed this user').tooltip('update').tooltip('show');
+                  
                   setTimeout(function () {
-                    $('.tooltipOne').tooltip('hide');
+                    $('.tooltipOne').tooltip('dispose');
                   }, 1000)
                   
                 } 
                 
                 else if (data === 'False'){
-                  $('.tooltipOne').attr('title', 'You havent followed this user').tooltip('show');
+                  $('.tooltipOne').attr('title', 'You havent followed this user').tooltip('update').tooltip('show');
                   setTimeout(function () {
-                    $('.tooltipOne').tooltip('hide');
+                    $('.tooltipOne').tooltip('dispose');
                   }, 1000)
                   
                 }
