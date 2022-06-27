@@ -31,8 +31,8 @@ def project(request, project_id):
         
     else:
         registered = False
-    if project.twitter_like_link:
-        tweet_id = project.twitter_like_link.split('/')[-1].split('?')[0]
+    if project.twitter_tweet_link:
+        tweet_id = project.twitter_tweet_id
     else: tweet_id = None
     return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id})
 
@@ -128,33 +128,28 @@ def comfirm(request, project_id):
     project = Project.objects.filter(project_id=project_id).first()
     username = request.user
     try:
-        
         twitter_user = TwitterUser.objects.filter(screen_name=username).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         twitter_api = TwitterAPI()
-        tweet_url = project.twitter_like_link
-        profile_url = project.twitter_follow_link
-        retweet_url = project.twitter_retweet_link
+        tweet_url = project.twitter_tweet_link
+        tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
         
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
         if registered is not None:
             return HttpResponse('You registered already!!!')
         else:
             if project.twitter_like:
-                tweet_id = tweet_url.split('/')[-1].split('?')[0] 
                 like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
             else: like_state = None
             if project.twitter_comment:
-                tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
                 comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
             else: comment_state = None
             if project.twitter_retweet:
-                retweet_id = retweet_url.split('/')[-1].split('?')[0]
-                retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, retweet_id)
+                retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
             else: retweet_state = None
             if project.twitter_follow:
-                screen_name = profile_url.split('/')[-1].split('?')[0]
+                screen_name = project.twitter_follow_username
                 follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
             else: follow_state = None
             if project.twitter_account_created:
@@ -177,12 +172,12 @@ def comfirm(request, project_id):
                 return render(request, 'mint/error_page.html', context)
             
     except AttributeError as e: 
+        print(e)
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
 def checkfollow(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
-        
-        username = Project.objects.filter(project_id=project_id).first().twitter_follow_link
+        username = Project.objects.filter(project_id=project_id).first().twitter_follow_username
         twitter_api = TwitterAPI()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
@@ -195,7 +190,7 @@ def checklike(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
         
-        tweet_url = Project.objects.filter(project_id=project_id).first().twitter_like_link
+        tweet_url = Project.objects.filter(project_id=project_id).first().twitter_tweet_link
         tweet_id = tweet_url.split('/')[-1].split('?')[0]
         twitter_api = TwitterAPI()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
@@ -210,14 +205,13 @@ def checkretweet(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
         
-        tweet_url = Project.objects.filter(project_id=project_id).first().twitter_retweet_link
-        tweet_id = tweet_url.split('/')[-1].split('?')[0]
+        tweet_id = Project.objects.filter(project_id=project_id).first().twitter_tweet_id
+        print(tweet_id)
         twitter_api = TwitterAPI()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
-        print(retweet_state)
         return HttpResponse(retweet_state)
         
     else: 
