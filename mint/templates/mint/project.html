@@ -124,17 +124,17 @@ Home
             {
               
               if (data === 'True') {
-                $('.tooltipTwo').attr('title','You have liked the tweet').tooltip('show');
+                $('.tooltipTwo').attr('title','You have liked the tweet').tooltip('update').tooltip('show');
                 setTimeout(function () {
-                  $('.tooltipTwo').tooltip('hide');
+                  $('.tooltipTwo').tooltip('dispose');
                 }, 1000)
                 
               } 
               
               else if (data === 'False'){
-                $('.tooltipTwo').attr('title', 'You havent liked the tweet').tooltip('show');
+                $('.tooltipTwo').attr('title', 'You havent liked the tweet').tooltip('update').tooltip('show');
                 setTimeout(function () {
-                  $('.tooltipTwo').tooltip('hide');
+                  $('.tooltipTwo').tooltip('dispose');
                 }, 1000)
                 
               }
@@ -180,17 +180,17 @@ Home
                 {
                   
                   if (data === 'True') {
-                    $('.tooltipThree').attr('title','You have retweeted this tweet').tooltip('show');
+                    $('.tooltipThree').attr('title','You have retweeted this tweet').tooltip('update').tooltip('show');
                     setTimeout(function () {
-                      $('.tooltipThree').tooltip('hide');
+                      $('.tooltipThree').tooltip('dispose');
                     }, 1000)
                     
                   } 
                   
                   else if (data === 'False'){
-                    $('.tooltipThree').attr('title', 'You havent retweeted this tweet').tooltip('show');
+                    $('.tooltipThree').attr('title', 'You havent retweeted this tweet').tooltip('update').tooltip('show');
                     setTimeout(function () {
-                      $('.tooltipThree').tooltip('hide');
+                      $('.tooltipThree').tooltip('dispose');
                     }, 1000)
                     
                   }
