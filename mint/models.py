@@ -26,11 +26,11 @@ class Project(models.Model):
     project_description = models.TextField()
     project_image = models.ImageField(upload_to='media/uploads/', null=False)
     twitter_follow = models.BooleanField(default=False)
-    twitter_follow_link = models.CharField(max_length=255, null=True, blank=True)
+    twitter_follow_username = models.CharField(max_length=255, null=True, blank=True)
+    twitter_tweet_link = models.URLField(max_length=255, null=True, blank=True)
+    twitter_tweet_id = models.BigIntegerField(editable=False, null=True, blank=True)
     twitter_like = models.BooleanField(default=False)
-    twitter_like_link = models.URLField(max_length=255, null=True, blank=True)
     twitter_retweet = models.BooleanField(default=False)
-    twitter_retweet_link = models.URLField(max_length=255, null=True, blank=True)
     twitter_comment = models.BooleanField(default=False)
     twitter_embed_html = models.TextField(editable=False,null=True, blank=True)
     twitter_account_created = models.BooleanField(default=False)
@@ -41,12 +41,11 @@ class Project(models.Model):
     
     def clean(self):
         # check if the booleans fields ticked have a corresponding link
-        if (self.twitter_follow) != (self.twitter_follow_link is not None):
+        if (self.twitter_follow) != (self.twitter_follow_username is not None):
             raise ValidationError('Twitter follow link is required if twitter follow is checked.')
-        if (self.twitter_like) != (self.twitter_like_link is not None):
-            raise ValidationError('Twitter like link is required if twitter like is checked.')
-        if (self.twitter_retweet) != (self.twitter_retweet_link is not None):
-            raise ValidationError('Twitter retweet link is required if twitter retweet is checked.')
+        if (self.twitter_like) != (self.twitter_tweet_link is not None) and (self.twitter_comment) != (self.twitter_tweet_link is not None) and (self.twitter_retweet) != (self.twitter_tweet_link is not None) :
+            raise ValidationError('Twitter link is required if tweets actions is/are checked.')
+        
         if (self.twitter_followers) != (self.twitter_least_followers is not None):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_years is not None):
@@ -56,14 +55,14 @@ class Project(models.Model):
     
     def save(self):
         
-        if  self.twitter_like_link and not self.twitter_embed_html:
-            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_like_link)
-        elif  self.twitter_retweet_link and not self.twitter_embed_html:
-            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_retweet_link)
-        elif  self.twitter_follow_link and not self.twitter_embed_html:
-            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_follow_link)
-        super().save()
+        if  self.twitter_tweet_link and not self.twitter_embed_html:
+            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_tweet_link)
+        elif  self.twitter_follow_username and not self.twitter_embed_html:
+            self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_follow_username)
         
+        if self.twitter_tweet_link:
+            self.twitter_tweet_id = self.twitter_tweet_link.split('/')[-1].split('?')[0]
+        super().save()
     def get_tweet_embed_html(self, tweet_url):
         x = requests.get('https://publish.twitter.com/oembed?url={url}'.format(url=tweet_url))
         json_str = x.text
