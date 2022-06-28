@@ -7,23 +7,24 @@ Home
 
 <div class="container-fluid">
     
-    <div class="row mx-3">
+    <div class="row mx-3 my-5">
         <div class="col-xs-12 col-md-6 ">
             <div class="card">
+              <h5 class="card-title position-absolute right-0">
+                <button type="button" class="btn btn-primary position-relative">
+                  Registered
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{count}}
+                    <span class="visually-hidden">Registered</span>
+                  </span>
+                </button> 
+              </h5>
               <img src="{{context.project_image.url}}" class="card-img-top" alt="...">
               <h5 class="card-header">
                 {{context.project_name}}
               </h5>
               <div class="card-body">
-                <h5 class="card-title">
-                  <button type="button" class="btn btn-primary position-relative">
-                    Registered
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                      {{count}}
-                      <span class="visually-hidden">Registered</span>
-                    </span>
-                  </button> 
-                </h5>
+                
                 <p class="card-text"> {{context.project_description}} </p>
                 
               </div>
@@ -104,6 +105,8 @@ Home
                 <div class="card-body text-center">
                     {% if registered %}
                       <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>
+                    {% elif not context.project_status %}
+                    <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Project Ended</a>
                     {% else %}
                     <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block btn-large">Complete Registration</a>
                     {% endif %}
@@ -199,7 +202,7 @@ Home
               })
             });
 
-        
+
       </script>
       {% endif %}
 {% endblock  %}
