@@ -32,5 +32,6 @@ urlpatterns = [
     path('checkfollow/<slug:project_id>', views.checkfollow, name='checkfollow'),
     path('checklike/<slug:project_id>', views.checklike, name='checklike'),
     path('checkretweet/<slug:project_id>', views.checkretweet, name='checkretweet'),
+    path('success', views.success, name='success'),
 ]
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

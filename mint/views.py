@@ -9,6 +9,7 @@ from .authorization import create_update_user_from_twitter, check_token_still_va
 from twitter_api.twitter_api import TwitterAPI
 from .models import Project
 from django.http import HttpResponse
+import json
 
 
 
@@ -216,4 +217,7 @@ def checkretweet(request, project_id):
         
     else: 
         return HttpResponse('')
+def success(request):
+    projects_all = Project.objects.all().order_by('-project_date')
     
+    return render(request, 'mint/home2.html', {'context': projects_all})
