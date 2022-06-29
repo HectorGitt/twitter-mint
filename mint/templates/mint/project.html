@@ -58,7 +58,7 @@ Home
                     {% if context.twitter_like %}
                     <div class="accordion-item">
                       <h2 class="checklike accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <button class="accordion-button collapsed position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                            Like Tweet
                         </button>
                         <p id='tooltip' class='tooltipTwo' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
@@ -115,14 +115,37 @@ Home
               </div>
         </div>
       </div>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Error Occured</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
       {% if user.is_authenticated %}
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
       <script type="text/javascript">
+        
         $('.checklike').click(function(){
+        
         $.ajax(
         {
             type:"GET",
             url: "/checklike/{{context.project_id}}",
+            timeout:10000,
+            beforeSend: function(){
+              $('[aria-controls="collapseTwo"]').append("<div class='d-flex spinner-border spinner2 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>")
+              $('[aria-controls="collapseTwo"]').attr('disabled', true)
+            },
             success: function( data ) 
             {
               
@@ -130,7 +153,7 @@ Home
                 $('.tooltipTwo').attr('title','You have liked the tweet').tooltip('update').tooltip('show');
                 setTimeout(function () {
                   $('.tooltipTwo').tooltip('dispose');
-                }, 1000)
+                }, 2000)
                 
               } 
               
@@ -138,18 +161,36 @@ Home
                 $('.tooltipTwo').attr('title', 'You havent liked the tweet').tooltip('update').tooltip('show');
                 setTimeout(function () {
                   $('.tooltipTwo').tooltip('dispose');
-                }, 1000)
+                }, 2000)
                 
               }
+
                 
+            },
+            complete: function(){
+              $('.spinner2').remove()
+              $('[aria-controls="collapseTwo"]').attr('disabled', false)
+              
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              $('.modal-body').text(thrownError)
+              $('.modal').modal('show')
             }
           })
         });
         $('.checkfollow').click(function(){
+          
+          
+
           $.ajax(
           {
               type:"GET",
               url: "/checkfollow/{{context.project_id}}",
+              timeout: 10000,
+              beforeSend: function(){
+                $('[aria-controls="collapseOne"]').append("<div class='d-flex spinner-border spinner1 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>")
+                $('[aria-controls="collapseOne"]').attr('disabled', true)
+              },
               success: function( data ) 
               {
                 
@@ -158,7 +199,7 @@ Home
                   
                   setTimeout(function () {
                     $('.tooltipOne').tooltip('dispose');
-                  }, 1000)
+                  }, 2000)
                   
                 } 
                 
@@ -166,19 +207,33 @@ Home
                   $('.tooltipOne').attr('title', 'You havent followed this user').tooltip('update').tooltip('show');
                   setTimeout(function () {
                     $('.tooltipOne').tooltip('dispose');
-                  }, 1000)
+                  }, 2000)
                   
                 }
                   
+              },
+              complete: function() {
+                $('.spinner1').remove()
+                $('[aria-controls="collapseOne"]').attr('disabled', false)
+              },
+              error: function (xhr, ajaxOptions, thrownError) {
+                $('.modal-body').text(thrownError)
+                $('.modal').modal('show')
               }
             })
           });
 
           $('.checkretweet').click(function(){
+            
             $.ajax(
             {
                 type:"GET",
                 url: "/checkretweet/{{context.project_id}}",
+                timeout:10000,
+                beforeSend: function(){
+                  $('[aria-controls="collapseThree"]').append("<div class='d-flex spinner-border spinner3 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>")
+                  $('[aria-controls="collapseThree"]').attr('disabled', true)
+                },
                 success: function( data ) 
                 {
                   
@@ -186,7 +241,7 @@ Home
                     $('.tooltipThree').attr('title','You have retweeted this tweet').tooltip('update').tooltip('show');
                     setTimeout(function () {
                       $('.tooltipThree').tooltip('dispose');
-                    }, 1000)
+                    }, 2000)
                     
                   } 
                   
@@ -194,11 +249,20 @@ Home
                     $('.tooltipThree').attr('title', 'You havent retweeted this tweet').tooltip('update').tooltip('show');
                     setTimeout(function () {
                       $('.tooltipThree').tooltip('dispose');
-                    }, 1000)
+                    }, 2000)
                     
                   }
+                 
                     
-                }
+                },
+                complete: function() {
+                  $('.spinner3').remove()
+                  $('[aria-controls="collapseThree"]').attr('disabled', false)
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                  $('.modal-body').text(thrownError)
+                  $('.modal').modal('show')
+                },
               })
             });
 
