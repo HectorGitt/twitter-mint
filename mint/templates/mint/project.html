@@ -50,7 +50,7 @@ Home
                       </h2>
                       <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button" href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
+                          <a class="twitter-follow-button" target='__blank' href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
                         </div>
                       </div>
                     </div>
@@ -65,7 +65,7 @@ Home
                       </h2>
                       <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button badge btn btn-primary" href="https://twitter.com/intent/like?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Like</a>
+                          <a class="twitter-follow-button badge btn btn-primary" target='__blank' href="https://twitter.com/intent/like?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Like</a>
                         </div>
                       </div>
                     </div>
@@ -80,7 +80,7 @@ Home
                       </h2>
                       <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button badge btn btn-primary" href="https://twitter.com/intent/retweet?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Retweet</a>
+                          <a class="twitter-follow-button badge btn btn-primary" target='__blank' href="https://twitter.com/intent/retweet?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Retweet</a>
                         </div>
                       </div>
                     </div>
@@ -168,7 +168,7 @@ Home
                 
             },
             complete: function(){
-              $('.spinner2').remove()
+                            $('.spinner2').remove()
               $('[aria-controls="collapseTwo"]').attr('disabled', false)
               
             },
