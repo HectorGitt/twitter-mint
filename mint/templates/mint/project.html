@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Home
+{{context.project_name}}
 {% endblock  %}
 {% block content %}
 
@@ -98,9 +98,53 @@ Home
                         </div>
                       </div>
                     </div>
+                    {% endif %}
+                    {% if context.twitter_comment %}
+                    <div class="accordion-item">
+                      <h2 class="checkcomment accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                          Comment
+                        </button>
+                        <p id='tooltip' class='tooltipFour' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
+                      </h2>
+                      <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <a class="twitter-button badge btn btn-primary" target='__blank' href="https://twitter.com/intent/tweet?in_reply_to={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Comment</a>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    {% if context.twitter_followers %}
+                    <div class="accordion-item">
+                      <h2 class="checkfollowers accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                          Followers
+                        </button>
+                        <p id='tooltip' class='tooltipFive' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
+                      </h2>
+                      <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          You should have a minimum of {{context.twitter_least_followers}} followers
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    {% if context.twitter_account_created %}
+                    <div class="accordion-item">
+                      <h2 class="checkyears accordion-header" id="headingSix">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                          Account years
+                        </button>
+                        <p id='tooltip' class='tooltipSix' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
+                      </h2>
+                      <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          Your account should be {{context.twitter_account_years}} year(s) old
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
                   </div>
-                  {% endif %}
-                  
                 </div>
                 
                 
