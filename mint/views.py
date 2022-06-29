@@ -207,7 +207,6 @@ def checkretweet(request, project_id):
     if request.method == "GET" and auth_user.is_authenticated :
         
         tweet_id = Project.objects.filter(project_id=project_id).first().twitter_tweet_id
-        print(tweet_id)
         twitter_api = TwitterAPI()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
