@@ -39,8 +39,22 @@ Home
                   <p> Required fields are marked with an asterisk (*).</p>
                   
                   <div class="accordion" id="accordionExample">
+                    <div>{{context.twitter_embed_html | safe }}</div>
+                    
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-primary disabled">Connected</a>
+                        {{ user.username }}
+                        {% else %}
+                        <a href="/connect_twitter?next={{request.path}}" class="btn btn-primary">Connect Twitter</a>
+    
+                        {% endif %}
+                      </li>
+                    </ul>
                     {% if context.twitter_follow %}
-                    <div class="accordion-item">
+                    <div class="accordion-item border-top">
                       <h2  class="accordion-header checkfollow" id="headingOne">
                         <button 
                           class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -86,21 +100,10 @@ Home
                     </div>
                   </div>
                   {% endif %}
-                  {{context.twitter_embed_html | safe }}
+                  
                 </div>
                 
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'login' %}" class="btn btn-primary disabled">Connected</a>
-                    {{ user.username }}
-                    {% else %}
-                      <a href="/connect_twitter?next={{request.path}}" class="btn btn-primary">Connect Twitter</a>
-
-                    {% endif %}
-                  </li>
-                </ul>
+                
                 
                 <div class="card-body text-center">
                     {% if registered %}
