@@ -4,29 +4,257 @@
 Home
 {% endblock  %}
 {% block content %}
-<div class="container my-5">
-  <div class="container-fluid d-flex flex-row flex-wrap justify-content-around align-items-center">
-    {% for project in context  %}
-        <div class="card my-5 text-center shadow-lg" style="max-width:300px">
-          <img src="{{project.project_image.url}}" class="card-img-top" alt="...">
-          <div class="card-header">
-            {{project.project_name}}
-          </div>
 
-          <div class="card-body">
-            <h5 class="card-title">{{project.project_name}}</h5>
-             <p class="card-text"> Ends in {{project.project_end_date}} </p>
-            <a href="/project/{{project.project_id}}" class="btn btn-primary">Check out</a>
-          </div>
-          <div class="card-footer text-muted">
-            {{project.project_date}}
+<div class="container-fluid">
+    
+    <div class="row mx-3 my-5">
+        <div class="col-xs-12">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{context.project_name}}</h5>
+                  <h5 class="card-header">
+                    Register
+                  </h5>   
+                  <p class="card-text">Follow the steps to add yourself to this list.</p>
+                  <p> Required fields are marked with an asterisk (*).</p>
+                  
+                  <div class="accordion" id="accordionExample">
+                    {% if context.twitter_follow %}
+                    <div class="accordion-item">
+                      <h2  class="accordion-header checkfollow" id="headingOne">
+                        <button 
+                          class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                          Follow @{{context.twitter_follow_username}}
+                        </button>
+                        <p id='tooltip' class='tooltipOne' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
+                      </h2>
+                      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <a class="twitter-follow-button" href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    {% if context.twitter_like %}
+                    <div class="accordion-item">
+                      <h2 class="checklike accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                           Like Tweet
+                        </button>
+                        <p id='tooltip' class='tooltipTwo' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
+                      </h2>
+                      <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <a class="twitter-follow-button badge btn btn-primary" href="https://twitter.com/intent/like?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Like</a>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    {% if context.twitter_retweet %}
+                    <div class="accordion-item">
+                      <h2 class="checkretweet accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                          Retweet
+                        </button>
+                        <p id='tooltip' class='tooltipThree' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
+                      </h2>
+                      <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <a class="twitter-follow-button badge btn btn-primary" href="https://twitter.com/intent/retweet?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Retweet</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                  <div class='row'>
+                    <div class='col-md-6'>
+                      <img src="{{context.project_image.url}}" class="card-img-top" alt="...">
+                    </div>  
+                    <div class='col-md-6'>
+                      {{context.twitter_embed_html | safe }}
+                    </div>  
+                  </div>
+                  
+                </div>
+                
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="btn btn-primary disabled">Connected</a>
+                    {{ user.username }}
+                    {% else %}
+                      <a href="/connect_twitter?next={{request.path}}" class="btn btn-primary">Connect Twitter</a>
+
+                    {% endif %}
+                  </li>
+                </ul>
+                
+                <div class="card-body text-center">
+                    {% if registered %}
+                      <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>
+                    {% elif not context.project_status %}
+                    <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Project Ended</a>
+                    {% else %}
+                    <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block btn-large">Complete Registration</a>
+                    {% endif %}
+                </div>
+                
+              </div>
+        </div>
+      </div>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Error Occured</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
           </div>
         </div>
-    {% endfor %}
-  </div>
-</div>
+      </div>
+      {% if user.is_authenticated %}
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script type="text/javascript">
+        
+        $('.checklike').click(function(){
+        
+        $.ajax(
+        {
+            type:"GET",
+            url: "/checklike/{{context.project_id}}",
+            timeout:10000,
+            beforeSend: function(){
+              $('[aria-controls="collapseTwo"]').append("<div class='d-flex spinner-border spinner2 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>")
+              $('[aria-controls="collapseTwo"]').attr('disabled', true)
+            },
+            success: function( data ) 
+            {
+              
+              if (data === 'True') {
+                $('.tooltipTwo').attr('title','You have liked the tweet').tooltip('update').tooltip('show');
+                setTimeout(function () {
+                  $('.tooltipTwo').tooltip('dispose');
+                }, 2000)
+                
+              } 
+              
+              else if (data === 'False'){
+                $('.tooltipTwo').attr('title', 'You havent liked the tweet').tooltip('update').tooltip('show');
+                setTimeout(function () {
+                  $('.tooltipTwo').tooltip('dispose');
+                }, 2000)
+                
+              }
+
+                
+            },
+            complete: function(){
+                            $('.spinner2').remove()
+              $('[aria-controls="collapseTwo"]').attr('disabled', false)
+              
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              $('.modal-body').text(thrownError)
+              $('.modal').modal('show')
+            }
+          })
+        });
+        $('.checkfollow').click(function(){
+          
+          
+
+          $.ajax(
+          {
+              type:"GET",
+              url: "/checkfollow/{{context.project_id}}",
+              timeout: 10000,
+              beforeSend: function(){
+                $('[aria-controls="collapseOne"]').append("<div class='d-flex spinner-border spinner1 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>")
+                $('[aria-controls="collapseOne"]').attr('disabled', true)
+              },
+              success: function( data ) 
+              {
+                
+                if (data === 'True') {
+                  $('.tooltipOne').attr('title','You have followed this user').tooltip('update').tooltip('show');
+                  
+                  setTimeout(function () {
+                    $('.tooltipOne').tooltip('dispose');
+                  }, 2000)
+                  
+                } 
+                
+                else if (data === 'False'){
+                  $('.tooltipOne').attr('title', 'You havent followed this user').tooltip('update').tooltip('show');
+                  setTimeout(function () {
+                    $('.tooltipOne').tooltip('dispose');
+                  }, 2000)
+                  
+                }
+                  
+              },
+              complete: function() {
+                $('.spinner1').remove()
+                $('[aria-controls="collapseOne"]').attr('disabled', false)
+              },
+              error: function (xhr, ajaxOptions, thrownError) {
+                $('.modal-body').text(thrownError)
+                $('.modal').modal('show')
+              }
+            })
+          });
+
+          $('.checkretweet').click(function(){
+            
+            $.ajax(
+            {
+                type:"GET",
+                url: "/checkretweet/{{context.project_id}}",
+                timeout:10000,
+                beforeSend: function(){
+                  $('[aria-controls="collapseThree"]').append("<div class='d-flex spinner-border spinner3 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>")
+                  $('[aria-controls="collapseThree"]').attr('disabled', true)
+                },
+                success: function( data ) 
+                {
+                  
+                  if (data === 'True') {
+                    $('.tooltipThree').attr('title','You have retweeted this tweet').tooltip('update').tooltip('show');
+                    setTimeout(function () {
+                      $('.tooltipThree').tooltip('dispose');
+                    }, 2000)
+                    
+                  } 
+                  
+                  else if (data === 'False'){
+                    $('.tooltipThree').attr('title', 'You havent retweeted this tweet').tooltip('update').tooltip('show');
+                    setTimeout(function () {
+                      $('.tooltipThree').tooltip('dispose');
+                    }, 2000)
+                    
+                  }
+                 
+                    
+                },
+                complete: function() {
+                  $('.spinner3').remove()
+                  $('[aria-controls="collapseThree"]').attr('disabled', false)
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                  $('.modal-body').text(thrownError)
+                  $('.modal').modal('show')
+                },
+              })
+            });
 
 
-
-
+      </script>
+      {% endif %}
 {% endblock  %}

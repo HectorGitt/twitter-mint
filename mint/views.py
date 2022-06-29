@@ -217,6 +217,6 @@ def checkretweet(request, project_id):
     else: 
         return HttpResponse('')
 def success(request):
-    projects_all = Project.objects.all().order_by('-project_date')
+    projects_all = Project.objects.all().order_by('-project_date').first()
     
     return render(request, 'mint/home2.html', {'context': projects_all})
