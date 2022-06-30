@@ -216,6 +216,19 @@ def checkretweet(request, project_id):
         
     else: 
         return HttpResponse('')
+def checkcomment(request):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        
+        tweet_id = Project.objects.filter(project_id=project_id).first().twitter_tweet_id
+        twitter_api = TwitterAPI()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
+        return HttpResponse(comment_state)
+    else: 
+        return HttpResponse('')
+    
 def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     
