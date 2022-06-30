@@ -37,7 +37,8 @@ class Project(models.Model):
     twitter_account_years = models.PositiveIntegerField(default=None, null=True, blank=True)
     twitter_followers = models.BooleanField(default=False)
     twitter_least_followers = models.PositiveIntegerField(default=None, null=True, blank=True)
-    project_status = models.BooleanField(default=True, editable = False)
+    status = models.BooleanField(default=True, editable = False)
+    winners = models.ManyToManyField('TwitterUser', blank=True, symmetrical=False, related_name='winners')
     
     def clean(self):
         # check if the booleans fields ticked have a corresponding link
@@ -83,8 +84,4 @@ class TwitterUser(models.Model):
     
     def __str__(self):
         return self.screen_name
-class Winner(models.Model):
-    
-    def __str__(self):
-        return 'Display'
-    
+  
