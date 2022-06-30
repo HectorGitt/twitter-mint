@@ -11,7 +11,7 @@ from django.utils.translation import ngettext
 class ProjectAdmin(admin.ModelAdmin, methods):
     list_display = ['project_name', 'no_of_winners', 'project_end_date', 'registered_users', 'view_users','end_project']
     search_fields = ("project_name__startswith", )
-    list_filter = ('project_status',)
+    list_filter = ('status',)
     
 @admin.register(TwitterUser)
 class TwitterUserAdmin(admin.ModelAdmin):
@@ -25,11 +25,15 @@ class TwitterUserAdmin(admin.ModelAdmin):
     def generate_winner(self, request, queryset):
         pks = queryset.values_list('twitter_id', flat=True)
         winners_pks = random.sample(list(pks), k=1)
-        print(winners_pks)
         for i in winners_pks:
-            winner = queryset.filter(twitter_id=i)
-            print(winner)
+            winner = TwitterUser.objects.filter(twitter_id=i).first()
             project_id = (request.GET.get('projects__project_id', ''))
+            project = Project.objects.filter(project_id=project_id).first()
+            project.winners.add(winner)
+            project.status = False
+            project.save()
+
+            
         self.message_user(request, ngettext(
             '%d Random user was successfully picked as a winner for the project.',
             '%d Random users were successfully picked as winners for the project..',
