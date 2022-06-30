@@ -152,7 +152,7 @@
                 <div class="card-body text-center">
                     {% if registered %}
                       <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>
-                    {% elif not context.project_status %}
+                    {% elif not context.status %}
                     <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Project Ended</a>
                     {% else %}
                     <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block btn-large">Complete Registration</a>
