@@ -25,5 +25,13 @@ class methods():
             + "?"
             + urlencode({"projects__project_id": f"{obj.project_id}"})
         )
-        return format_html('<a class="btn btn-success" href="{}">End</a>', url)
+        ''' url2 = (
+            reverse("admin:mint_project_changelist")
+            + "?"
+            + urlencode({"twitteruser__project_id": f"{obj.project_id}"})
+        ) '''
+        if obj.status:
+            return format_html('<a class="btn btn-success" href="{}">End</a>', url)
+        else:
+            return format_html('<a class=" disabled btn btn-success" href="{}">Ended</a>', url)
         
