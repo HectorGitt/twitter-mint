@@ -81,7 +81,7 @@ class TwitterUser(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     projects = models.ManyToManyField(Project, blank=True, symmetrical=False, related_name='registered')
     email = models.CharField(max_length=255, null=True, blank=True)
-    
+    wallet_id = models.CharField(max_length=255, null=True, blank=True)
     def __str__(self):
         return self.screen_name
   
