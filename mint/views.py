@@ -82,8 +82,10 @@ def callback(request):
                 user, twitter_user = create_update_user_from_twitter(twitter_user_new)
                 if user is not None:
                     login(request, user)
-                    print(request.session['next'])
-                    return redirect(request.session['next'])
+                    try:
+                        return redirect(request.session['next'])
+                    except:
+                        return redirect('home')
                     
             else:
                 messages.add_message(request, messages.ERROR, 'Unable to get profile details. Please try again.')
@@ -112,11 +114,11 @@ def verify(request, project_id):
     
     if request.method == 'POST':
         form_email = request.POST.get('email')
-        print(twitter_user)
-        print(form_email)
+        wallet_id = request.POST.get('wallet_id')
         twitter_user.email = str(form_email)
+        twitter_user.wallet_id = str(wallet_id)
         twitter_user.save()
-        return redirect('home')
+        return redirect('comfirm', project_id)
     else:
         email = twitter_user.email
         if email is None or email == '':
