@@ -4,6 +4,10 @@ from .methods import methods
 import random
 from django.contrib import messages
 from django.utils.translation import ngettext
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core import mail
+
 
 
 # Register your models here.
@@ -31,7 +35,14 @@ class TwitterUserAdmin(admin.ModelAdmin):
             project = Project.objects.filter(project_id=project_id).first()
             project.winners.add(winner)
             project.status = False
-            project.save()
+            #project.save()
+            subject = 'Subject'
+            html_message = render_to_string('mail_template.html', {'context': 'values'})
+            plain_message = strip_tags(html_message)
+            from_email = 'From <adeniyi.olaitanhector@yahoo.com>'
+            to = 'adeniyi.olaitanhector@outlook.com'
+            mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message, fail_silently=False)
+
 
             
         self.message_user(request, ngettext(
@@ -40,4 +51,5 @@ class TwitterUserAdmin(admin.ModelAdmin):
             len(winners_pks),
         ) % len(winners_pks), messages.SUCCESS)
         
+
 
