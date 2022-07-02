@@ -109,7 +109,6 @@ DATABASES = {
 }
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -172,6 +171,15 @@ django_heroku.settings(locals())
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL='media/uploads/'
+
+#EMAIL SETTINGS
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+ADMINS = [('Hector', 'adeniyi.olaitanhector@yahoo.com')]
+EMAIL_HOST: config('EMAIL_HOST')
+EMAIL_HOST_USER: config('EMAIL_HOST_USER')
+EMAIL_USE_TLS: True
+EMAIL_PORT: 587
+EMAIL_HOST_PASSWORD: config('EMAIL_HOST_PASSWORD')
 
 ''' DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
