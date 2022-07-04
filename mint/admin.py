@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.core import mail
 from django.db.models.signals import m2m_changed
+from django.core.exceptions import ValidationError
 
 
 
@@ -70,10 +71,9 @@ class AccountMonthBornListFilter(admin.SimpleListFilter):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin, methods):
     list_display = ['project_name', 'no_of_winners', 'project_end_date', 'registered_users', 'view_users','end_project']
-    #search_fields = ("project_name__startswith", )
+    search_fields = ("project_name__startswith", )
     list_filter = ('status',)
     inlines = [TwitterUserInline]
-    
     
 def winners_changed(sender,**kwargs):
     print('added winner')
@@ -122,30 +122,33 @@ class TwitterUserAdmin(admin.ModelAdmin):
         
     @admin.action(description='Pick Winner(s)')
     def pick_winner(self, request, queryset):
-        pks = queryset.values_list('twitter_id', flat=True)
-        project_id = (request.GET.get('projects__project_id', ''))
-        project = Project.objects.filter(project_id=project_id).first()
-        projects = Project.objects.all().order_by('-project_date')[0:2]
-        if project.status:
-            users_list = ''
-            for i in pks:
-                winner = TwitterUser.objects.filter(twitter_id=i).first()
-                project.winners.add(winner)
-                subject = 'Congratulations, You have been selected'
-                html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects})
-                plain_message = 'strip_tags(html_message)'
-                from_email = 'adeniyi.olaitanhector@yahoo.com'
-                to = winner.email
-                send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
-                users_list += winner.screen_name + ','
-            project.status = False
-            project.save()
-            self.message_user(request, ngettext(
-                '%d user was successfully picked as a winner for the project.',
-                '%d users were successfully picked as winners for the project..',
-                len(pks) ,
-            ) % (len(pks)) , messages.SUCCESS)
-            self.message_user(request, users_list, messages.SUCCESS)
-        else:
-            self.message_user(request, 'This project has already ended', messages.ERROR)
-
+        try:
+            pks = queryset.values_list('twitter_id', flat=True)
+            project_id = (request.GET.get('projects__project_id', ''))
+            project = Project.objects.filter(project_id=project_id).first()
+            projects = Project.objects.all().order_by('-project_date')[0:2]
+            if project.status:
+                users_list = ''
+                for i in pks:
+                    winner = TwitterUser.objects.filter(twitter_id=i).first()
+                    project.winners.add(winner)
+                    subject = 'Congratulations, You have been selected'
+                    html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects})
+                    plain_message = 'strip_tags(html_message)'
+                    from_email = 'adeniyi.olaitanhector@yahoo.com'
+                    to = winner.email
+                    send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
+                    users_list += winner.screen_name + ','
+                project.status = False
+                project.save()
+                self.message_user(request, ngettext(
+                    '%d user was successfully picked as a winner for the project.',
+                    '%d users were successfully picked as winners for the project..',
+                    len(pks) ,
+                ) % (len(pks)) , messages.SUCCESS)
+                self.message_user(request, users_list, messages.SUCCESS)
+            else:
+                self.message_user(request, 'This project has already ended', messages.ERROR)
+        except ValidationError:
+            self.message_user(request, 'No project was selected', messages.ERROR)
+        
