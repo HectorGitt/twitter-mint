@@ -1,4 +1,4 @@
-
+from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -16,7 +16,7 @@ import json
 # Create your views here.
 def home(request):
     projects_all = Project.objects.all().order_by('-project_date')
-    
+    paginator = Paginator(projects_all, 2) # Show 25 contacts per page.
     return render(request, 'mint/home.html', {'context': projects_all})
 def project(request, project_id):
     username = request.user
