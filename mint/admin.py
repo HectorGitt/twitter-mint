@@ -83,7 +83,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects})
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
-                to = 'adeniyi.olaitanhector@outlook.com'
+                to = winner.email
                 send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
                 users_list += winner.screen_name + ','
             project.status = False
