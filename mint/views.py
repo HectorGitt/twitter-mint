@@ -157,9 +157,9 @@ def comfirm(request, project_id):
                 
             else: follow_state = None
             if project.twitter_account_created:
-                year_state, year_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_years)
-                twitter_user.account_year = year_value
-            else: year_state = None
+                month_state, month_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_months)
+                twitter_user.account_months = month_value
+            else: month_state = None
             if project.twitter_followers:
                 followers_state, followers_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_least_followers)
                 twitter_user.followers = followers_value
@@ -168,14 +168,14 @@ def comfirm(request, project_id):
                 if value is None or value:
                     return True
                 else: return False
-            #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(year_state) , check_none_true(followers_state) , check_none_true(comment_state))
+            #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
             twitter_user.save()
-            if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(year_state) and check_none_true(followers_state) and check_none_true(comment_state) :
+            if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
                 return render(request, 'mint/comfirm.html', {'context': project})
             else:
-                context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'year_state': year_state, 'comment_state': comment_state, 'followers_state': followers_state}
+                context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
                 return render(request, 'mint/error_page.html', context)
             
     except AttributeError as e: 

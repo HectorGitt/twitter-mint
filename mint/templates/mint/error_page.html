@@ -109,20 +109,20 @@
             {% endif %}
             {% endif %}
 
-            {% if year_state %}
+            {% if month_state %}
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
                 <div>
-                Your account met the minimum creation year requirement!
+                Your account met the minimum creation month requirement!
                 </div>
             </div>
             {% else %}
-            {% if year_state is none %}
+            {% if month_state is none %}
             {% else %}
             <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
                 <div>
-                    Your account doesnt meet the minimum creation year requirement!
+                    Your account doesnt meet the minimum creation month requirement!
                 </div>
             </div>
             {% endif %}

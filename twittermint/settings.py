@@ -130,6 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "Mint Admin",
+    "site_header": "Minting",
+    "site_brand": "Twitter Mint",
+    "copyright": "Mint Ltd",
 }
 JAZZMIN_UI_TWEAKS = {
     'theme': 'darkly',
