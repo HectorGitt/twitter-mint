@@ -7,6 +7,7 @@ from django.utils.translation import ngettext
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.core import mail
+from django.db.models.signals import m2m_changed
 
 
 
@@ -17,22 +18,25 @@ class TwitterUserInline(admin.TabularInline):
     verbose_name = "Winner"
     verbose_name_plural = "Winners"
     can_delete = True
-    
+
+
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin, methods):
     list_display = ['project_name', 'no_of_winners', 'project_end_date', 'registered_users', 'view_users','end_project']
     search_fields = ("project_name__startswith", )
     list_filter = ('status',)
     inlines = [TwitterUserInline]
-  
-  
- 
+    
+def winners_changed(sender,**kwargs):
+    print('added winner')
+m2m_changed.connect(winners_changed, sender=Project.winners,dispatch_uid='uuid.uuid4')
+   
 @admin.register(TwitterUser)
 class TwitterUserAdmin(admin.ModelAdmin):
     
-    list_display = ['screen_name', 'email', 'account_year', 'followers']
+    list_display = ['screen_name', 'email', 'account_months', 'followers']
     actions = ['generate_winner', 'pick_winner']
-    list_filter = ('account_year',)
+    list_filter = ('account_months',)
     
 
 
