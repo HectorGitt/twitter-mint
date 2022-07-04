@@ -28,15 +28,15 @@ class methods():
             + "?"
             + urlencode({"projects__project_id": f"{obj.project_id}"})
         )
-        ''' url2 = (
-            reverse("admin:mint_project_changelist")
+        """url2 = (
+            reverse("admin:mint_project_winners_changelist")
             + "?"
-            + urlencode({"twitteruser__project_id": f"{obj.project_id}"})
-        ) '''
+            + urlencode({"projects__project_id": f"{obj.project_id}"})
+        )"""
         if obj.status:
             return format_html('<a class="btn btn-success" href="{}">End</a>', url)
         else:
-            return format_html('<a class=" disabled btn btn-success" href="{}">Ended</a>', url)
+            return format_html('<a class="disabled btn btn-success" href="{}">Ended</a>', url)
         
 class EmailThread(threading.Thread):
     def __init__(self, subject, html_content, recipient_list, sender):
@@ -50,8 +50,7 @@ class EmailThread(threading.Thread):
         msg = EmailMessage(self.subject, self.html_content, self.sender, self.recipient_list)
         msg.content_subtype = 'html'
         msg.send()
-        print('sent')
 
 
-def send_html_mail(subject, from_email,plain_message, recipient_list, html_message, fail_silently):
+def send_html_mail(subject, from_email,plain_message, recipient_list, html_message, fail_silently, reply_to):
     EmailThread(subject, html_message, recipient_list, from_email).start()
