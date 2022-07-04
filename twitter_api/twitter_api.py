@@ -91,11 +91,11 @@ class TwitterAPI:
             me = api.verify_credentials()
             followers = me.followers_count
             if followers >= min_follow:
-                return True
-            else: return False
+                return True, followers
+            else: return False, followers
         except Exception as e:
             print(e)
-            return None
+            return None, None
     def check_created_at(self, access_token, access_token_secret, min_years):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
@@ -105,9 +105,9 @@ class TwitterAPI:
             date = me.created_at
             account_years = relativedelta(date.date(), datetime.date.today()).years
             if account_years >= min_years:
-                return True
-            else: return False
+                return True, account_years
+            else: return False, account_years
             
         except Exception as e:
             print(e)
-            return None
+            return None, None
