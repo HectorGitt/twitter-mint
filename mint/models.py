@@ -34,11 +34,11 @@ class Project(models.Model):
     twitter_comment = models.BooleanField(default=False)
     twitter_embed_html = models.TextField(editable=False,null=True, blank=True)
     twitter_account_created = models.BooleanField(default=False)
-    twitter_account_years = models.PositiveIntegerField(default=None, null=True, blank=True)
+    twitter_account_months = models.PositiveIntegerField(default=None, null=True, blank=True)
     twitter_followers = models.BooleanField(default=False)
     twitter_least_followers = models.PositiveIntegerField(default=None, null=True, blank=True)
     status = models.BooleanField(default=True)
-    winners = models.ManyToManyField('TwitterUser', blank=True, symmetrical=False, related_name='winners')
+    winners = models.ManyToManyField('TwitterUser', editable=False, blank=True, symmetrical=False, related_name='winners')
     
     def clean(self):
         # check if the booleans fields ticked have a corresponding link
@@ -49,7 +49,7 @@ class Project(models.Model):
         
         if (self.twitter_followers) != (self.twitter_least_followers is not None):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
-        if (self.twitter_account_created) != (self.twitter_account_years is not None):
+        if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
     def __str__(self):
         return self.project_name
@@ -80,7 +80,7 @@ class TwitterUser(models.Model):
     twitter_oauth_token = models.ForeignKey(TwitterAuthToken, on_delete=models.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     followers = models.PositiveIntegerField(default=None, null=True, blank=True)
-    account_year = models.PositiveIntegerField(default=None, null=True, blank=True)
+    account_months = models.PositiveIntegerField(default=None, null=True, blank=True)
     projects = models.ManyToManyField(Project, blank=True, symmetrical=False, related_name='registered')
     email = models.CharField(max_length=255, null=True, blank=True)
     wallet_id = models.CharField(max_length=255, null=True, blank=True)
