@@ -20,7 +20,7 @@ class Project(models.Model):
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
     project_date = models.DateTimeField(auto_now_add=True)
-    project_end_date = models.DateField(default=(datetime.date.today() + datetime.timedelta(days=3)))
+    project_end_date = models.DateField(auto_now_add=True)
     project_price = models.PositiveIntegerField(default=1)
     project_link = models.URLField(max_length=255)
     project_description = models.TextField()
@@ -37,7 +37,7 @@ class Project(models.Model):
     twitter_account_years = models.PositiveIntegerField(default=None, null=True, blank=True)
     twitter_followers = models.BooleanField(default=False)
     twitter_least_followers = models.PositiveIntegerField(default=None, null=True, blank=True)
-    status = models.BooleanField(default=True, editable = False)
+    status = models.BooleanField(default=True)
     winners = models.ManyToManyField('TwitterUser', blank=True, symmetrical=False, related_name='winners')
     
     def clean(self):
@@ -79,6 +79,8 @@ class TwitterUser(models.Model):
     profile_image_url = models.CharField(max_length=255, null=True)
     twitter_oauth_token = models.ForeignKey(TwitterAuthToken, on_delete=models.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    followers = models.PositiveIntegerField(default=None, null=True, blank=True)
+    account_year = models.PositiveIntegerField(default=None, null=True, blank=True)
     projects = models.ManyToManyField(Project, blank=True, symmetrical=False, related_name='registered')
     email = models.CharField(max_length=255, null=True, blank=True)
     wallet_id = models.CharField(max_length=255, null=True, blank=True)
