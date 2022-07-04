@@ -87,17 +87,11 @@ class TwitterUserAdmin(admin.ModelAdmin):
     list_filter = ( AccountMonthBornListFilter,)
     
 
-
-    @admin.action(description='Generate Random Winner(s)')
-    def generate_winner(self, request, queryset):
-        pks = queryset.values_list('twitter_id', flat=True)
-        project_id = (request.GET.get('projects__project_id', ''))
-        project = Project.objects.filter(project_id=project_id).first()
-        projects = Project.objects.all().order_by('-project_date')[0:2]
+    def register_winner(self,request, project, pks, action):
         if project.status:
+            projects = Project.objects.all().order_by('-project_date')[0:2]
             users_list = ''
-            winners_pks = random.sample(list(pks), k=1)
-            for i in winners_pks:
+            for i in pks:
                 winner = TwitterUser.objects.filter(twitter_id=i).first()
                 project.winners.add(winner)
                 subject = 'Congratulations, You have been selected'
@@ -105,50 +99,38 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
                 to = winner.email
+                to = 'adeniyi.olaitanhector@outlook.com'
                 send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
                 users_list += winner.screen_name + ','
             project.status = False
             project.save()
             self.message_user(request, ngettext(
-            '%d Random user was successfully picked as a winner for the project.',
-            '%d Random users were successfully picked as winners for the project..',
-            len(winners_pks), ) % len(winners_pks), messages.SUCCESS)
+                '%d %s user was successfully picked as a winner for the project.',
+                '%d %s users were successfully picked as winners for the project..',
+                len(pks) ,
+            ) % (len(pks), action) , messages.SUCCESS)
             self.message_user(request, users_list, messages.SUCCESS)
         else:
-            self.message_user(request, 'This project has already ended', messages.ERROR)
-
+            self.message_user(request, 'This project has already ended', messages.ERROR)    
+    @admin.action(description='Generate Random Winner(s)')
+    def generate_winner(self, request, queryset):
+        try:
+            pks = queryset.values_list('twitter_id', flat=True)
+            project_id = (request.GET.get('projects__project_id', ''))
+            project = Project.objects.filter(project_id=project_id).first()
+            self.register_winner(request, project, pks, 'Random')
+        except ValidationError:
+            self.message_user(request, 'No project was selected', messages.ERROR)
+                
             
-        
-        
+            
     @admin.action(description='Pick Winner(s)')
     def pick_winner(self, request, queryset):
         try:
             pks = queryset.values_list('twitter_id', flat=True)
             project_id = (request.GET.get('projects__project_id', ''))
             project = Project.objects.filter(project_id=project_id).first()
-            projects = Project.objects.all().order_by('-project_date')[0:2]
-            if project.status:
-                users_list = ''
-                for i in pks:
-                    winner = TwitterUser.objects.filter(twitter_id=i).first()
-                    project.winners.add(winner)
-                    subject = 'Congratulations, You have been selected'
-                    html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects})
-                    plain_message = 'strip_tags(html_message)'
-                    from_email = 'adeniyi.olaitanhector@yahoo.com'
-                    to = winner.email
-                    send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
-                    users_list += winner.screen_name + ','
-                project.status = False
-                project.save()
-                self.message_user(request, ngettext(
-                    '%d user was successfully picked as a winner for the project.',
-                    '%d users were successfully picked as winners for the project..',
-                    len(pks) ,
-                ) % (len(pks)) , messages.SUCCESS)
-                self.message_user(request, users_list, messages.SUCCESS)
-            else:
-                self.message_user(request, 'This project has already ended', messages.ERROR)
+            self.register_winner(request, project, pks, '')
         except ValidationError:
             self.message_user(request, 'No project was selected', messages.ERROR)
         
