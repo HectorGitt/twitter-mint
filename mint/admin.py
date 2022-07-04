@@ -20,12 +20,60 @@ class TwitterUserInline(admin.TabularInline):
     can_delete = True
 
 
+
+class AccountMonthBornListFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = ('account month')
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'months'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('1', ('more than 1 month')),
+            ('3', ('more than 3 months')),
+            ('6', ('more than 6 months')),
+            ('12', ('more than 12 months')),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        # Compare the requested value (either '80s' or '90s')
+        # to decide how to filter the queryset.
+        if self.value() == '1':
+            return queryset.filter(
+                account_months__gte =1)
+        if self.value() == '3':
+            return queryset.filter(
+                account_months__gte=3)
+        if self.value() == '6':
+            return queryset.filter(
+                account_months__gte=6)
+        if self.value() == '12':
+            return queryset.filter(
+                account_months__gte=12)
+            
+
+
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin, methods):
     list_display = ['project_name', 'no_of_winners', 'project_end_date', 'registered_users', 'view_users','end_project']
-    search_fields = ("project_name__startswith", )
+    #search_fields = ("project_name__startswith", )
     list_filter = ('status',)
     inlines = [TwitterUserInline]
+    
     
 def winners_changed(sender,**kwargs):
     print('added winner')
@@ -36,7 +84,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
     
     list_display = ['screen_name', 'email', 'account_months', 'followers']
     actions = ['generate_winner', 'pick_winner']
-    list_filter = ('account_months',)
+    list_filter = ( AccountMonthBornListFilter,)
     
 
 
