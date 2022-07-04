@@ -154,18 +154,22 @@ def comfirm(request, project_id):
             if project.twitter_follow:
                 screen_name = project.twitter_follow_username
                 follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
+                
             else: follow_state = None
             if project.twitter_account_created:
-                year_state = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_years)
+                year_state, year_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_years)
+                twitter_user.account_year = year_value
             else: year_state = None
             if project.twitter_followers:
-                followers_state = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_least_followers)
+                followers_state, followers_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_least_followers)
+                twitter_user.followers = followers_value
             else: followers_state = None
             def check_none_true(value):
                 if value is None or value:
                     return True
                 else: return False
             #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(year_state) , check_none_true(followers_state) , check_none_true(comment_state))
+            twitter_user.save()
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(year_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
