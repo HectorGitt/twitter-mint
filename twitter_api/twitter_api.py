@@ -1,6 +1,5 @@
 import tweepy
 from decouple import config
-from dateutil.relativedelta import relativedelta
 import datetime
 
 class TwitterAPI:
@@ -96,17 +95,17 @@ class TwitterAPI:
         except Exception as e:
             print(e)
             return None, None
-    def check_created_at(self, access_token, access_token_secret, min_years):
+    def check_created_at(self, access_token, access_token_secret, min_month):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(access_token, access_token_secret)
             api = tweepy.API(auth, wait_on_rate_limit=True)
             me = api.verify_credentials()
             date = me.created_at
-            account_years = relativedelta(date.date(), datetime.date.today()).years
-            if account_years >= min_years:
-                return True, account_years
-            else: return False, account_years
+            account_month = ((date.date().year - datetime.date.today().year) * 12) + (datetime.date.today().month - date.date().month)
+            if account_month >= min_month:
+                return True, account_month
+            else: return False, account_month
             
         except Exception as e:
             print(e)
