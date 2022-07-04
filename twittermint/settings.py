@@ -133,7 +133,10 @@ JAZZMIN_SETTINGS = {
 }
 JAZZMIN_UI_TWEAKS = {
     'theme': 'darkly',
+    "accent": "accent-lime",
     "navbar": "navbar-dark",
+    "sidebar_nav_legacy_style": True,
+    "sidebar_nav_flat_style": True,
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -141,7 +144,10 @@ JAZZMIN_UI_TWEAKS = {
         "warning": "btn-outline-warning",
         "danger": "btn-outline-danger",
         "success": "btn-success"
-    }
+    },
+    "body_small_text": True,
+    "no_navbar_border": True,
+    "sidebar_fixed": True,
 }
 JAZZMIN_SETTINGS["show_ui_builder"] = True
 
@@ -174,12 +180,15 @@ MEDIA_URL='media/uploads/'
 
 #EMAIL SETTINGS
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-ADMINS = [('Hector', 'adeniyi.olaitanhector@yahoo.com')]
-EMAIL_HOST: config('EMAIL_HOST')
-EMAIL_HOST_USER: config('EMAIL_HOST_USER')
-EMAIL_USE_TLS: True
-EMAIL_PORT: 587
-EMAIL_HOST_PASSWORD: config('EMAIL_HOST_PASSWORD')
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ADMINS = [('Hector', 'adeniyi.olaitanhector@outlook.com')]
+EMAIL_HOST= config('EMAIL_HOST')
+EMAIL_HOST_USER= config('EMAIL_HOST_USER')
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_USE_SSL= True
+EMAIL_PORT= config('EMAIL_PORT', cast=int)
+EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
 
 ''' DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
