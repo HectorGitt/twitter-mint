@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, TwitterUser
+from .models import Project, TwitterUser, EmailNotification
 from .methods import methods, send_html_mail
 import random
 from django.contrib import messages
@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 
 
 # Register your models here.
+admin.site.register(EmailNotification)
 class TwitterUserInline(admin.TabularInline):
     model = Project.winners.through
     extra = 1
@@ -88,14 +89,15 @@ class TwitterUserAdmin(admin.ModelAdmin):
     
 
     def register_winner(self,request, project, pks, action):
+        email = EmailNotification.objects.all().first()
         if project.status:
             projects = Project.objects.all().order_by('-project_date')[0:2]
             users_list = ''
             for i in pks:
                 winner = TwitterUser.objects.filter(twitter_id=i).first()
                 project.winners.add(winner)
-                subject = 'Congratulations, You have been selected'
-                html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects})
+                subject = email.subject
+                html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects, 'email':email})
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
                 to = winner.email
