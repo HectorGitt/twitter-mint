@@ -121,9 +121,11 @@ def verify(request, project_id):
         
         if request.method == 'POST':
             form_email = request.POST.get('email')
-            wallet_id = request.POST.get('wallet_id')
+            eth_wallet_id = request.POST.get('eth_wallet_id')
+            sol_wallet_id = request.POST.get('sol_wallet_id')
             twitter_user.email = str(form_email)
-            twitter_user.wallet_id = str(wallet_id)
+            twitter_user.eth_wallet_id = str(eth_wallet_id)
+            twitter_user.sol_wallet_id = str(sol_wallet_id)
             twitter_user.save()
             return redirect('comfirm', project_id)
         else:

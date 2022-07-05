@@ -16,6 +16,9 @@ class TwitterAuthToken(models.Model):
 
 
 class Project(models.Model):
+    ETHEREUM = 'ETH'
+    SOLANA = 'SOL'
+    WALLET_TYPE = [(ETHEREUM, 'Ethereum'), (SOLANA, 'Solana')]
     project_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
@@ -37,6 +40,7 @@ class Project(models.Model):
     twitter_account_months = models.PositiveIntegerField(default=None, null=True, blank=True)
     twitter_followers = models.BooleanField(default=False)
     twitter_least_followers = models.PositiveIntegerField(default=None, null=True, blank=True)
+    wallet_type = models.CharField(max_length=3, choices=WALLET_TYPE, default=ETHEREUM)
     status = models.BooleanField(default=True)
     winners = models.ManyToManyField('TwitterUser', editable=False, blank=True, symmetrical=False, related_name='winners')
     
@@ -83,7 +87,8 @@ class TwitterUser(models.Model):
     account_months = models.PositiveIntegerField(default=None, null=True, blank=True)
     projects = models.ManyToManyField(Project, blank=True, symmetrical=False, related_name='registered')
     email = models.CharField(max_length=255, null=True, blank=True)
-    wallet_id = models.CharField(max_length=255, null=True, blank=True)
+    eth_wallet_id = models.CharField(max_length=255, null=True, blank=True)
+    sol_wallet_id = models.CharField(max_length=255, null=True, blank=True)
     def __str__(self):
         return self.screen_name
 class EmailNotification(models.Model):
