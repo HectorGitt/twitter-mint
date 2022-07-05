@@ -18,6 +18,12 @@ def home(request):
     projects_all = Project.objects.all().order_by('-project_date')
     paginator = Paginator(projects_all, 2) # Show 25 contacts per page.
     return render(request, 'mint/home.html', {'context': projects_all})
+def projects(request, page):
+    projects_all = Project.objects.all().order_by('-project_date')
+    paginator = Paginator(projects_all, 3) # Show 25 contacts per page. 
+    page_number = page
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'mint/projects.html', {'page_obj': page_obj})
 def project(request, project_id):
     username = request.user
     project = Project.objects.filter(project_id=project_id).first()
