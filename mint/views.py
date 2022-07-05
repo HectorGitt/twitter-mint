@@ -116,22 +116,24 @@ def connect_twitter(request):
 @login_required
 def verify(request, project_id):
     username = request.user
-    twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-    
-    if request.method == 'POST':
-        form_email = request.POST.get('email')
-        wallet_id = request.POST.get('wallet_id')
-        twitter_user.email = str(form_email)
-        twitter_user.wallet_id = str(wallet_id)
-        twitter_user.save()
-        return redirect('comfirm', project_id)
-    else:
-        email = twitter_user.email
-        if email is None or email == '':
-            return render (request, 'mint/verify.html')
-        else:
-            return redirect('comfirm', project_id)
+    try:
+        twitter_user = TwitterUser.objects.filter(screen_name=username).first()
         
+        if request.method == 'POST':
+            form_email = request.POST.get('email')
+            wallet_id = request.POST.get('wallet_id')
+            twitter_user.email = str(form_email)
+            twitter_user.wallet_id = str(wallet_id)
+            twitter_user.save()
+            return redirect('comfirm', project_id)
+        else:
+            email = twitter_user.email
+            if email is None or email == '':
+                return render (request, 'mint/verify.html')
+            else:
+                return redirect('comfirm', project_id)
+    except AttributeError:
+         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
 @login_required
 def comfirm(request, project_id):
     project = Project.objects.filter(project_id=project_id).first()
