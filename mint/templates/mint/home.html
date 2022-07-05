@@ -31,7 +31,7 @@ Home
     <div class="col-lg-6 mx-auto">
       <p class="fs-5 mb-4">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit voluptate incidunt quaerat quibusdam deserunt est in praesentium aliquid tenetur ab. Facilis modi delectus unde assumenda, iure vel consequuntur corporis laudantium possimus quam a, sed officia molestias. Pariatur quisquam nemo esse!</p>
       <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a href='#projects' class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Projects</a>
+        <a href='#projects' class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Recent Projects</a>
         {% if user.is_authenticated %}
         {% else %}
         <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">Login</a>
@@ -63,22 +63,9 @@ Home
   </div>
 </div>
 
-<nav class='container' aria-label="...">
-  <ul class="pagination justify-content-center">
-    <li class="page-item disabled">
-      <a class="page-link bg-dark">Previous</a>
-    </li>
-    <li class="page-item active"><a class="page-link bg-dark" href="#">1</a></li>
-    <li class="page-item " aria-current="page">
-      <a class="page-link bg-dark" href="#">2</a>
-    </li>
-    <li class="page-item"><a class="page-link bg-dark" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link bg-dark" href="#">Next</a>
-    </li>
-  </ul>
-</nav>
-
+<div class="d-grid gap-2 col-4 mx-auto">
+  <a href="{% url 'projects' page=1 %}" class="btn btn-primary">Check more</a>
+</div>
 
 <div class="container-fluid bg-dark">
   <footer class="py-3 mt-4">
