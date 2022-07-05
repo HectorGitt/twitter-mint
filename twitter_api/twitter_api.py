@@ -102,7 +102,7 @@ class TwitterAPI:
             api = tweepy.API(auth, wait_on_rate_limit=True)
             me = api.verify_credentials()
             date = me.created_at
-            account_month = ((date.date().year - datetime.date.today().year) * 12) + (datetime.date.today().month - date.date().month)
+            account_month = (datetime.date.today().year - date.date().year) * 12 + (datetime.date.today().month - date.date().month)
             if account_month >= min_month:
                 return True, account_month
             else: return False, account_month
