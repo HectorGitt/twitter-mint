@@ -15,7 +15,7 @@ import json
 
 # Create your views here.
 def home(request):
-    projects_all = Project.objects.all().order_by('-project_date')
+    projects_all = Project.objects.all().order_by('-project_date')[0:6]
     paginator = Paginator(projects_all, 2) # Show 25 contacts per page.
     return render(request, 'mint/home.html', {'context': projects_all})
 def projects(request, page):
