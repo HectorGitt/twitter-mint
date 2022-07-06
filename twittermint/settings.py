@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import os
 import django_heroku
 from pathlib import Path
-import os
+
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -81,12 +82,6 @@ WSGI_APPLICATION = 'twittermint.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-''' DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-} ''' 
 
 DATABASES = {
 
@@ -101,7 +96,6 @@ DATABASES = {
         'PASSWORD': config('PASSWORD'),
 
         'HOST': config('HOST'),
-        
         'PORT': config('PORT', cast=int),
 
     }
@@ -200,6 +194,6 @@ EMAIL_USE_SSL= True
 ''' DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY') 
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_QUERYSTRING_AUTH = config('AWS_QUERYSTRING_AUTH', cast=bool) '''
