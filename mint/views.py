@@ -11,8 +11,6 @@ from .models import Project
 from django.http import HttpResponse
 import json
 
-
-
 # Create your views here.
 def home(request):
     projects_all = Project.objects.all().order_by('-project_date')[0:6]
@@ -81,14 +79,12 @@ def callback(request):
             if user is None or user.oauth_token_secret != access_token_secret : 
                 twitter_auth_token.oauth_token = access_token
                 twitter_auth_token.oauth_token_secret = access_token_secret
-                print('i got here')
                 twitter_auth_token.save()
             else:
                 twitter_auth_token.delete()
             # Create user
             info = twitter_api.get_me(access_token, access_token_secret)
             if info is not None:
-                print(info)
                 twitter_user_new = TwitterUser(twitter_id=info[0]['id'], screen_name=info[0]['username'], name=info[0]['name'], profile_image_url=info[0]['profile_image_url'])
                 if user is not None:
                     twitter_user_new.twitter_oauth_token = user
@@ -130,11 +126,13 @@ def verify(request, project_id):
         
         if request.method == 'POST':
             form_email = request.POST.get('email')
-            eth_wallet_id = request.POST.get('eth_wallet_id')
-            sol_wallet_id = request.POST.get('sol_wallet_id')
+            eth = request.POST.get('eth')
+            sol = request.POST.get('sol')
             twitter_user.email = str(form_email)
-            twitter_user.eth_wallet_id = str(eth_wallet_id)
-            twitter_user.sol_wallet_id = str(sol_wallet_id)
+            if eth is not None:
+                twitter_user.eth_wallet_id = str(eth)
+            if sol is not None:
+                twitter_user.sol_wallet_id = str(sol)
             twitter_user.save()
             return redirect('comfirm', project_id)
         else:
@@ -143,8 +141,9 @@ def verify(request, project_id):
                 return render (request, 'mint/verify.html')
             else:
                 return redirect('comfirm', project_id)
-    except AttributeError:
-         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
+    except AttributeError as e:
+        print(e)
+        return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
 @login_required
 def comfirm(request, project_id):
     project = Project.objects.filter(project_id=project_id).first()
