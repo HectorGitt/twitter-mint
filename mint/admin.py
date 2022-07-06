@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Project, TwitterUser, EmailNotification
 from .methods import methods, send_html_mail
-import random
 from django.contrib import messages
 from django.utils.translation import ngettext
 from django.template.loader import render_to_string
@@ -96,8 +95,8 @@ class TwitterUserAdmin(admin.ModelAdmin):
             for i in pks:
                 winner = TwitterUser.objects.filter(twitter_id=i).first()
                 project.winners.add(winner)
-                subject = email.subject
-                html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects, 'email':email})
+                subject = str(email.subject).replace('{{name}}', winner.name)
+                html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
                 to = winner.email
