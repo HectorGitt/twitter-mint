@@ -186,17 +186,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ADMINS = [('Hector', 'adeniyi.olaitanhector@outlook.com')]
 
-EMAIL_HOST = 'smtp.mail.yahoo.com'
-EMAIL_HOST_USER = 'adeniyi.olaitanhector@yahoo.com'
-EMAIL_HOST_PASSWORD = 'blbqqofpesgkhusw'
-EMAIL_PORT = 465
+EMAIL_HOST= config('EMAIL_HOST')
+EMAIL_HOST_USER= config('EMAIL_HOST_USER')
+EMAIL_PORT= config('EMAIL_PORT', cast=int)
+EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
+
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_USE_SSL= True
-"""EMAIL_HOST= config('EMAIL_HOST')
-EMAIL_HOST_USER= config('EMAIL_HOST_USER')
-EMAIL_PORT= config('EMAIL_PORT', cast=int)
-EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')"""
+
 
 
 ''' DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
