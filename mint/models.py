@@ -93,9 +93,9 @@ class TwitterUser(models.Model):
     def __str__(self):
         return self.screen_name
 class EmailNotification(models.Model):
-    subject = models.CharField(max_length=50, default='Congratulations, You have been selected')
-    heading = models.CharField(max_length=50, default='Congratulations!!!')
-    heading_secondary = models.CharField(max_length=50, default='You have been selected.')
+    subject = models.CharField(max_length=80, default='Congratulations, You have been selected')
+    heading = models.CharField(max_length=60, default='Congratulations!!!')
+    heading_secondary = models.CharField(max_length=100, default='You have been selected.')
     content = models.TextField(max_length=500, default='You have been picked as the winner of the project you registered for at twitter-minting, you can send us a mail to claim your price.')
     date = models.DateTimeField(auto_now_add=True, editable=False)
     class Meta:
