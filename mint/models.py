@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-import datetime
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 import json
 import requests
@@ -58,7 +58,7 @@ class Project(models.Model):
     def __str__(self):
         return self.project_name
     
-    def save(self):
+    def save(self, *args, **kwargs):
         
         if  self.twitter_tweet_link and not self.twitter_embed_html:
             self.twitter_embed_html = self.get_tweet_embed_html(self.twitter_tweet_link)
@@ -67,7 +67,7 @@ class Project(models.Model):
         
         if self.twitter_tweet_link:
             self.twitter_tweet_id = self.twitter_tweet_link.split('/')[-1].split('?')[0]
-        super().save()
+        super(Project, self).save(*args, **kwargs)
     def get_tweet_embed_html(self, tweet_url):
         x = requests.get('https://publish.twitter.com/oembed?url={url}'.format(url=tweet_url))
         json_str = x.text

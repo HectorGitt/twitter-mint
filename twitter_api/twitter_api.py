@@ -28,8 +28,7 @@ class TwitterAPI:
 
     def get_me(self, access_token, access_token_secret):
         try:
-            client = tweepy.Client(consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=access_token,
-                                   access_token_secret=access_token_secret)
+            client = tweepy.Client(consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=access_token, access_token_secret=access_token_secret)
             info = client.get_me(user_auth=True, expansions='pinned_tweet_id')
             return info
         except Exception as e:

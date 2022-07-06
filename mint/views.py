@@ -77,14 +77,23 @@ def callback(request):
     if twitter_auth_token is not None:
         access_token, access_token_secret = twitter_api.twitter_callback(oauth_verifier, oauth_token, twitter_auth_token.oauth_token_secret)
         if access_token is not None and access_token_secret is not None:
-            twitter_auth_token.oauth_token = access_token
-            twitter_auth_token.oauth_token_secret = access_token_secret
-            twitter_auth_token.save()
+            user = TwitterAuthToken.objects.filter(oauth_token=access_token).last()
+            if user is None or user.oauth_token_secret != access_token_secret : 
+                twitter_auth_token.oauth_token = access_token
+                twitter_auth_token.oauth_token_secret = access_token_secret
+                print('i got here')
+                twitter_auth_token.save()
+            else:
+                twitter_auth_token.delete()
             # Create user
             info = twitter_api.get_me(access_token, access_token_secret)
             if info is not None:
+                print(info)
                 twitter_user_new = TwitterUser(twitter_id=info[0]['id'], screen_name=info[0]['username'], name=info[0]['name'], profile_image_url=info[0]['profile_image_url'])
-                twitter_user_new.twitter_oauth_token = twitter_auth_token
+                if user is not None:
+                    twitter_user_new.twitter_oauth_token = user
+                else:
+                    twitter_user_new.twitter_oauth_token = twitter_auth_token
                 user, twitter_user = create_update_user_from_twitter(twitter_user_new)
                 if user is not None:
                     login(request, user)
@@ -151,6 +160,8 @@ def comfirm(request, project_id):
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
         if registered is not None:
             return HttpResponse('You registered already!!!')
+        elif not project.status:
+            return HttpResponse('Nice try..... Project Ended!!!')
         else:
             if project.twitter_like:
                 like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
