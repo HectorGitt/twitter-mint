@@ -1,3 +1,4 @@
+{% load to_name %}
 <!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 
@@ -126,14 +127,14 @@
 													<table class="heading_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 														<tr>
 															<td style="text-align:center;width:100%;padding-top:80px;">
-																<h1 style="margin: 0; color: #f4ede6; direction: ltr; font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 24px; font-weight: 400; letter-spacing: 6px; line-height: 180%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">{{email.heading}}<br></span></h1>
+																<h1 style="margin: 0; color: #f4ede6; direction: ltr; font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 24px; font-weight: 400; letter-spacing: 6px; line-height: 180%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">{{email.heading|to_name:name}}<br></span></h1>
 															</td>
 														</tr>
 													</table>
 													<table class="heading_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 														<tr>
 															<td style="padding-left:20px;padding-right:20px;text-align:center;width:100%;padding-top:20px;">
-																<h1 style="margin: 0; color: #f4ede6; direction: ltr; font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 34px; font-weight: 400; letter-spacing: 2px; line-height: 180%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">{{email.heading_secondary}}<br></span></h1>
+																<h1 style="margin: 0; color: #f4ede6; direction: ltr; font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 34px; font-weight: 400; letter-spacing: 2px; line-height: 180%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">{{email.heading_secondary|to_name:name}}<br></span></h1>
 															</td>
 														</tr>
 													</table>
@@ -142,7 +143,7 @@
 															<td style="padding-bottom:40px;padding-left:20px;padding-right:20px;padding-top:40px;">
 																<div style="font-family: sans-serif">
 																	<div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; mso-line-height-alt: 18px; color: #f4ede6; line-height: 1.5;">
-																		<p style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 24px;"><span style="font-size:16px;">{{email.content}}</span></p>
+																		<p style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 24px;"><span style="font-size:16px;">{{email.content|to_name:name}}</span></p>
 																	</div>
 																</div>
 															</td>
