@@ -96,6 +96,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 winner = TwitterUser.objects.filter(twitter_id=i).first()
                 project.winners.add(winner)
                 subject = str(email.subject).replace('{{name}}', winner.name)
+                subject = subject.replace('{{project_name}}', project.project_name)
                 html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
