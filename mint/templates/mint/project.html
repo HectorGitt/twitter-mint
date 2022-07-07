@@ -144,35 +144,38 @@
                       </div>
                     </div>
                     {% endif %}
-                    {% if context.wallet_type != 'NIL' %}
-                    <div class="accordion-item">
-                      <h2 class="checkcomment accordion-header" id="headingFour">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                          Wallet ID
-                        </button>
-                        <p id='tooltip' class='tooltipFour' data-bs-trigger='click'  data-bs-toggle='tooltip' data-bs-placement='bottom' title='y' ></p>
-                      </h2>
-                      <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                          You must fill a wallet id of type {{context.wallet_type}} to continue
-                        </div>
+                    <form class='mt-3' action='/project/{{context.project_id}}/verify' method='POST' >
+                      {% csrf_token %}
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input value="{{twitter_user.email}}" required='required' type="email" class="form-control" id="email" name='email' aria-describedby="emailHelp">
+                        <div id="emailHelp" class="form-text">This email will be used to contact you when you win.</div>
+                        {% if context.wallet_type == 'ETH' %}
+                        <label for="eth" class="form-label mt-3">Wallet address(ETH)</label>
+                        <input type="text" value="{{twitter_user.eth_wallet_id}}" class="form-control" id="eth" name='eth'>
+                        {% endif %}
+                        {% if context.wallet_type == 'SOL' %}
+                        <label for="sol" class="form-label mt-3">Wallet address(SOL)</label>
+                        <input type="text" required='required' value="{{twitter_user.sol_wallet_id}}" class="form-control" id="sol" name='sol'>
+                        {% endif %}
                       </div>
-                    </div>
-                    {% endif %}
+                      <div class="card-body text-center">
+                        {% if registered %}
+                          <button type='submit' class="btn btn-success btn-block disabled btn-large">Registered</button>
+                        {% elif not context.status %}
+                        <button type='submit' class="btn btn-success btn-block disabled btn-large">Project Ended</button>
+                        {% else %}
+                        <button type='submit' class="btn btn-success btn-block btn-large">Complete Registration</button>
+                        {% endif %}
+                      </div>
+                    </form>
                   </div>
+                  
                 </div>
                 
                 
                 
-                <div class="card-body text-center">
-                    {% if registered %}
-                      <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Registered</a>
-                    {% elif not context.status %}
-                    <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block disabled btn-large">Project Ended</a>
-                    {% else %}
-                    <a href="/project/{{context.project_id}}/verify" class="btn btn-success btn-block btn-large">Complete Registration</a>
-                    {% endif %}
-                </div>
+                
                 
               </div>
         </div>

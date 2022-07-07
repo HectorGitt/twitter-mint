@@ -29,17 +29,21 @@ def project(request, project_id):
     if username.is_authenticated:
         try:
             twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-            
             registered = twitter_user.projects.all().filter(project_id=project_id).first()
         except:
             return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
         
     else:
+        class twitter_user():
+            email = ''
+            eth_wallet_id = ''
+            sol_wallet_id = ''
+        twitter_user = twitter_user()
         registered = False
     if project.twitter_tweet_link:
         tweet_id = project.twitter_tweet_id
     else: tweet_id = None
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id})
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user})
 
 def login_user(request):
     if request.user.is_authenticated:
@@ -126,21 +130,19 @@ def verify(request, project_id):
         
         if request.method == 'POST':
             form_email = request.POST.get('email')
+            print(form_email)
             eth = request.POST.get('eth')
             sol = request.POST.get('sol')
-            twitter_user.email = str(form_email)
-            if eth is not None:
+            if form_email != twitter_user.email:
+                twitter_user.email = str(form_email)
+            if eth is not None and twitter_user.eth_wallet_id != eth:
                 twitter_user.eth_wallet_id = str(eth)
-            if sol is not None:
+            if sol is not None and twitter_user.sol_wallet_id != sol:
                 twitter_user.sol_wallet_id = str(sol)
             twitter_user.save()
             return redirect('comfirm', project_id)
         else:
-            email = twitter_user.email
-            if email is None or email == '':
-                return render (request, 'mint/verify.html')
-            else:
-                return redirect('comfirm', project_id)
+            return HttpResponse('Nice try....')    
     except AttributeError as e:
         print(e)
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
