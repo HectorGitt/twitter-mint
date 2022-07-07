@@ -200,7 +200,7 @@ def comfirm(request, project_id):
                 context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
                 return render(request, 'mint/error_page.html', context)
             
-    except AttributeError as e: 
+    except AttributeError as e:
         print(e)
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
 def checkfollow(request, project_id):
@@ -241,7 +241,6 @@ def checkretweet(request, project_id):
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
         return HttpResponse(retweet_state)
-        
     else: 
         return HttpResponse('')
 def checkcomment(request):
