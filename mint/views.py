@@ -35,9 +35,9 @@ def project(request, project_id):
         
     else:
         class twitter_user():
-            email = ''
-            eth_wallet_id = ''
-            sol_wallet_id = ''
+            email = ' '
+            eth_wallet_id = ' '
+            sol_wallet_id = ' '
         twitter_user = twitter_user()
         registered = False
     if project.twitter_tweet_link:
