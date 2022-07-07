@@ -158,8 +158,8 @@ def comfirm(request, project_id):
         
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
         if registered is not None:
-            data = {'content': 'You registered already!!!', 'message': 300}
-            return JsonResponse(data)
+            data = 300
+            return HttpResponse(data)
         elif not project.status:
             return HttpResponse('Nice try..... Project Ended!!!')
         else:
@@ -194,8 +194,8 @@ def comfirm(request, project_id):
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
-                data = {'message': 290}
-                return JsonResponse(data)
+                data = 290
+                return HttpResponse(data)
             else:
                 context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
                 return JsonResponse(context)
