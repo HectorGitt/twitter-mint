@@ -88,8 +88,8 @@ class TwitterUser(models.Model):
     account_months = models.PositiveIntegerField(default=None, null=True, blank=True)
     projects = models.ManyToManyField(Project, blank=True, symmetrical=False, related_name='registered')
     email = models.CharField(max_length=255, null=True, blank=True)
-    eth_wallet_id = models.CharField(max_length=35, default='00')
-    sol_wallet_id = models.CharField(max_length=35, default='00')
+    eth_wallet_id = models.CharField(max_length=255, null=True, blank=True)
+    sol_wallet_id = models.CharField(max_length=255, null=True, blank=True)
     def __str__(self):
         return self.screen_name
 class EmailNotification(models.Model):
