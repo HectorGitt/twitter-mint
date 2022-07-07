@@ -152,11 +152,11 @@
                         <div id="emailHelp" class="form-text">This email will be used to contact you when you win.</div>
                         {% if context.wallet_type == 'ETH' %}
                         <label for="eth" class="form-label mt-3">Wallet address(ETH)</label>
-                        <input required='required' maxlength='25' minlength='15' type="text" value="{{twitter_user.eth_wallet_id}}" class="form-control" id="eth" name='eth'>
+                        <input required='required' maxlength='35' minlength='26' type="text" value="{{twitter_user.eth_wallet_id}}" class="form-control" id="eth" name='eth'>
                         {% endif %}
                         {% if context.wallet_type == 'SOL' %}
                         <label for="sol" class="form-label mt-3">Wallet address(SOL)</label>
-                        <input maxlength='25' minlength='15' type="text" required='required' value="{{twitter_user.sol_wallet_id}}" class="form-control" id="sol" name='sol'>
+                        <input maxlength='35' minlength='26' type="text" required='required' value="{{twitter_user.sol_wallet_id}}" class="form-control" id="sol" name='sol'>
                         {% endif %}
                       </div>
                       <div class="card-body text-center">
