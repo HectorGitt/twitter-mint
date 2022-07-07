@@ -8,8 +8,7 @@ from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter, check_token_still_valid
 from twitter_api.twitter_api import TwitterAPI
 from .models import Project
-from django.http import HttpResponse
-import json
+from django.http import HttpResponse, JsonResponse
 
 # Create your views here.
 def home(request):
@@ -130,7 +129,6 @@ def verify(request, project_id):
         
         if request.method == 'POST':
             form_email = request.POST.get('email')
-            print(form_email)
             eth = request.POST.get('eth')
             sol = request.POST.get('sol')
             if form_email != twitter_user.email:
@@ -160,7 +158,8 @@ def comfirm(request, project_id):
         
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
         if registered is not None:
-            return HttpResponse('You registered already!!!')
+            data = {'content': 'You registered already!!!', 'message': 300}
+            return JsonResponse(data)
         elif not project.status:
             return HttpResponse('Nice try..... Project Ended!!!')
         else:
@@ -195,10 +194,11 @@ def comfirm(request, project_id):
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
-                return render(request, 'mint/comfirm.html', {'context': project})
+                data = {'message': 290}
+                return JsonResponse(data)
             else:
-                context = {'context': project, 'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
-                return render(request, 'mint/error_page.html', context)
+                context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
+                return JsonResponse(context)
             
     except AttributeError as e:
         print(e)

@@ -140,7 +140,7 @@
                       </div>
                     </div>
                     {% endif %}
-                    <form class='mt-3' action='/project/{{context.project_id}}/verify' method='POST' >
+                    <form class='mt-3 complete_form' method='POST' >
                       {% csrf_token %}
                       <div class="mb-3">
                         {% if context.email_required %}
@@ -157,7 +157,7 @@
                         <input maxlength='35' minlength='26' type="text" required='required' value="{{twitter_user.sol_wallet_id}}" class="form-control" id="sol" name='sol'>
                         {% endif %}
                       </div>
-                      <div class="card-body text-center">
+                      <div class="card-body text-center complete_loader position-relative">
                         {% if not user.is_authenticated %}
                           <button type='submit' class="btn disabled btn-success btn-block btn-large">Sign in required</button>
                         {% elif registered %}
@@ -192,6 +192,27 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='container-fluid toast_cont'>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+          <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <strong class="me-auto">Error</strong>
+              <small>Just now</small>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+              <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </symbol>
+              <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+              </symbol>
+            </svg>
+            <div class="toast-body">
             </div>
           </div>
         </div>
@@ -245,8 +266,6 @@
         });
         $('.checkfollow').click(function(){
           
-          
-
           $.ajax(
           {
               type:"GET",
@@ -330,11 +349,97 @@
                 },
               })
             });
-            $( document ).ready(function() {
-              console.log( "ready!" );
-            });
-
-
+            $('.complete_form').submit(function(e){
+              e.preventDefault();
+              $.ajax(
+                {
+                  type:"POST",
+                  url: "/project/{{context.project_id}}/verify",
+                  data: {
+                    'email': $('#email').val(),
+                    'eth': $('#eth').val(),
+                    'sol': $('#sol').val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                  },
+                  timeout: 25000,
+                  beforeSend: function(){
+                    $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
+                    $('button[type="submit"]').attr('disabled', true)
+                  },
+                  success: function( data ) 
+                  {
+                    myToastEl = $('#liveToast')
+                    var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl)
+                    if (data.constructor == Array){
+                      if (data.like_state == true){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You liked the tweet!</div></div>')
+                      }
+                      else if (data.like_state == false) {
+                        $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You didnt like this  tweet!<div></div>')
+                      }
+                      if (data.follow_state == true){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You followed the user!</div></div>')
+                      }
+                      else if (data.follow_state == false) {
+                        $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You didnt follow the user!<div></div>')
+                      }
+                      if (data.retweet_state == true){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You retweeted the tweet!</div></div>')
+                      }
+                      else if (data.retweet_state == false) {
+                        $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You didnt retweet the tweet!<div></div>')
+                      }
+                      if (data.comment_state == true){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You commented on the tweet!</div></div>')
+                      }
+                      else if (data.comment_state == false) {
+                        $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You didnt comment on the tweet!<div></div>')
+                      }
+                      if (data.followers_state == true){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You have the minimum number of followers!</div></div>')
+                      }
+                      else if (data.followers_state == false) {
+                        $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You dont have the minimum number of followers!<div></div>')
+                      }
+                      if (data.followers_state == true){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Your account met the minimum creation month requirement!</div></div>')
+                      }
+                      else if (data.followers_state == false) {
+                        $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Your account doesnt meet the month creation requirement!<div></div>')
+                      }
+                      $('button[type="submit"]').attr('disabled', false)
+                    }
+                    else {
+                      if (data.message == 290){
+                        $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Registration complete!</div></div>')
+                        $('button[type="submit"]').attr('disabled', true)
+                        $('button[type="submit"]').text('Registered')
+                        
+                      } else if (data.message == 300) {
+                        $('.toast-body').append(data.content)
+                        $('button[type="submit"]').attr('disabled', true)
+                        $('button[type="submit"]').text('Registered')
+                      } else {
+                        $('.toast-body').append('Unknown Error, Contact admin!!')
+                        $('button[type="submit"]').attr('disabled', false)
+                      }
+                    }  
+                    myToast.show()
+                    setTimeout(function () {
+                      $('.toast-body').empty();
+                    }, 11000)
+                  },
+                  complete: function() {
+                    $('.spinner9').remove()
+                  },
+                  error: function (xhr, ajaxOptions, thrownError) {
+                    $('.modal-body').text(thrownError)
+                    $('.modal').modal('show')
+                    $('button[type="submit"]').attr('disabled', false)
+                  }
+                })}
+              )
+            
       </script>
       {% endif %}
 {% endblock  %}

@@ -43,7 +43,7 @@ class TwitterAPI:
             return tweet.favorited
         except Exception as e:
             print(e)
-            return None
+            return False
         
         
         
@@ -56,7 +56,7 @@ class TwitterAPI:
             return user.following
         except Exception as e:
             print(e)
-            return None
+            return False
     def check_retweet(self, access_token, access_token_secret, retweet_id):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
@@ -66,7 +66,7 @@ class TwitterAPI:
             return tweet.retweeted
         except Exception as e:
             print(e)
-            return None
+            return False
     def check_comment(self, access_token, access_token_secret, tweet_id):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
@@ -74,14 +74,13 @@ class TwitterAPI:
             api = tweepy.API(auth, wait_on_rate_limit=True)
             tweet = api.get_status(tweet_id)
             timeline = api.user_timeline(since_id=tweet_id, count=9)
-            print(timeline)
             for status in timeline:
                 if status.in_reply_to_status_id == tweet_id:
                     return True
             return False
         except Exception as e:
             print(e)
-            return None
+            return False
     def check_followers(self, access_token, access_token_secret, min_follow):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
@@ -94,7 +93,7 @@ class TwitterAPI:
             else: return False, followers
         except Exception as e:
             print(e)
-            return None, None
+            return False, None
     def check_created_at(self, access_token, access_token_secret, min_month):
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
@@ -109,4 +108,4 @@ class TwitterAPI:
             
         except Exception as e:
             print(e)
-            return None, None
+            return False, None
