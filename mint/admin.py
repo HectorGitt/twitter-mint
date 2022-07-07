@@ -127,11 +127,14 @@ class TwitterUserAdmin(admin.ModelAdmin):
             
     @admin.action(description='Pick Winner(s)')
     def pick_winner(self, request, queryset):
+        
         try:
             pks = queryset.values_list('twitter_id', flat=True)
             project_id = (request.GET.get('projects__project_id', ''))
             project = Project.objects.filter(project_id=project_id).first()
-            self.register_winner(request, project, pks, '')
+            if len(queryset) <= project.no_of_winners:
+                self.register_winner(request, project, pks, '')
+            else:self.message_user(request, 'No of picked winners more than no of desired winners', messages.ERROR)
         except ValidationError:
             self.message_user(request, 'No project was selected', messages.ERROR)
         
