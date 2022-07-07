@@ -147,9 +147,11 @@
                     <form class='mt-3' action='/project/{{context.project_id}}/verify' method='POST' >
                       {% csrf_token %}
                       <div class="mb-3">
+                        {% if context.email_required %}
                         <label for="email" class="form-label">Email address</label>
                         <input maxlength='50' minlength='5' value="{{twitter_user.email}}" required='required' type="email" class="form-control" id="email" name='email' aria-describedby="emailHelp">
                         <div id="emailHelp" class="form-text">This email will be used to contact you when you win.</div>
+                        {% endif %}
                         {% if context.wallet_type == 'ETH' %}
                         <label for="eth" class="form-label mt-3">Wallet address(ETH)</label>
                         <input required='required' maxlength='35' minlength='26' type="text" value="{{twitter_user.eth_wallet_id}}" class="form-control" id="eth" name='eth'>
