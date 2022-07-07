@@ -142,7 +142,7 @@ def verify(request, project_id):
             twitter_user.save()
             return redirect('comfirm', project_id)
         else:
-            return HttpResponse('Nice try....')    
+            return redirect('comfirm', project_id)    
     except AttributeError as e:
         print(e)
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
