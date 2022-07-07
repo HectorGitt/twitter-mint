@@ -42,6 +42,7 @@ class Project(models.Model):
     twitter_followers = models.BooleanField(default=False)
     twitter_least_followers = models.PositiveIntegerField(default=None, null=True, blank=True)
     wallet_type = models.CharField(max_length=3, choices=WALLET_TYPE, default=NONE)
+    email_required = models.BooleanField(default=True)
     status = models.BooleanField(default=True)
     winners = models.ManyToManyField('TwitterUser', editable=False, blank=True, symmetrical=False, related_name='winners')
     
