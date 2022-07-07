@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
     
-    <div class="row mx-3 my-5">
+    <div class="row mx-lg-3 my-5">
         <div class="col-xs-12 col-md-6 ">
             <div class="card">
               <h5 class="card-title position-absolute right-0">
@@ -370,7 +370,7 @@
                   {
                     myToastEl = $('#liveToast')
                     var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl)
-                    if (data.constructor == Array){
+                    if (data.constructor == Array || data.constructor == Object){
                       if (data.like_state == true){
                         $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You liked the tweet!</div></div>')
                       }
@@ -410,6 +410,7 @@
                       $('button[type="submit"]').attr('disabled', false)
                     }
                     else {
+                      console.log(data)
                       if (data.message == 290){
                         $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Registration complete!</div></div>')
                         $('button[type="submit"]').attr('disabled', true)
