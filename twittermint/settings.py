@@ -178,7 +178,7 @@ MEDIA_URL='media/uploads/'
 #EMAIL SETTINGS
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-ADMINS = [('Hector', 'adeniyi.olaitanhector@outlook.com')]
+ADMINS = [('Hector', 'adeniyi.olaitanhector@yahoo.com')]
 
 EMAIL_HOST= config('EMAIL_HOST')
 EMAIL_HOST_USER= config('EMAIL_HOST_USER')
