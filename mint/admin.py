@@ -8,6 +8,7 @@ from django.utils.html import strip_tags
 from django.core import mail
 from django.db.models.signals import m2m_changed
 from django.core.exceptions import ValidationError
+import random
 
 
 
@@ -119,7 +120,8 @@ class TwitterUserAdmin(admin.ModelAdmin):
             pks = queryset.values_list('twitter_id', flat=True)
             project_id = (request.GET.get('projects__project_id', ''))
             project = Project.objects.filter(project_id=project_id).first()
-            self.register_winner(request, project, pks, 'Random')
+            winner_pks = random.sample(sorted(pks), k=project.no_of_winners)
+            self.register_winner(request, project, winner_pks, 'Random')
         except ValidationError:
             self.message_user(request, 'No project was selected', messages.ERROR)
                 
