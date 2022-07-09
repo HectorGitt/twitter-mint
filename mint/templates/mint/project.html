@@ -4,9 +4,7 @@
 {{context.project_name}}
 {% endblock  %}
 {% block content %}
-
 <div class="container-fluid">
-    
     <div class="row mx-lg-3 my-5">
         <div class="col-xs-12 col-md-6 ">
             <div class="card">
@@ -20,9 +18,7 @@
                 {{context.project_name}}
               </h5>
               <div class="card-body">
-                
-                <p class="card-text"> {{context.project_description}} </p>
-                
+                <p class="card-text"> {{context.project_description}} </p>   
               </div>
             </div>
         </div>
@@ -30,22 +26,17 @@
             <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Register</h5>
-                  
                   <p class="card-text">Follow the steps to add yourself to this list.</p>
                   <p> Required fields are marked with an asterisk (*).</p>
-                  
                   <div class="accordion" id="accordionExample">
                     <div>{{context.twitter_embed_html | safe }}</div>
-                    
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item">
-                        
                         {% if user.is_authenticated %}
                         <a href="{% url 'login' %}" class="btn btn-primary disabled">Connected</a>
                         {{ user.username }}
                         {% else %}
                         <a href="/connect_twitter?next={{request.path}}" class="btn btn-primary">Connect Twitter</a>
-    
                         {% endif %}
                       </li>
                     </ul>
@@ -61,6 +52,9 @@
                       <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                           <a class="twitter-follow-button" target='__blank' href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
+                          {% comment %} 
+                            <a class="badge btn btn-primary" href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false'> Follow</a>
+                          {% endcomment %}
                         </div>
                       </div>
                     </div>
@@ -109,6 +103,7 @@
                         </div>
                       </div>
                     </div>
+
                     {% endif %}
                     {% if context.twitter_followers %}
                     <div class="accordion-item">
@@ -169,14 +164,8 @@
                         {% endif %}
                       </div>
                     </form>
-                  </div>
-                  
+                  </div>                
                 </div>
-                
-                
-                
-                
-                
               </div>
         </div>
       </div>
@@ -187,8 +176,7 @@
               <h5 class="modal-title" id="exampleModalLabel">Error Occured</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              
+            <div class="modal-body">       
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -220,10 +208,8 @@
       </div>
       {% if user.is_authenticated %}
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-      <script type="text/javascript">
-        
+      <script type="text/javascript">   
         $('.checklike').click(function(){
-        
         $.ajax(
         {
             type:"GET",
