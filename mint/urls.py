@@ -22,17 +22,17 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.home, name='home'),
     path('projects/<int:page>/', views.projects, name='projects'),
-    path('project/<slug:project_id>/', views.project, name='project'),
+    path('project/<uuid:project_id>/', views.project, name='project'),
     path('login/', views.login_user, name='login'),
     path('twitter_login', views.twitter_login, name='twitter_login'),
     path('connect_twitter', views.connect_twitter, name='connect_twitter'),
     path('twitter_logout', views.twitter_logout, name='logout'),
     path('callback', views.callback, name='callback'),
-    path('project/<slug:project_id>/verify',views.verify, name='verify'),
-    path('project/<slug:project_id>/comfirm', views.comfirm, name='comfirm'),
-    path('checkfollow/<slug:project_id>', views.checkfollow, name='checkfollow'),
-    path('checklike/<slug:project_id>', views.checklike, name='checklike'),
-    path('checkretweet/<slug:project_id>', views.checkretweet, name='checkretweet'),
+    path('project/<uuid:project_id>/verify',views.verify, name='verify'),
+    path('project/<uuid:project_id>/comfirm', views.comfirm, name='comfirm'),
+    path('checkfollow/<uuid:project_id>', views.checkfollow, name='checkfollow'),
+    path('checklike/<uuid:project_id>', views.checklike, name='checklike'),
+    path('checkretweet/<uuid:project_id>', views.checkretweet, name='checkretweet'),
     path('success', views.success, name='success'),
 ]
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
