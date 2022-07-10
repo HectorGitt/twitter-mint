@@ -10,18 +10,19 @@ from twitter_api.twitter_api import TwitterAPI
 from .models import Project
 from django.http import HttpResponse, JsonResponse, Http404
 from django.core.exceptions import ValidationError
+from django.views.generic.list import ListView
 
 # Create your views here.
 def home(request):
     projects_all = Project.objects.all().order_by('-project_date')[0:6]
-    paginator = Paginator(projects_all, 2) # Show 25 contacts per page.
     return render(request, 'mint/home.html', {'context': projects_all})
-def projects(request, page):
-    projects_all = Project.objects.all().order_by('-project_date')
-    paginator = Paginator(projects_all, 3) # Show 25 contacts per page. 
-    page_number = page
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'mint/projects.html', {'page_obj': page_obj})
+class ProjectListView(ListView):
+    model = Project
+    paginate_by = 3
+    template_name = 'projects.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 def project(request, project_id):
     username = request.user
     project = get_object_or_404(Project, project_id=project_id)

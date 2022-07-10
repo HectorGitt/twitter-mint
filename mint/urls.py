@@ -16,12 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from .views import ProjectListView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('projects/<int:page>/', views.projects, name='projects'),
+    path('projects/<int:page>/', ProjectListView.as_view(), name='projects'),
     path('project/<uuid:project_id>/', views.project, name='project'),
     path('login/', views.login_user, name='login'),
     path('twitter_login', views.twitter_login, name='twitter_login'),
