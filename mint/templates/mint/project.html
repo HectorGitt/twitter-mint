@@ -5,6 +5,7 @@
 {% endblock  %}
 {% block content %}
 <div class="container-fluid">
+  
     <div class="row mx-lg-3 my-5">
         <div class="col-xs-12 col-md-6 ">
             <div class="card">
@@ -51,10 +52,13 @@
                       </h2>
                       <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button" target='__blank' href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
-                          {% comment %} 
-                            <a class="badge btn btn-primary" href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false'> Follow</a>
-                          {% endcomment %}
+                          {% comment %} <a class="twitter-follow-button" target='__blank' href="https://twitter.com/{{context.twitter_follow_username}}" data-size="large" data-show-count='false' data-show-screen-name='false'> Follow</a>
+                           {% endcomment %}
+
+                            <a class="badge btn btn-primary btn-lg" href="https://twitter.com/intent/follow?screen_name={{context.twitter_follow_username}}" data-size="large" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false'>
+                              <i class="fa-brands fa-twitter"></i>
+                              Follow
+                              </a>
                         </div>
                       </div>
                     </div>
@@ -69,7 +73,7 @@
                       </h2>
                       <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button badge btn btn-primary" target='__blank' href="https://twitter.com/intent/like?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Like</a>
+                          <a class="badge btn btn-primary" href="https://twitter.com/intent/like?tweet_id={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false'><i class="fa-brands fa-twitter"></i> Like</a>
                         </div>
                       </div>
                     </div>
@@ -84,7 +88,7 @@
                       </h2>
                       <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-follow-button badge btn btn-primary" target='__blank' href="https://twitter.com/intent/retweet?tweet_id={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Retweet</a>
+                          <a class="badge btn btn-primary" href="https://twitter.com/intent/retweet?tweet_id={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;'><i class="fa-brands fa-twitter"></i> Retweet</a>
                         </div>
                       </div>
                     </div>
@@ -99,7 +103,7 @@
                       </h2>
                       <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                          <a class="twitter-button badge btn btn-primary" target='__blank' href="https://twitter.com/intent/tweet?in_reply_to={{tweet_id}}"><i class="fa-brands fa-twitter"></i> Comment</a>
+                          <a class="badge btn btn-primary" target='__blank' href="https://twitter.com/intent/tweet?in_reply_to={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;'><i class="fa-brands fa-twitter"></i> Comment</a>
                         </div>
                       </div>
                     </div>
@@ -207,7 +211,7 @@
         </div>
       </div>
       {% if user.is_authenticated %}
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      {% block script %}
       <script type="text/javascript">   
         $('.checklike').click(function(){
         $.ajax(
@@ -429,5 +433,7 @@
               )
             
       </script>
+      {% endblock  %}
+      
       {% endif %}
 {% endblock  %}
