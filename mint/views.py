@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .decorators import twitter_login_required
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter, check_token_still_valid
@@ -23,30 +23,27 @@ def projects(request, page):
     page_obj = paginator.get_page(page_number)
     return render(request, 'mint/projects.html', {'page_obj': page_obj})
 def project(request, project_id):
-    try:
-        username = request.user
-        project = Project.objects.filter(project_id=project_id).first()
-        registered_count = project.registered.all().count()
-        if username.is_authenticated:
-            try:
-                twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-                registered = twitter_user.projects.all().filter(project_id=project_id).first()
-            except:
-                return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
-            
-        else:
-            class twitter_user():
-                email = ''
-                eth_wallet_id = ''
-                sol_wallet_id = ''
-            twitter_user = twitter_user()
-            registered = False
-        if project.twitter_tweet_link:
-            tweet_id = project.twitter_tweet_id
-        else: tweet_id = None
-        return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user})
-    except ValidationError:
-        raise Http404('Project does not exist')
+    username = request.user
+    project = get_object_or_404(Project, project_id=project_id)
+    registered_count = project.registered.all().count()
+    if username.is_authenticated:
+        try:
+            twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+            registered = twitter_user.projects.all().filter(project_id=project_id).first()
+        except:
+            return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
+        
+    else:
+        class twitter_user():
+            email = ''
+            eth_wallet_id = ''
+            sol_wallet_id = ''
+        twitter_user = twitter_user()
+        registered = False
+    if project.twitter_tweet_link:
+        tweet_id = project.twitter_tweet_id
+    else: tweet_id = None
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user})
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('home')
