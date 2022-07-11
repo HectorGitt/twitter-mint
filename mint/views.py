@@ -124,27 +124,30 @@ def connect_twitter(request):
 
 @login_required
 def verify(request, project_id):
-    username = request.user
-    try:
-        twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-        
-        if request.method == 'POST':
-            form_email = request.POST.get('email')
-            eth = request.POST.get('eth')
-            sol = request.POST.get('sol')
-            if form_email != twitter_user.email:
-                twitter_user.email = str(form_email)
-            if eth is not None and twitter_user.eth_wallet_id != eth:
-                twitter_user.eth_wallet_id = str(eth)
-            if sol is not None and twitter_user.sol_wallet_id != sol:
-                twitter_user.sol_wallet_id = str(sol)
-            twitter_user.save()
-            return redirect('comfirm', project_id)
-        else:
-            return redirect('comfirm', project_id)    
-    except AttributeError as e:
-        print(e)
-        return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        username = request.user
+        try:
+            twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+            
+            if request.method == 'POST':
+                form_email = request.POST.get('email')
+                eth = request.POST.get('eth')
+                sol = request.POST.get('sol')
+                if form_email != twitter_user.email:
+                    twitter_user.email = str(form_email)
+                if eth is not None and twitter_user.eth_wallet_id != eth:
+                    twitter_user.eth_wallet_id = str(eth)
+                if sol is not None and twitter_user.sol_wallet_id != sol:
+                    twitter_user.sol_wallet_id = str(sol)
+                twitter_user.save()
+                return redirect('comfirm', project_id)
+            else:
+                return redirect('comfirm', project_id)    
+        except AttributeError as e:
+            print(e)
+            return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
+    else:
+        raise Http404()     
 @login_required
 def comfirm(request, project_id):
     try:
