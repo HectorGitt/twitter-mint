@@ -1,0 +1,22 @@
+.register-card {
+    position: relative;
+}
+.register-card .card {
+    position: absolute;
+    top: -40% ;
+    transform: scale(0.9);
+}
+.top-image-cont {
+    height: 20vh;
+}
+
+.register-card p {
+    margin: 2px 0;
+    padding: 2px 0;
+}
+@media screen and (max-width: 780px) {
+    .register-card .card {
+        position: static;
+        transform: scale(1);
+    }   
+}
