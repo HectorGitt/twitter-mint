@@ -17,6 +17,9 @@ body {
 .top-image-cont {
     height: 20vh;
 }
+.project-row {
+    --bs-gutter-x: 0;
+}
 
 .register-card p {
     margin: 2px 0;
