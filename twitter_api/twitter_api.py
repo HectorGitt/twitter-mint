@@ -72,10 +72,11 @@ class TwitterAPI:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(access_token, access_token_secret)
             api = tweepy.API(auth, wait_on_rate_limit=True)
+            user = api.verify_credentials().screen_name
             tweet = api.get_status(tweet_id)
             timeline = api.user_timeline(since_id=tweet_id, count=9)
             for status in timeline:
-                if status.in_reply_to_status_id == tweet_id:
+                if status.in_reply_to_status_id == tweet_id and status.user.screen_name == user:
                     return True
             return False
         except Exception as e:
