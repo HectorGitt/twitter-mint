@@ -3,14 +3,16 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse, Http404
+from django.core.exceptions import ValidationError
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from .models import Project
 from .decorators import twitter_login_required
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter, check_token_still_valid
 from twitter_api.twitter_api import TwitterAPI
-from .models import Project
-from django.http import HttpResponse, JsonResponse, Http404
-from django.core.exceptions import ValidationError
-from django.views.generic.list import ListView
+
 
 # Create your views here.
 def home(request):
@@ -249,12 +251,13 @@ def checkretweet(request, project_id):
         return HttpResponse(retweet_state)
     else: 
         return HttpResponse('')
-def checkcomment(request):
+def checkcomment(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
         
         tweet_id = Project.objects.filter(project_id=project_id).first().twitter_tweet_id
         twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
@@ -262,6 +265,32 @@ def checkcomment(request):
     else: 
         return HttpResponse('')
     
+def checkfollowers(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        min_followers = Project.objects.filter(project_id=project_id).first().twitter_least_followers
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        followers_state, followers_value = twitter_api.check_followers(oauth_token, oauth_token_secret, min_followers )
+        twitter_user.followers = followers_value
+        return HttpResponse(followers_state)
+    else: 
+        return HttpResponse('')
+def checkmonths(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        min_followers = Project.objects.filter(project_id=project_id).first().twitter_least_followers
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_followers )
+        twitter_user.account_months = months_value
+        return HttpResponse(months_state)
+    else: 
+        return HttpResponse('')
 def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     
