@@ -281,12 +281,12 @@ def checkfollowers(request, project_id):
 def checkmonths(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
-        min_followers = Project.objects.filter(project_id=project_id).first().twitter_least_followers
+        min_months = Project.objects.filter(project_id=project_id).first().twitter_account_months
         twitter_api = TwitterAPI()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
-        months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_followers )
+        months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_months )
         twitter_user.account_months = months_value
         return HttpResponse(months_state)
     else: 
