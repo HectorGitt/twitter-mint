@@ -3,25 +3,28 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse, Http404
+from django.core.exceptions import ValidationError
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from .models import Project
 from .decorators import twitter_login_required
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter, check_token_still_valid
 from twitter_api.twitter_api import TwitterAPI
-from .models import Project
-from django.http import HttpResponse, JsonResponse, Http404
-from django.core.exceptions import ValidationError
+
 
 # Create your views here.
 def home(request):
     projects_all = Project.objects.all().order_by('-project_date')[0:6]
-    paginator = Paginator(projects_all, 2) # Show 25 contacts per page.
     return render(request, 'mint/home.html', {'context': projects_all})
-def projects(request, page):
-    projects_all = Project.objects.all().order_by('-project_date')
-    paginator = Paginator(projects_all, 3) # Show 25 contacts per page. 
-    page_number = page
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'mint/projects.html', {'page_obj': page_obj})
+class ProjectListView(ListView):
+    model = Project
+    paginate_by = 3
+    template_name = 'projects.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 def project(request, project_id):
     username = request.user
     project = get_object_or_404(Project, project_id=project_id)
@@ -123,27 +126,30 @@ def connect_twitter(request):
 
 @login_required
 def verify(request, project_id):
-    username = request.user
-    try:
-        twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-        
-        if request.method == 'POST':
-            form_email = request.POST.get('email')
-            eth = request.POST.get('eth')
-            sol = request.POST.get('sol')
-            if form_email != twitter_user.email:
-                twitter_user.email = str(form_email)
-            if eth is not None and twitter_user.eth_wallet_id != eth:
-                twitter_user.eth_wallet_id = str(eth)
-            if sol is not None and twitter_user.sol_wallet_id != sol:
-                twitter_user.sol_wallet_id = str(sol)
-            twitter_user.save()
-            return redirect('comfirm', project_id)
-        else:
-            return redirect('comfirm', project_id)    
-    except AttributeError as e:
-        print(e)
-        return HttpResponse('You are logged in as a Staff and not a twitter user!!!')       
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        username = request.user
+        try:
+            twitter_user = TwitterUser.objects.filter(screen_name=username).first()
+            
+            if request.method == 'POST':
+                form_email = request.POST.get('email')
+                eth = request.POST.get('eth')
+                sol = request.POST.get('sol')
+                if form_email != twitter_user.email:
+                    twitter_user.email = str(form_email)
+                if eth is not None and twitter_user.eth_wallet_id != eth:
+                    twitter_user.eth_wallet_id = str(eth)
+                if sol is not None and twitter_user.sol_wallet_id != sol:
+                    twitter_user.sol_wallet_id = str(sol)
+                twitter_user.save()
+                return redirect('comfirm', project_id)
+            else:
+                return redirect('comfirm', project_id)    
+        except AttributeError as e:
+            print(e)
+            return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
+    else:
+        raise Http404()     
 @login_required
 def comfirm(request, project_id):
     try:
@@ -245,12 +251,13 @@ def checkretweet(request, project_id):
         return HttpResponse(retweet_state)
     else: 
         return HttpResponse('')
-def checkcomment(request):
+def checkcomment(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
         
         tweet_id = Project.objects.filter(project_id=project_id).first().twitter_tweet_id
         twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
@@ -258,6 +265,32 @@ def checkcomment(request):
     else: 
         return HttpResponse('')
     
+def checkfollowers(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        min_followers = Project.objects.filter(project_id=project_id).first().twitter_least_followers
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        followers_state, followers_value = twitter_api.check_followers(oauth_token, oauth_token_secret, min_followers )
+        twitter_user.followers = followers_value
+        return HttpResponse(followers_state)
+    else: 
+        return HttpResponse('')
+def checkmonths(request, project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        min_followers = Project.objects.filter(project_id=project_id).first().twitter_least_followers
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_followers )
+        twitter_user.account_months = months_value
+        return HttpResponse(months_state)
+    else: 
+        return HttpResponse('')
 def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     

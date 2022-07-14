@@ -1,0 +1,10 @@
+.register-card {
+    position: relative;
+}
+.register-card .card {
+    position: absolute;
+    top: 30%;
+}
+body {
+    background-color: aquamarine;
+}
