@@ -45,7 +45,7 @@ Home
   <div id='projects' class="container-fluid d-flex flex-row flex-wrap justify-content-around align-items-center">
     {% for project in context  %}
         <div class="card my-5 text-center shadow-lg" style="max-width:300px">
-          <img src="{{project.project_image.url}}" class="card-img-top" alt="...">
+          <img src="{{project.project_image.url}}" style='width:100%' class="card-img-top" alt="...">
           <div class="card-header">
             {{project.no_of_winners}} Winner(s)
           </div>
