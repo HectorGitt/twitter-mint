@@ -9,6 +9,11 @@ body {
     top: -50% ;
     transform: scale(0.9);
 }
+.card {
+    border-radius: 10px;
+    box-shadow: 0 0 2rem 0.3rem rgba(0, 0, 0, 0.171);
+    
+}
 .top-image-cont {
     height: 20vh;
 }
