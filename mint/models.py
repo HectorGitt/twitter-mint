@@ -50,9 +50,21 @@ class Project(models.Model):
         # check if the booleans fields ticked have a corresponding link
         if (self.twitter_follow) != (self.twitter_follow_username is not None):
             raise ValidationError('Twitter follow link is required if twitter follow is checked.')
-        if (self.twitter_like) != (self.twitter_tweet_link is not None) and (self.twitter_comment) != (self.twitter_tweet_link is not None) and (self.twitter_retweet) != (self.twitter_tweet_link is not None) :
-            raise ValidationError('Twitter link is required if tweets actions is/are checked.')
+        count = 0
         
+        #Check If at least twitter action match the link
+        if (self.twitter_like) == (self.twitter_tweet_link is not None):
+            pass
+        else: count += 1    
+        if (self.twitter_comment) == (self.twitter_tweet_link is not None):
+                pass
+        else: count += 1
+        if (self.twitter_retweet) == (self.twitter_tweet_link is not None):
+            pass
+        else: count += 1
+        print(count)
+        if count == 3 :
+            raise ValidationError('Twitter link is required if tweets actions is/are checked.')
         if (self.twitter_followers) != (self.twitter_least_followers is not None):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
@@ -77,7 +89,7 @@ class Project(models.Model):
         return json_object['html']
     class Meta:
         ordering = (["-project_date"])
-    
+        
 class TwitterUser(models.Model):
     twitter_id = models.CharField(max_length=255)
     screen_name = models.CharField(max_length=255)
