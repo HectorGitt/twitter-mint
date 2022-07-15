@@ -25,7 +25,7 @@ body {
     margin: 2px 0;
     padding: 2px 0;
 }
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 768px) {
     .register-card .card {
         position: static;
         transform: scale(1);
