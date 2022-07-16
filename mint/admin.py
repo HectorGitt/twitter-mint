@@ -106,7 +106,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 to = winner.email
                 send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
                 users_list += winner.screen_name + ','
-            #project.status = False
+            project.status = False
             project.save()
             self.message_user(request, ngettext(
                 '%d %s user was successfully picked as a winner for the project.',
