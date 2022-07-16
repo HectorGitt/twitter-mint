@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 import json
 import requests
+from django.utils import timezone
 # Create your models here.
 
 class TwitterAuthToken(models.Model):
@@ -24,7 +25,7 @@ class Project(models.Model):
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
     project_date = models.DateTimeField(auto_now_add=True)
-    project_end_date = models.DateField(auto_now_add=True)
+    project_end_date = models.DateTimeField(default=timezone.now)
     project_price = models.PositiveIntegerField(default=1)
     project_link = models.URLField(max_length=255)
     project_description = models.TextField()
