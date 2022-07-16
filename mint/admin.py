@@ -98,13 +98,15 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 project.winners.add(winner)
                 subject = str(email.subject).replace('{{name}}', winner.name)
                 subject = subject.replace('{{project_name}}', project.project_name)
-                html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
+                print(project, projects, winner.name, email)
+                #html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
+                html_message = 'Congratulations, you have been selected for the Project ' + str(project.project_name)
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
                 to = winner.email
                 send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
                 users_list += winner.screen_name + ','
-            project.status = False
+            #project.status = False
             project.save()
             self.message_user(request, ngettext(
                 '%d %s user was successfully picked as a winner for the project.',
