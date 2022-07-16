@@ -46,7 +46,16 @@ def project(request, project_id):
     if project.twitter_tweet_link:
         tweet_id = project.twitter_tweet_id
     else: tweet_id = None
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user})
+    estimated = 0
+    if project.twitter_follow:
+        estimated += 2
+    if project.twitter_like:
+        estimated += 2
+    if project.twitter_retweet:
+        estimated += 2
+    if project.twitter_comment:
+        estimated += 4
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated})
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -286,7 +295,7 @@ def checkmonths(request, project_id):
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
-        months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_months )
+        months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_months)
         twitter_user.account_months = months_value
         return HttpResponse(months_state)
     else: 
