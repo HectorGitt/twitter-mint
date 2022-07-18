@@ -55,6 +55,10 @@ def project(request, project_id):
         estimated += 2
     if project.twitter_comment:
         estimated += 4
+    if project.email_required:
+        estimated += 4
+    if project.wallet_type == 'SOL' or project.wallet_type == 'ETH':
+        estimated += 4
     return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated})
 def login_user(request):
     if request.user.is_authenticated:
