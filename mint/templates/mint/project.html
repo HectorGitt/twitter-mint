@@ -228,9 +228,10 @@
           </div>
         </div>
       </div>
+  {% endblock  %}
       {% if user.is_authenticated %}
       {% block script %}
-      <script src='{% static 'mint/scripts/jquery.countdown.min.js' %}' type="text/javascript"></script>
+      
       <script type="text/javascript">
         $('.clock').countdown(`{{context.project_end_date|date:"SHORT_DATE_FORMAT" }} {{context.project_end_date|time:"H:i:s"}}`).on('update.countdown', function(event) {
           var format = '%H:%M:%S';
@@ -425,4 +426,3 @@
       {% endblock  %}
       
       {% endif %}
-{% endblock  %}
