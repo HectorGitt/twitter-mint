@@ -310,3 +310,12 @@ def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     
     return render(request, 'mint/home2.html', {'context': projects_all})
+def checkwalletbalance(request,project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        #wallet_id = twitter_user.
+        return HttpResponse(months_state)
