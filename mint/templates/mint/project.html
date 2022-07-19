@@ -170,7 +170,7 @@
                           Please enter valid wallet id.
                         </div>
                         <div class="valid-feedback">
-                          Looks good!
+                          Looks good! Balance: 
                         </div>
                           
                         </div>
@@ -387,13 +387,17 @@
         address = $('#eth').val()
         isEthereum = Web3.utils.isAddress(address)
         const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
-          web3.eth.getBalance("2190809810928901280918990218092180918221", function(err, result) {
+        try {
+          web3.eth.getBalance(address, function(err, result) {
           if (err) {
             console.log(err)
           } else {
             console.log(web3.utils.fromWei(result, "ether") + " ETH")
+            $('.valid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH`)
           }
         })
+      }catch(e) {
+      }
         if (isEthereum){
           $('#eth').removeClass('is-invalid')
           $('#eth').addClass('is-valid')
