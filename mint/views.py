@@ -160,7 +160,7 @@ def verify(request, project_id):
                 return redirect('comfirm', project_id)    
         except AttributeError as e:
             print(e)
-            return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
+            return HttpResponse(e)
     else:
         raise Http404()     
 @login_required
