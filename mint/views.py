@@ -221,7 +221,7 @@ def comfirm(request, project_id):
             
     except AttributeError as e:
         print(e)
-        return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
+        return HttpResponse(e)
     except ValidationError:
         raise Http404('Project does not exist')
 def checkfollow(request, project_id):
