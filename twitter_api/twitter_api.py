@@ -43,7 +43,7 @@ class TwitterAPI:
             return tweet.favorited
         except Exception as e:
             print(e)
-            return False
+            return e
         
         
         

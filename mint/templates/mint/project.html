@@ -386,6 +386,14 @@
       $("#eth").on("input", function() {
         address = $('#eth').val()
         isEthereum = Web3.utils.isAddress(address)
+        const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
+          web3.eth.getBalance("2190809810928901280918990218092180918221", function(err, result) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log(web3.utils.fromWei(result, "ether") + " ETH")
+          }
+        })
         if (isEthereum){
           $('#eth').removeClass('is-invalid')
           $('#eth').addClass('is-valid')
@@ -451,10 +459,10 @@
                 else if (data.followers_state == false) {
                   $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You dont have the minimum number of followers!<div></div>')
                 }
-                if (data.followers_state == true){
+                if (data.months_state == true){
                   $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Your account met the minimum creation month requirement!</div></div>')
                 }
-                else if (data.followers_state == false) {
+                else if (data.months_state == false) {
                   $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Your account doesnt meet the month creation requirement!<div></div>')
                 }
                 $('button[type="submit"]').attr('disabled', false)
@@ -484,7 +492,7 @@
               $('.spinner9').remove()
             },
             error: function (xhr, ajaxOptions, thrownError) {
-              $('.modal-body').text(`${thrownError} this`)
+              $('.modal-body').text(`${thrownError}`)
               $('.modal').modal('show')
               $('button[type="submit"]').attr('disabled', false)
             }
