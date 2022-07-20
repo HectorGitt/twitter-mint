@@ -54,7 +54,7 @@ tweepy==4.10.0
 tzdata==2022.1
 urllib3==1.26.9
 varint==1.0.2
-web3==6.0.0-beta.4
+web3==5.0
 websockets==10.3
 whitenoise==6.2.0
 yarl==1.7.2
