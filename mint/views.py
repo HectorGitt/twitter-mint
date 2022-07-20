@@ -208,16 +208,15 @@ def comfirm(request, project_id):
             twitter_user.save()
             def check_none_true(value):
                 if value is None or value:
-                    return value
+                    return True
                 else: return False
-            #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
+            print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
                 data = 290
                 return HttpResponse(data)
             else:
-                print(month_state)
                 context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
                 return JsonResponse(context)
             
