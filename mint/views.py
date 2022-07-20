@@ -160,7 +160,7 @@ def verify(request, project_id):
                 return redirect('comfirm', project_id)    
         except AttributeError as e:
             print(e)
-            return HttpResponse(e)
+            return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
     else:
         raise Http404()     
 @login_required
@@ -173,8 +173,9 @@ def comfirm(request, project_id):
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         twitter_api = TwitterAPI()
         tweet_url = project.twitter_tweet_link
-        tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
-        
+        if tweet_url:
+            tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
+        else: tweet_id = None
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
         if registered is not None:
             data = 300
@@ -207,7 +208,7 @@ def comfirm(request, project_id):
             twitter_user.save()
             def check_none_true(value):
                 if value is None or value:
-                    return True
+                    return value
                 else: return False
             #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
@@ -216,6 +217,7 @@ def comfirm(request, project_id):
                 data = 290
                 return HttpResponse(data)
             else:
+                print(month_state)
                 context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
                 return JsonResponse(context)
             
@@ -308,3 +310,12 @@ def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     
     return render(request, 'mint/home2.html', {'context': projects_all})
+def checkwalletbalance(request,project_id):
+    auth_user = request.user
+    if request.method == "GET" and auth_user.is_authenticated :
+        twitter_api = TwitterAPI()
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        oauth_token = str(twitter_user.twitter_oauth_token)
+        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
+        #wallet_id = twitter_user.
+        return HttpResponse(months_state)
