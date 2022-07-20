@@ -6,12 +6,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
 from django.core.exceptions import ValidationError
 from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
-from .models import Project
-from .decorators import twitter_login_required
-from .models import TwitterAuthToken, TwitterUser
-from .authorization import create_update_user_from_twitter, check_token_still_valid
 from twitter_api.twitter_api import TwitterAPI
+from web3api.web3api import Web3
+from .models import Project
+from .models import TwitterAuthToken, TwitterUser
+from .authorization import create_update_user_from_twitter
+from web3.exceptions import InvalidAddress
 
 
 # Create your views here.
@@ -143,15 +143,24 @@ def verify(request, project_id):
         username = request.user
         try:
             twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-            
+            project = Project.objects.filter(project_id=project_id).first()
             if request.method == 'POST':
                 form_email = request.POST.get('email')
                 eth = request.POST.get('eth')
                 sol = request.POST.get('sol')
                 if form_email != twitter_user.email:
                     twitter_user.email = str(form_email)
-                if eth is not None and twitter_user.eth_wallet_id != eth:
-                    twitter_user.eth_wallet_id = str(eth)
+                if project.least_wallet_balance != 0 or project.wallet_type != 'NIL':
+                    web3 = Web3()
+                    try:
+                        balance = web3.web3eth_balance(str(eth))
+                    except InvalidAddress:
+                        return HttpResponse(501)
+                    if balance >= project.least_wallet_balance:
+                        if eth is not None and twitter_user.eth_wallet_id != eth:
+                            twitter_user.eth_wallet_id = str(eth)
+                    else:
+                        return HttpResponse('Denied access')
                 if sol is not None and twitter_user.sol_wallet_id != sol:
                     twitter_user.sol_wallet_id = str(sol)
                 twitter_user.save()
