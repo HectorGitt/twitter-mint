@@ -479,6 +479,10 @@
                   $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You are already registered!!!<div></div>')
                   $('button[type="submit"]').attr('disabled', true)
                   $('button[type="submit"]').text('Registered')
+                } else if (data == 501) {
+                  $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Wallet Address!!!<div></div>')
+                  $('button[type="submit"]').attr('disabled', true)
+                
                 } else {
                   $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Unknown Error, Contact admin!!<div></div>')
                   $('button[type="submit"]').attr('disabled', false)
