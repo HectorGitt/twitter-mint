@@ -132,7 +132,14 @@
                         </p>
                     </div>
                     {% endif %}
-					
+                    {% if context.least_wallet_balance != 0 or context.wallet_type != 'NIL'  %}
+                    <div class='balance d-flex justify-content-between'>
+                      <p>
+                        <i class="fa-solid fa-wallet text-secondary"></i>
+                        Minimum wallet balance: {{context.least_wallet_balance}} {{context.wallet_type}}
+                      </p>
+                    </div>
+                    {% endif %}
                     <form class=' complete_form' method='POST' >
                       {% csrf_token %}
                       <div class="">
@@ -170,7 +177,7 @@
                           Please enter valid wallet id.
                         </div>
                         <div class="valid-feedback">
-                          Looks good! Balance: 
+                          Looks good!
                         </div>
                           
                         </div>
@@ -383,37 +390,19 @@
         }
       }
       )
-      $("#eth").on("input", function() {
+      $("#eth").on("input load", function() {
         $('button[type="submit"]').attr('disabled', true)
         address = $('#eth').val()
         isEthereum = Web3.utils.isAddress(address)
         if (isEthereum){
-          const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
-          web3.eth.getBalance(address, function(err, result) {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log(web3.utils.fromWei(result, "ether") + " ETH")
-            $('.valid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH`)
-            if (({{context.least_wallet_balance}}) <= (web3.utils.fromWei(result, "ether")) ){
-              $('button[type="submit"]').attr('disabled', false)
-              console.log('hi')
-              $('button[type="submit"]').attr('disabled', false)
-            }else{
-              $('#eth').removeClass('is-valid')
-              $('#eth').addClass('is-invalid')
-              $('.invalid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH, Required: {{context.least_wallet_balance}} ETH`)
-            }
-          }
-        })
+          $('.valid-feedback').text('Looks good!')
           $('#eth').removeClass('is-invalid')
           $('#eth').addClass('is-valid')
-          
+          $('button[type="submit"]').attr('disabled', false)
           
         } else {
           $('#eth').removeClass('is-valid')
           $('#eth').addClass('is-invalid')
-          $('button[type="submit"]').attr('disabled', true)
           
         }
       }
@@ -490,6 +479,10 @@
                   $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You are already registered!!!<div></div>')
                   $('button[type="submit"]').attr('disabled', true)
                   $('button[type="submit"]').text('Registered')
+                } else if (data == 501) {
+                  $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Wallet Address!!!<div></div>')
+                  $('button[type="submit"]').attr('disabled', true)
+                
                 } else {
                   $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Unknown Error, Contact admin!!<div></div>')
                   $('button[type="submit"]').attr('disabled', false)
@@ -512,8 +505,45 @@
           $('.complete_form').submit(
             function(e){
               e.preventDefault()
-              submit(e)
+              $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
+              $('button[type="submit"]').attr('disabled', true)
+              address = $('#eth').val()
+              isEthereum = Web3.utils.isAddress(address)
+              if (isEthereum){
+                const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
+                web3.eth.getBalance(address, function(err, result) {
+                if (err) {
+                  console.log(err)
+                  $('.spinner9').remove()
+                } else {
+                  console.log(web3.utils.fromWei(result, "ether") + " ETH")
+                  if (({{context.least_wallet_balance}}) <= (web3.utils.fromWei(result, "ether")) ){
+                    $('.valid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH`)
+                    $('button[type="submit"]').attr('disabled', false)
+                    $('.spinner9').remove()
+                    submit(e)
+                    
+                  }else{
+                    $('#eth').removeClass('is-valid')
+                    $('#eth').addClass('is-invalid')
+                    $('.invalid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH, Required: {{context.least_wallet_balance}} ETH`)
+                    $('.spinner9').remove()
+                  }
+                }
+              })
+                $('#eth').removeClass('is-invalid')
+                $('#eth').addClass('is-valid')
+                
+                
+              } else {
+                $('#eth').removeClass('is-valid')
+                $('#eth').addClass('is-invalid')
+                $('button[type="submit"]').attr('disabled', true)
+                
+              }
+              
             }
+            
           )
       </script>
       {% endif %}
