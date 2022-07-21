@@ -14,6 +14,7 @@ from .authorization import create_update_user_from_twitter
 from web3.exceptions import InvalidAddress
 from solana.rpc.api import Client
 from solana.publickey import PublicKey
+from decouple import config
 
 
 # Create your views here.
@@ -163,7 +164,7 @@ def verify(request, project_id):
                 if eth is not None and twitter_user.eth_wallet_id != eth:
                     twitter_user.eth_wallet_id = str(eth)
                 if project.least_wallet_balance != 0 and project.wallet_type == 'SOL':
-                    solana_client = Client("https://late-solitary-water.solana-mainnet.discover.quiknode.pro/24a864dc3e0d5d34b04c7b06c00bc5ccadfabf6d/")
+                    solana_client = Client(config('QUICKNODE_PROVIDER'))
                     obj = solana_client.get_balance(PublicKey(str(sol)))
                     balance = obj['result']['value']
                     if balance < project.least_wallet_balance:
@@ -229,8 +230,8 @@ def comfirm(request, project_id):
             #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
-                #twitter_user.projects.add(project)
-                data = 290
+                twitter_user.projects.add(project)
+                data = 200
                 return HttpResponse(data)
             else:
                 context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
