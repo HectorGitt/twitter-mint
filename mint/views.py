@@ -164,7 +164,7 @@ def verify(request, project_id):
                 if eth is not None and twitter_user.eth_wallet_id != eth:
                     twitter_user.eth_wallet_id = str(eth)
                 if project.least_wallet_balance != 0 and project.wallet_type == 'SOL':
-                    solana_client = Client(config('QUICKNODE_PROVIDER'))
+                    solana_client = Client(config('SOLANA_PROVIDER'))
                     obj = solana_client.get_balance(PublicKey(str(sol)))
                     balance = obj['result']['value']
                     if balance < project.least_wallet_balance:
