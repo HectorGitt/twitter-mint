@@ -12,6 +12,8 @@ from .models import Project
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter
 from web3.exceptions import InvalidAddress
+from solana.rpc.api import Client
+from solana.publickey import PublicKey
 
 
 # Create your views here.
@@ -150,17 +152,21 @@ def verify(request, project_id):
                 sol = request.POST.get('sol')
                 if form_email != twitter_user.email:
                     twitter_user.email = str(form_email)
-                if project.least_wallet_balance != 0 or project.wallet_type != 'NIL':
+                if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
                     web3 = Web3()
                     try:
                         balance = web3.web3eth_balance(str(eth))
                     except InvalidAddress:
                         return HttpResponse(501)
                     if balance >= project.least_wallet_balance:
-                        if eth is not None and twitter_user.eth_wallet_id != eth:
-                            twitter_user.eth_wallet_id = str(eth)
+                        pass
                     else:
                         return HttpResponse('Denied access')
+                if eth is not None and twitter_user.eth_wallet_id != eth:
+                    twitter_user.eth_wallet_id = str(eth)
+                if project.least_wallet_balance != 0 and project.wallet_type == 'SOL':
+                    solana_client = Client("https://late-solitary-water.solana-mainnet.discover.quiknode.pro/24a864dc3e0d5d34b04c7b06c00bc5ccadfabf6d/")
+                    print(solana_client.get_balance(PublicKey(str(sol))))
                 if sol is not None and twitter_user.sol_wallet_id != sol:
                     twitter_user.sol_wallet_id = str(sol)
                 twitter_user.save()

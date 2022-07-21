@@ -286,7 +286,7 @@
 			{
 				type:"GET",
 				url: `/${classNameVal}/{{context.project_id}}`,
-				timeout: 10000,
+				timeout: 20000,
 				beforeSend: function(){
 					$(`.${classNameVal}`).append(`<div class='d-flex spinner-border ${spinnerVal} text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>`)
 					$(`.${classNameVal}`).attr('disabled', true)
@@ -319,7 +319,7 @@
 			{% if user.is_authenticated %}
       
       
-			$(document).ready(function(){
+			{% comment %} $(document).ready(function(){
 				setTimeout(function () {
 					{% if context.twitter_follow %}
 						handleAjax('checkfollow', 'spinner1')
@@ -363,7 +363,7 @@
 					handleAjax('checkmonths', 'spinner6')	
 				{% endif %}
 			
-			});
+			}); {% endcomment %}
 			{% endif %}
       var isSolana;
       var isEthereum;
@@ -420,7 +420,7 @@
               'sol': $('#sol').val(),
               'csrfmiddlewaretoken': '{{ csrf_token }}',
             },
-            timeout: 25000,
+            timeout: 60000,
             beforeSend: function(){
               $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
               $('button[type="submit"]').attr('disabled', true)
@@ -507,41 +507,92 @@
               e.preventDefault()
               $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
               $('button[type="submit"]').attr('disabled', true)
-              address = $('#eth').val()
-              isEthereum = Web3.utils.isAddress(address)
-              if (isEthereum){
-                const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
-                web3.eth.getBalance(address, function(err, result) {
-                if (err) {
-                  console.log(err)
-                  $('.spinner9').remove()
-                } else {
-                  console.log(web3.utils.fromWei(result, "ether") + " ETH")
-                  if (({{context.least_wallet_balance}}) <= (web3.utils.fromWei(result, "ether")) ){
-                    $('.valid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH`)
-                    $('button[type="submit"]').attr('disabled', false)
+              {% if context.wallet_type == 'ETH' %}
+                console.log('solo')
+                address = $('#eth').val()
+                isEthereum = Web3.utils.isAddress(address)
+                if (isEthereum){
+                  const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
+                  web3.eth.getBalance(address, function(err, result) {
+                  if (err) {
+                    console.log(err)
                     $('.spinner9').remove()
-                    submit(e)
-                    
-                  }else{
-                    $('#eth').removeClass('is-valid')
-                    $('#eth').addClass('is-invalid')
-                    $('.invalid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH, Required: {{context.least_wallet_balance}} ETH`)
-                    $('.spinner9').remove()
+                  } else {
+                    console.log(web3.utils.fromWei(result, "ether") + " ETH")
+                    if (({{context.least_wallet_balance}}) <= (web3.utils.fromWei(result, "ether")) ){
+                      $('.valid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH`)
+                      $('button[type="submit"]').attr('disabled', false)
+                      $('.spinner9').remove()
+                      submit(e)
+                      
+                    }else{
+                      $('#eth').removeClass('is-valid')
+                      $('#eth').addClass('is-invalid')
+                      $('.invalid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH, Required: {{context.least_wallet_balance}} ETH`)
+                      $('.spinner9').remove()
+                    }
                   }
+                })
+                  $('#eth').removeClass('is-invalid')
+                  $('#eth').addClass('is-valid')
+                  
+                  
+                } else {
+                  $('#eth').removeClass('is-valid')
+                  $('#eth').addClass('is-invalid')
+                  $('button[type="submit"]').attr('disabled', true)
+                  
                 }
-              })
-                $('#eth').removeClass('is-invalid')
-                $('#eth').addClass('is-valid')
+              {% endif %}  
+              {% if context.wallet_type == 'SOL' %}
+              try {
+                address = $('#sol').val()
+                let pubkey = new PublicKey(address)
+                let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
+                if (isSolana){
+                  console.log('hi')
+                  const data = async () => {
+                    const publicKey = new PublicKey(address);
+                    const solana = new solanaWeb3.Connection("https://late-solitary-water.solana-mainnet.discover.quiknode.pro/24a864dc3e0d5d34b04c7b06c00bc5ccadfabf6d/");
+                    try {
+                      balance = await solana.getBalance(publicKey);
+                      if (({{context.least_wallet_balance}}) <= balance ){
+                        $('.valid-feedback').text(`Wallet Balance: ${balance} SOL`)
+                        $('.spinner9').remove()
+                        submit(e)
+                      }else {
+                        $('.invalid-feedback').text(`Wallet Balance: ${balance} SOL Required: {{context.least_wallet_balance}} ETH`)
+                        $('#sol').removeClass('is-valid')
+                        $('#sol').addClass('is-invalid')
+                        $('.spinner9').remove()
+                        $('button[type="submit"]').attr('disabled', true)
+                      }
+                    }
+                      catch (e) {
+                        // Maybe do something else here first.
+                        $('#sol').removeClass('is-valid')
+                        $('#sol').addClass('is-invalid')
+                        $('.invalid-feedback').text(`An Error Occured`)
+                        $('.spinner9').remove()
+                        $('button[type="submit"]').attr('disabled', true)
+                    }
+                    
+                    
+                  }
+                  data()
+                } else {
+                  $('#sol').removeClass('is-valid')
+                  $('#sol').addClass('is-invalid')
+                  $('button[type="submit"]').attr('disabled', true)
+                }
                 
-                
-              } else {
-                $('#eth').removeClass('is-valid')
-                $('#eth').addClass('is-invalid')
-                $('button[type="submit"]').attr('disabled', true)
-                
+              } catch (error) {
+                  $('#sol').removeClass('is-valid')
+                  $('#sol').addClass('is-invalid')
+                  $('button[type="submit"]').attr('disabled', true)
+                  $('.spinner9').remove()
               }
-              
+              {% endif %}
             }
             
           )
