@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseForbidden
 from django.core.exceptions import ValidationError
 from django.views.generic.list import ListView
 from twitter_api.twitter_api import TwitterAPI
@@ -12,6 +12,9 @@ from .models import Project
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter
 from web3.exceptions import InvalidAddress
+from solana.rpc.api import Client
+from solana.publickey import PublicKey
+from decouple import config
 
 
 # Create your views here.
@@ -150,17 +153,22 @@ def verify(request, project_id):
                 sol = request.POST.get('sol')
                 if form_email != twitter_user.email:
                     twitter_user.email = str(form_email)
-                if project.least_wallet_balance != 0 or project.wallet_type != 'NIL':
+                if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
                     web3 = Web3()
                     try:
                         balance = web3.web3eth_balance(str(eth))
                     except InvalidAddress:
                         return HttpResponse(501)
-                    if balance >= project.least_wallet_balance:
-                        if eth is not None and twitter_user.eth_wallet_id != eth:
-                            twitter_user.eth_wallet_id = str(eth)
-                    else:
+                    if balance < project.least_wallet_balance:
                         return HttpResponse('Denied access')
+                if eth is not None and twitter_user.eth_wallet_id != eth:
+                    twitter_user.eth_wallet_id = str(eth)
+                if project.least_wallet_balance != 0 and project.wallet_type == 'SOL':
+                    solana_client = Client(config('SOLANA_PROVIDER'))
+                    obj = solana_client.get_balance(PublicKey(str(sol)))
+                    balance = obj['result']['value']
+                    if balance < project.least_wallet_balance:
+                       return HttpResponseForbidden('Forbidden')
                 if sol is not None and twitter_user.sol_wallet_id != sol:
                     twitter_user.sol_wallet_id = str(sol)
                 twitter_user.save()
@@ -223,7 +231,7 @@ def comfirm(request, project_id):
             if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
-                data = 290
+                data = 200
                 return HttpResponse(data)
             else:
                 context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
