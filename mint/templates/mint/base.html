@@ -34,6 +34,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.5-rc.0/web3.min.js'></script>
+    
+    {% block script %}
+    {% endblock  %}
     <script type="text/javascript">
         $(document).ready(function() {
             $('.spinner-cont').addClass('d-none')
@@ -41,7 +44,5 @@
 
           });
     </script>
-    {% block script %}
-    {% endblock  %}
 </body>
 </html>
