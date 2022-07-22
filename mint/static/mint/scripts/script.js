@@ -46,24 +46,24 @@ function handleInput() {
       var isEthereum;
       var PublicKey = solanaWeb3.PublicKey;
       $("#sol").on("input", function() {
+        $('button[type="submit"]').attr('disabled', true)
         try {
             let address = $('#sol').val()
             let pubkey = new PublicKey(address)
             let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
             if (isSolana){
+            $('.valid-feedback').text('Looks good!')
               $('#sol').removeClass('is-invalid')
               $('#sol').addClass('is-valid')
               $('button[type="submit"]').attr('disabled', false)
             } else {
               $('#sol').removeClass('is-valid')
-              $('#sol').addClass('is-invalid')
-              $('button[type="submit"]').attr('disabled', true)
+              $('#sol').addClass('is-invalid') 
             }
             
         } catch (error) {
             $('#sol').removeClass('is-valid')
             $('#sol').addClass('is-invalid')
-            $('button[type="submit"]').attr('disabled', true)
         }
       }
       )
@@ -88,7 +88,6 @@ function handleInput() {
 handleInput()
 function submit(e, project_id, csrf_token){
     e.preventDefault();
-    
     $.ajax(
       {
         type:"POST",
