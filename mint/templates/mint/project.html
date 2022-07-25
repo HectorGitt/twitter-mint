@@ -8,7 +8,7 @@
 {% block content %}
 <div class='top-image-cont'><div 
 	style='
-	background-image: url({{context.project_image.url}});
+	background-image: url({% static "mint/images/giveaway.jpg" %});
 	height: 100%;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -222,7 +222,6 @@
 				</div>
 			
 	</div>
-	
       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -269,6 +268,15 @@
     import {countDown} from '{% static 'mint/scripts/global.js' %}'
     countDown(`{{context.project_end_date|date:"SHORT_DATE_FORMAT" }} {{context.project_end_date|time:"H:i:s"}}`)
   </script>
+  <script type="text/javascript">
+    _NBSettings = {
+        apiKey: 'public_468b7af9d987e53951c9731d80f7d38c',
+        rejectedMessage: "Invalid email",
+        ajaxMode: true,
+        acceptedMessage: "Valid email",
+    };
+  </script>
+  <script type="text/javascript" src="https://cdn.neverbounce.com/widget/dist/NeverBounce.js"></script>
   {% if user.is_authenticated %}
   <script type='module' src="{% static 'mint/scripts/script.js' %}"></script>
   <script type='module'>
@@ -317,7 +325,7 @@
         {% endif %}
       });
   </script>
+  
   {% endif %}
   {% endblock  %}
-      
       
