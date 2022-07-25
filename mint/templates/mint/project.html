@@ -268,15 +268,15 @@
     import {countDown} from '{% static 'mint/scripts/global.js' %}'
     countDown(`{{context.project_end_date|date:"SHORT_DATE_FORMAT" }} {{context.project_end_date|time:"H:i:s"}}`)
   </script>
-  {% comment %} <script type="text/javascript">
+  <script type="text/javascript">
     _NBSettings = {
-        apiKey: 'public_468b7af9d987e53951c9731d80f7d38c',
+        apiKey: 'public_1c44a292aa50b71096eba136ad1c8dc2',
         rejectedMessage: "Invalid email",
         ajaxMode: true,
         acceptedMessage: "Valid email",
     };
   </script>
-  <script type="text/javascript" src="https://cdn.neverbounce.com/widget/dist/NeverBounce.js"></script> {% endcomment %}
+  <script type="text/javascript" src="https://cdn.neverbounce.com/widget/dist/NeverBounce.js"></script>
   {% if user.is_authenticated %}
   <script type='module' src="{% static 'mint/scripts/script.js' %}"></script>
   <script type='module'>
