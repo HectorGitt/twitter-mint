@@ -1,9 +1,7 @@
 export function sade(){
     console.log('sup')
 }
-function documentReady() {
-    
-}
+
 export function handleAjax(classNameVal, spinnerVal, project_id){
     $.ajax(
     {
@@ -42,11 +40,16 @@ export function handleAjax(classNameVal, spinnerVal, project_id){
 
 
 function handleInput() {
-        var isSolana;
+    $("#email").on("input", function() {
+      $("#email").removeClass("is-invalid");
+      $('button[type="submit"]').attr('disabled', false)
+    })
+      var isSolana;
       var isEthereum;
       var PublicKey = solanaWeb3.PublicKey;
       $("#sol").on("input", function() {
-        $('button[type="submit"]').attr('disabled', true)
+        $('#sol').removeClass('is-invalid')
+        $('button[type="submit"]').attr('disabled', false)
         try {
             let address = $('#sol').val()
             let pubkey = new PublicKey(address)
@@ -67,7 +70,7 @@ function handleInput() {
         }
       }
       )
-      $("#eth").on("input load", function() {
+      $("#eth").on("input", function() {
         $('button[type="submit"]').attr('disabled', true)
         let address = $('#eth').val()
         let isEthereum = Web3.utils.isAddress(address)
@@ -161,7 +164,13 @@ function submit(e, project_id, csrf_token){
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Wallet Address!!!<div></div>')
               $('button[type="submit"]').attr('disabled', true)
             
-            } else {
+            }else if (data == 400) {
+              $('#email').addClass('is-invalid')
+              $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Email!!<div></div>')
+              $('button[type="submit"]').attr('disabled', true)
+            
+            }else {
+              console.log(data)
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Unknown Error, Contact admin!!<div></div>')
               $('button[type="submit"]').attr('disabled', false)
             }
