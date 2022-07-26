@@ -15,7 +15,6 @@ from web3.exceptions import InvalidAddress
 from solana.rpc.api import Client
 from solana.publickey import PublicKey
 from decouple import config
-import neverbounce_sdk
 
 # Create your views here.
 def home(request):
@@ -152,14 +151,7 @@ def verify(request, project_id):
                 eth = request.POST.get('eth')
                 sol = request.POST.get('sol')
                 if form_email != twitter_user.email:
-                    api_key = 'private_f24228948aab845d877edb23e9daf0dc'
-                    client = neverbounce_sdk.client(api_key=api_key,timeout=30)
-                    resp = client.single_check(form_email)
-                    if resp['result'] == 'valid':
-                        twitter_user.email = str(form_email)
-                    else:
-                        data = 400
-                        return HttpResponse(data)
+                    twitter_user.email = str(form_email)
                 if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
                     web3 = Web3()
                     try:
