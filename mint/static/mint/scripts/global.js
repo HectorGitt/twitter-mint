@@ -44,11 +44,15 @@ export function countDown(dateTime){
       if (e.detail.result && e.detail.result.isError()) {
           if (e.detail.result.isThrottled()) {
               // Do stuff when the verification is throttled
-              alert('Verification is throttled');
-          }
+              $('.modal-body').text(`Too many request, comfirm your email and try again later`)
+              $('.modal').modal('show')
+          } else {
           // Do stuff when other API errors occur
           // - Our recommendation is to hide any loaders and treat these emails the same way you would treat an Unknown email
-          alert('Contact an administrator for assistance');
+          $('.modal-body').text(`Contact administrator`)
+          $('.modal').modal('show')
+
+          }
       }
     
       // Do stuff when input changes, (e.g. hide loader)

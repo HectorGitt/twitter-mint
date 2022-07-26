@@ -1,4 +1,3 @@
-from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,14 +7,14 @@ from django.core.exceptions import ValidationError
 from django.views.generic.list import ListView
 from twitter_api.twitter_api import TwitterAPI
 from web3api.web3api import Web3
-from .models import Project
-from .models import TwitterAuthToken, TwitterUser
-from .authorization import create_update_user_from_twitter
 from web3.exceptions import InvalidAddress
 from solana.rpc.api import Client
 from solana.publickey import PublicKey
 from decouple import config
-import neverbounce_sdk
+from .models import Project
+from .models import TwitterAuthToken, TwitterUser
+from .authorization import create_update_user_from_twitter
+
 
 # Create your views here.
 def home(request):
@@ -71,7 +70,6 @@ def login_user(request):
         request.session['next'] = request.GET.get('next', '/')
         return render(request, 'mint/login.html', {'next': next})
 def twitter_login(request):
-        
     twitter_api = TwitterAPI()
     url, oauth_token, oauth_token_secret = twitter_api.twitter_login()
     if url is None or url == '':
@@ -152,14 +150,7 @@ def verify(request, project_id):
                 eth = request.POST.get('eth')
                 sol = request.POST.get('sol')
                 if form_email != twitter_user.email:
-                    api_key = 'private_f24228948aab845d877edb23e9daf0dc'
-                    client = neverbounce_sdk.client(api_key=api_key,timeout=30)
-                    resp = client.single_check(form_email)
-                    if resp['result'] == 'valid':
-                        twitter_user.email = str(form_email)
-                    else:
-                        data = 400
-                        return HttpResponse(data)
+                    twitter_user.email = str(form_email)
                 if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
                     web3 = Web3()
                     try:
