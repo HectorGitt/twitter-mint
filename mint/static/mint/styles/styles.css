@@ -14,6 +14,9 @@ body {
     box-shadow: 0 0 2rem 0.3rem rgba(0, 0, 0, 0.171);
     
 }
+.input-group div{
+    width: 85%;
+}
 .top-image-cont {
     height: 20vh;
 }
@@ -25,9 +28,23 @@ body {
     margin: 2px 0;
     padding: 2px 0;
 }
+@media screen and (max-width: 1200px) {
+    .input-group div{
+        width: 80%;
+    }
+}
+@media screen and (max-width: 992px) {
+    .input-group div{
+        width: 80%;
+    }
+}
 @media screen and (max-width: 768px) {
     .register-card .card {
         position: static;
         transform: scale(1);
     }   
+    .input-group div{
+        width: 85%;
+    }
 }
+

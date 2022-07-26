@@ -286,6 +286,9 @@ export function completeForm(wallet_type, least_balance, project_id, csrf_token)
               $('.spinner9').remove()
           }
           }
+          if (wallet_type == 'NIL') {
+            submit(e, project_id, csrf_token)
+          }
         }
         
       )
