@@ -1,6 +1,13 @@
-export function sade(){
-    console.log('sup')
-}
+//neverbounce settings
+var auto_lookup = false;
+
+
+var csrf_token_g;
+var wallet_type_g;
+var least_balance_g;
+var project_id_g;
+
+
 
 export function handleAjax(classNameVal, spinnerVal, project_id){
     $.ajax(
@@ -40,9 +47,26 @@ export function handleAjax(classNameVal, spinnerVal, project_id){
 
 
 function handleInput() {
-    $("#email").on("input", function() {
-      $("#email").removeClass("is-invalid");
-      $('button[type="submit"]').attr('disabled', false)
+      $("#email").on('focus', function() {
+        if (!auto_lookup){
+          var ele = document.querySelector('#email', true)
+          _nb.fields.initListeners()
+          _nb.fields.registerListener(ele)
+          auto_lookup = true;
+          }
+      }
+      )
+      $("#email").on("input", function() {
+        if (!auto_lookup){
+        console.log('input2')
+        var ele = document.querySelector('#email', true)
+        _nb.fields.initListeners()
+        _nb.fields.registerListener(ele)
+        auto_lookup = true;
+        $('#email').trigger('input')
+        }
+        $("#email").removeClass("is-invalid");
+        $('button[type="submit"]').attr('disabled', true)
     })
       var isSolana;
       var isEthereum;
@@ -62,11 +86,13 @@ function handleInput() {
             } else {
               $('#sol').removeClass('is-valid')
               $('#sol').addClass('is-invalid') 
+              $('button[type="submit"]').attr('disabled', true)
             }
             
         } catch (error) {
             $('#sol').removeClass('is-valid')
             $('#sol').addClass('is-invalid')
+            $('button[type="submit"]').attr('disabled', true)
         }
       }
       )
@@ -88,7 +114,7 @@ function handleInput() {
       }
       )
 }
-handleInput()
+
 function submit(e, project_id, csrf_token){
     e.preventDefault();
     $.ajax(
@@ -155,18 +181,22 @@ function submit(e, project_id, csrf_token){
               $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Registration complete!</div></div>')
               $('button[type="submit"]').attr('disabled', true)
               $('button[type="submit"]').text('Registered')
+              $('#sol').attr('disabled', true)
+              $('#eth').attr('disabled', true)
               
             } else if (data == 300) {
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You are already registered!!!<div></div>')
               $('button[type="submit"]').attr('disabled', true)
               $('button[type="submit"]').text('Registered')
+              $('#sol').attr('disabled', true)
+              $('#eth').attr('disabled', true)
             } else if (data == 501) {
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Wallet Address!!!<div></div>')
               $('button[type="submit"]').attr('disabled', true)
             
             }else if (data == 400) {
               $('#email').addClass('is-invalid')
-              $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Email!!<div></div>')
+              $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Low wallet balance!!<div></div>')
               $('button[type="submit"]').attr('disabled', true)
             
             }else {
@@ -189,110 +219,142 @@ function submit(e, project_id, csrf_token){
           $('button[type="submit"]').attr('disabled', false)
         }
       })} 
-export function completeForm(wallet_type, least_balance, project_id, csrf_token){
-    $('.complete_form').submit(
-        function(e){
-          e.preventDefault()
-          console.log(least_balance)
-          $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
-          $('button[type="submit"]').attr('disabled', true)
-          if (wallet_type == 'ETH'){
-            let address = $('#eth').val()
-            let isEthereum = Web3.utils.isAddress(address)
-            if (isEthereum){
-              const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/35802e8eee3c46d6b2b169386dd064c8"))
-              web3.eth.getBalance(address, function(err, result) {
-              if (err) {
-                $('#eth').removeClass('is-valid')
-                $('#eth').addClass('is-invalid')
-                $('.invalid-feedback').text(`An error occured`)
-                $('.spinner9').remove()
-              } else {
-                console.log(web3.utils.fromWei(result, "ether") + " ETH")
-                if ((least_balance) <= (web3.utils.fromWei(result, "ether")) ){
-                  $('.valid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH`)
-                  $('button[type="submit"]').attr('disabled', false)
-                  $('.spinner9').remove()
-                  submit(e, project_id, csrf_token)
-                }else{
-                  $('#eth').removeClass('is-valid')
-                  $('#eth').addClass('is-invalid')
-                  $('.invalid-feedback').text(`Wallet Balance: ${web3.utils.fromWei(result, "ether")} ETH, Required: {{least_wallet_balance}} ETH`)
-                  $('.spinner9').remove()
-                }
-              }
-            })
-              $('#eth').removeClass('is-invalid')
-              $('#eth').addClass('is-valid')
-              
-              
-            } else {
-              $('#eth').removeClass('is-valid')
-              $('#eth').addClass('is-invalid')
-              $('button[type="submit"]').attr('disabled', true)
-              
-            }
-            }
-            if (wallet_type == 'SOL') {
-            try {
-            let address = $('#sol').val()
-            console.log(address)
-            var PublicKey = solanaWeb3.PublicKey;
-            let pubkey = new PublicKey(address)
-            let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
-            if (isSolana){
-              const data = async () => {
-                const publicKey = new PublicKey(address);
-                const solana = new solanaWeb3.Connection("https://late-solitary-water.solana-mainnet.discover.quiknode.pro/24a864dc3e0d5d34b04c7b06c00bc5ccadfabf6d/");
-                try {
-                  let balance = await solana.getBalance(publicKey);
-                  if ((least_balance) <= balance ){
-                    $('#sol').removeClass('is-invalid')
-                    $('.valid-feedback').text(`Wallet Balance: ${balance} SOL`)
-                    $('#sol').addClass('is-valid')
-                    $('.spinner9').remove()
-                    submit(e, project_id, csrf_token)
-                  }else {
-                    $('.invalid-feedback').text(`Wallet Balance: ${balance} SOL Required: ${least_balance} ETH`)
-                    $('#sol').removeClass('is-valid')
-                    $('#sol').addClass('is-invalid')
-                    $('.spinner9').remove()
-                    $('button[type="submit"]').attr('disabled', true)
-                  }
-                }
-                  catch (e) {
-                    // Maybe do something else here first.
-                    $('#sol').removeClass('is-valid')
-                    $('#sol').addClass('is-invalid')
-                    $('.invalid-feedback').text(`An Error Occured`)
-                    $('.spinner9').remove()
-                    $('button[type="submit"]').attr('disabled', true)
-                }
-                
-                
-              }
-              data()
-            } else {
-              $('#sol').removeClass('is-valid')
-              $('#sol').addClass('is-invalid')
-              $('button[type="submit"]').attr('disabled', true)
-            }
-            
-           } catch (error) {
-              $('#sol').removeClass('is-valid')
-              alert(error)
-              $('#sol').addClass('is-invalid')
-              $('button[type="submit"]').attr('disabled', true)
-              $('.spinner9').remove()
-          }
-          }
-          if (wallet_type == 'NIL') {
-            submit(e, project_id, csrf_token)
-          }
-        }
-        
-      )
+export function assignVariables(wallet_type, least_balance, project_id, csrf_token){
+    wallet_type_g = wallet_type
+    csrf_token_g = csrf_token
+    least_balance_g = least_balance
+    project_id_g = project_id
 }
+function completeForm(e){
+    console.log(least_balance_g)
+    $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
+    $('button[type="submit"]').attr('disabled', true)
+    if (wallet_type_g == 'ETH'){
+      let address = $('#eth').val()
+      let isEthereum = Web3.utils.isAddress(address)
+      if (isEthereum){
+        $('.spinner9').remove()
+        submit(e, project_id_g, csrf_token_g) 
+      } else {
+        $('#eth').removeClass('is-valid')
+        $('#eth').addClass('is-invalid')
+        $('button[type="submit"]').attr('disabled', true)
+        
+      }
+      }
+      if (wallet_type_g == 'SOL') {
+      try {
+      let address = $('#sol').val()
+      console.log(address)
+      var PublicKey = solanaWeb3.PublicKey;
+      let pubkey = new PublicKey(address)
+      let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
+      if (isSolana){
+        $('.spinner9').remove()
+        submit(e, project_id_g, csrf_token_g)
+      } else {
+        $('#sol').removeClass('is-valid')
+        $('#sol').addClass('is-invalid')
+        $('button[type="submit"]').attr('disabled', true)
+      }
+      
+     } catch (error) {
+        $('#sol').removeClass('is-valid')
+        alert(error)
+        $('#sol').addClass('is-invalid')
+        $('button[type="submit"]').attr('disabled', true)
+        $('.spinner9').remove()
+    }
+    }
+    if (wallet_type_g == 'NIL') {
+      submit(e, project_id_g, csrf_token_g)
+    }
+}
+function completeFormHandler(){
+    $('.complete_form').submit(function(e){
+      e.preventDefault()
+      if (!auto_lookup){
+        completeForm(e)
+      }
+  })
+}
+completeFormHandler()
+
+/**
+ * Hook into field registration events
+ * The nb:registered event is fired on the body every time
+ * _nb.fields.registerListener is called and during page load for
+ * each field auto registered.
+ *
+ * All `nb:` prefixed events contain a `detail` object
+ * with the following params:
+ *   `id` - a reference ID for the field & form
+ *   `result` - a result object
+ *   `error` - error object from request
+ */
+ document.querySelector('body').addEventListener('nb:registered', function (event) {
+
+  // Get field using id from registered event
+  let field = document.querySelector('[data-nb-id="' + event.detail.id + '"]');
+
+  // Handle clear events (input has changed or an API error was returned)
+  field.addEventListener('nb:clear', function(e) {     
+    $('button[type="submit"]').attr('disabled', true) 
+      // Check for errors
+      if (e.detail.result && e.detail.result.isError()) {
+          if (e.detail.result.isThrottled()) {
+              // Do stuff when the verification is throttled
+              $('.modal-body').text(`Too many request, comfirm your email and try again later`)
+              $('.modal').modal('show')
+          } else {
+          // Do stuff when other API errors occur
+          // - Our recommendation is to hide any loaders and treat these emails the same way you would treat an Unknown email
+          $('.modal-body').text(`Contact administrator`)
+          $('.modal').modal('show')
+
+          }
+      }
+    
+      // Do stuff when input changes, (e.g. hide loader)
+  });
+
+  // Handle loading status (API request has been made)
+  field.addEventListener('nb:loading', function(e) {
+      // Do stuff while waiting on API response
+      $('button[type="submit"]').attr('disabled', true)
+      
+  });
+
+  let form = document.querySelector('.complete_form');
+  form.addEventListener('nb:submit', function(e){
+    e.preventDefault()
+    completeForm(e)
+  }
+  
+  )
+    
+
+  // Handle results (API call has succeeded)
+  field.addEventListener('nb:result', function(e) {
+      if (e.detail.result.is(_nb.settings.getAcceptedStatusCodes())) {
+          // Do stuff for good email
+          $('button[type="submit"]').attr('disabled', false)
+          $('#sol').attr('disabled', false)
+          $('#eth').attr('disabled', false)
+      }
+      else {
+          // Do stuff for bad email
+          $('#sol').attr('disabled', true)
+          $('#eth').attr('disabled', true)
+      }
+  });
+
+  // Handle soft results (fails regex; doesn't bother making API request)
+  field.addEventListener('nb:soft-result', function(e) {
+      // Do stuff when input doesn't even look like an email (i.e. missing @ or no .com/.net/etc...)
+  });
+});
+handleInput()
 /* 
 <script type="text/javascript">
         

@@ -112,6 +112,7 @@ def callback(request):
                     twitter_user_new.twitter_oauth_token = twitter_auth_token
                 user, twitter_user = create_update_user_from_twitter(twitter_user_new)
                 if user is not None:
+                    
                     login(request, user)
                     try:
                         return redirect(request.session['next'])
@@ -165,8 +166,10 @@ def verify(request, project_id):
                     solana_client = Client(config('SOLANA_PROVIDER'))
                     obj = solana_client.get_balance(PublicKey(str(sol)))
                     balance = obj['result']['value']
-                    if balance < project.least_wallet_balance:
-                       return HttpResponseForbidden('Forbidden')
+                    ui_balance = round((balance * (10**-9) ), 9)
+                    print(obj)
+                    if ui_balance < project.least_wallet_balance:
+                       return HttpResponse(400)
                 if sol is not None and twitter_user.sol_wallet_id != sol:
                     twitter_user.sol_wallet_id = str(sol)
                 twitter_user.save()

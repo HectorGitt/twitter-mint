@@ -140,14 +140,14 @@
                       </p>
                     </div>
                     {% endif %}
-                    <form class=' complete_form' method='POST' >
+                    <form class='complete_form' method='POST' >
                       {% csrf_token %}
                       <div class="">
                         {% if context.email_required %}
                         <label for="email" class="form-label">Email address</label>
                         <div class="input-group">
                         <span class="input-group-text" id="basic-addon1"><i class="fa-regular fa-envelope"></i></span>
-                        <input maxlength='50' minlength='5' value="{{twitter_user.email}}" required pattern='.{5,}' type="email" class="form-control" id="email" name='email' aria-describedby="emailHelp">
+                        <input maxlength='50' minlength='6' value="{{twitter_user.email}}" required pattern='.{6,}' type="email" class="form-control" id="email" name='email' aria-describedby="emailHelp">
                         </div>
                         <div id="emailHelp" class="form-text">This email will be used to contact you when you win.</div>
                         
@@ -266,10 +266,14 @@
   <script type='module' src="{% static 'mint/scripts/global.js' %}"></script>
   <script type="text/javascript">
     _NBSettings = {
-        apiKey: 'public_1c44a292aa50b71096eba136ad1c8dc2'
-    };
-</script>
-<script type="text/javascript" src="https://cdn.neverbounce.com/widget/dist/NeverBounce.js"></script>
+    apiKey: 'public_1c44a292aa50b71096eba136ad1c8dc2',
+    ajaxMode: true,
+    inputLatency: 2000,
+    displayPoweredBy: false,
+    autoFieldHookup: false,
+  }
+  </script>
+  <script type="text/javascript" src="https://cdn.neverbounce.com/widget/dist/NeverBounce.js"></script>
   <script type='module'>
     import {countDown} from '{% static 'mint/scripts/global.js' %}'
     countDown(`{{context.project_end_date|date:"SHORT_DATE_FORMAT" }} {{context.project_end_date|time:"H:i:s"}}`)
@@ -277,8 +281,8 @@
   {% if user.is_authenticated %}
   <script type='module' src="{% static 'mint/scripts/script.js' %}"></script>
   <script type='module'>
-    import {completeForm, handleAjax} from '{% static 'mint/scripts/script.js' %}'
-    completeForm(`{{context.wallet_type}}`, `{{context.least_wallet_balance}}`, `{{context.project_id}}`, `{{csrf_token}}`)
+    import {assignVariables, handleAjax} from '{% static 'mint/scripts/script.js' %}'
+    assignVariables(`{{context.wallet_type}}`, `{{context.least_wallet_balance}}`, `{{context.project_id}}`, `{{csrf_token}}`)
     $(document).ready(function(){
       setTimeout(function () {
         {% if context.twitter_follow %}
@@ -322,7 +326,7 @@
         {% endif %}
       });
   </script>
-  
+ 
   {% endif %}
   {% endblock  %}
       
