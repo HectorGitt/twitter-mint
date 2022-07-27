@@ -47,14 +47,23 @@ export function handleAjax(classNameVal, spinnerVal, project_id){
 
 
 function handleInput() {
-      $("#email").on("input", function() {
-        console.log('input')
+      $("#email").on('focus', function() {
         if (!auto_lookup){
-          console.log('input2')
+          var ele = document.querySelector('#email', true)
+          _nb.fields.initListeners()
+          _nb.fields.registerListener(ele)
+          auto_lookup = true;
+          }
+      }
+      )
+      $("#email").on("input", function() {
+        if (!auto_lookup){
+        console.log('input2')
         var ele = document.querySelector('#email', true)
-        _nb.fields.registerListener(ele)
         _nb.fields.initListeners()
+        _nb.fields.registerListener(ele)
         auto_lookup = true;
+        $('#email').trigger('input')
         }
         $("#email").removeClass("is-invalid");
         $('button[type="submit"]').attr('disabled', true)
@@ -105,7 +114,7 @@ function handleInput() {
       }
       )
 }
-handleInput()
+
 function submit(e, project_id, csrf_token){
     e.preventDefault();
     $.ajax(
@@ -345,6 +354,7 @@ completeFormHandler()
       // Do stuff when input doesn't even look like an email (i.e. missing @ or no .com/.net/etc...)
   });
 });
+handleInput()
 /* 
 <script type="text/javascript">
         
