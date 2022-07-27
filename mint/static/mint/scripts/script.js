@@ -50,7 +50,6 @@ function handleInput() {
       $("#email").on('focus', function() {
         if (!auto_lookup){
           var ele = document.querySelector('#email', true)
-          _nb.fields.initListeners()
           _nb.fields.registerListener(ele)
           auto_lookup = true;
           }
@@ -107,8 +106,7 @@ function handleInput() {
       )
 }
 
-function submit(e, project_id, csrf_token){
-    e.preventDefault();
+function submit(project_id, csrf_token){
     $.ajax(
       {
         type:"POST",
@@ -211,13 +209,14 @@ function submit(e, project_id, csrf_token){
           $('button[type="submit"]').attr('disabled', false)
         }
       })} 
+
 export function assignVariables(wallet_type, least_balance, project_id, csrf_token){
     wallet_type_g = wallet_type
     csrf_token_g = csrf_token
     least_balance_g = least_balance
     project_id_g = project_id
 }
-function completeForm(e){
+function completeForm(){
     console.log(least_balance_g)
     $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
     $('button[type="submit"]').attr('disabled', true)
@@ -226,7 +225,7 @@ function completeForm(e){
       let isEthereum = Web3.utils.isAddress(address)
       if (isEthereum){
         $('.spinner9').remove()
-        submit(e, project_id_g, csrf_token_g) 
+        submit(project_id_g, csrf_token_g) 
       } else {
         $('#eth').removeClass('is-valid')
         $('#eth').addClass('is-invalid')
@@ -243,7 +242,7 @@ function completeForm(e){
       let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
       if (isSolana){
         $('.spinner9').remove()
-        submit(e, project_id_g, csrf_token_g)
+        submit(project_id_g, csrf_token_g)
       } else {
         $('#sol').removeClass('is-valid')
         $('#sol').addClass('is-invalid')
@@ -259,14 +258,16 @@ function completeForm(e){
     }
     }
     if (wallet_type_g == 'NIL') {
-      submit(e, project_id_g, csrf_token_g)
+      submit(project_id_g, csrf_token_g)
     }
 }
 function completeFormHandler(){
     $('.complete_form').submit(function(e){
       e.preventDefault()
       if (!auto_lookup){
-        completeForm(e)
+        completeForm()
+      }else {
+        $('.complete_form').unbind()
       }
   })
 }
@@ -320,7 +321,7 @@ completeFormHandler()
   let form = document.querySelector('.complete_form');
   form.addEventListener('nb:submit', function(e){
     e.preventDefault()
-    completeForm(e)
+    completeForm()
   }
   
   )
