@@ -57,14 +57,6 @@ function handleInput() {
       }
       )
       $("#email").on("input", function() {
-        if (!auto_lookup){
-        console.log('input2')
-        var ele = document.querySelector('#email', true)
-        _nb.fields.initListeners()
-        _nb.fields.registerListener(ele)
-        auto_lookup = true;
-        $('#email').trigger('input')
-        }
         $("#email").removeClass("is-invalid");
         $('button[type="submit"]').attr('disabled', true)
     })
