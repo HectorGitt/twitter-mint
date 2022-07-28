@@ -225,10 +225,10 @@ function submit(project_id, csrf_token){
             else if (data.followers_state == false) {
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You dont have the minimum number of followers!<div></div>')
             }
-            if (data.months_state == true){
+            if (data.month_state == true){
               $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Your account met the minimum creation month requirement!</div></div>')
             }
-            else if (data.months_state == false) {
+            else if (data.month_state == false) {
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Your account doesnt meet the month creation requirement!<div></div>')
             }
             $('button[type="submit"]').attr('disabled', false)
@@ -282,7 +282,8 @@ export function assignVariables(wallet_type, least_balance, project_id, csrf_tok
     least_balance_g = least_balance
     project_id_g = project_id
 }
-function completeForm(){
+function completeForm(e){
+    e.preventDefault()
     $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
     $('button[type="submit"]').attr('disabled', true)
     if (wallet_type_g == 'ETH'){
@@ -331,9 +332,9 @@ function completeFormHandler(){
     $('.complete_form').submit(function(e){
       e.preventDefault()
       if (!auto_lookup){
-        completeForm()
+        completeForm(e)
       }else {
-        $('.complete_form').unbind()
+        //DONT PROCESS FORM
       }
   })
 }
@@ -387,7 +388,7 @@ completeFormHandler()
   let form = document.querySelector('.complete_form');
   form.addEventListener('nb:submit', function(e){
     e.preventDefault()
-    completeForm()
+    completeForm(e)
   }
   
   )
