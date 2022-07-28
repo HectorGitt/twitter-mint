@@ -167,7 +167,6 @@ def verify(request, project_id):
                     obj = solana_client.get_balance(PublicKey(str(sol)))
                     balance = obj['result']['value']
                     ui_balance = round((balance * (10**-9) ), 9)
-                    print(obj)
                     if ui_balance < project.least_wallet_balance:
                        return HttpResponse(400)
                 if sol is not None and twitter_user.sol_wallet_id != sol:
