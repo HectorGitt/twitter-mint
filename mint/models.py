@@ -31,7 +31,8 @@ class Project(models.Model):
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
     project_date = models.DateTimeField(auto_now_add=True)
-    project_end_date = models.DateTimeField(default=timezone.now)
+    end_hours = models.PositiveIntegerField(default=0)
+    project_end_date = models.DateTimeField(default=None, editable=False)
     project_price = models.PositiveIntegerField(default=1)
     project_link = models.URLField(max_length=255)
     project_description = models.TextField()
@@ -77,8 +78,10 @@ class Project(models.Model):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
+        if (self.project_end_date is None):
+            self.project_end_date = timezone.now() + timezone.timedelta(hours=self.end_hours)
     def __str__(self):
-        return self.project_name
+        return str(self.project_name)
     
     def save(self, *args, **kwargs):
         
@@ -94,7 +97,7 @@ class Project(models.Model):
         x = requests.get('https://publish.twitter.com/oembed?url={url}'.format(url=tweet_url))
         json_str = x.text
         json_object = json.loads(json_str)
-        return json_object['html']
+        return json_object.get('html')
     class Meta:
         ordering = (["-project_date"])
         
