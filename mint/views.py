@@ -329,10 +329,30 @@ def success(request):
     return render(request, 'mint/home2.html', {'context': projects_all})
 def checkwalletbalance(request,project_id):
     auth_user = request.user
-    if request.method == "GET" and auth_user.is_authenticated :
-        twitter_api = TwitterAPI()
-        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
-        oauth_token = str(twitter_user.twitter_oauth_token)
-        oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
-        #wallet_id = twitter_user.
-        return HttpResponse(months_state)
+    project = Project.objects.filter(project_id=project_id).first()
+    twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+    if request.method == "POST" and auth_user.is_authenticated :
+        eth = request.POST.get('eth')
+        sol = request.POST.get('sol')
+        if eth is not None and twitter_user.eth_wallet_id != eth:
+            twitter_user.eth_wallet_id = str(eth)
+        if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
+            web3 = Web3()
+            try:
+                ui_balance = web3.web3eth_balance(str(eth))
+            except InvalidAddress:
+                return HttpResponse(501)
+        if sol is not None and twitter_user.sol_wallet_id != sol:
+            twitter_user.sol_wallet_id = str(sol)
+        if project.least_wallet_balance != 0 and project.wallet_type == 'SOL':
+            solana_client = Client(config('SOLANA_PROVIDER'))
+            obj = solana_client.get_balance(PublicKey(str(sol)))
+            balance = obj['result']['value']
+            ui_balance = round((balance * (10**-9) ), 9)
+        twitter_user.save()
+        obj = {'response': 200, 'value': ui_balance}
+        return JsonResponse(obj)
+    else:
+        return HttpResponse('Denied')
+        
+        
