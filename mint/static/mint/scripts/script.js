@@ -169,6 +169,7 @@ function checkwalletbalance(project_id, csrf_token){
         $('.modal-body').text(`${thrownError}`)
         $('.modal').modal('show')
         $('button[type="submit"]').attr('disabled', false)
+        $('.spinner9').remove()
       }
 
     })
@@ -292,7 +293,11 @@ function completeForm(e){
       if (isEthereum){
         $('.spinner9').remove()
         //submit(project_id_g, csrf_token_g) 
-        checkwalletbalance(project_id_g, csrf_token_g)
+        if (least_balance_g != 0){
+          checkwalletbalance(project_id_g, csrf_token_g)
+        }else {
+          submit(project_id_g, csrf_token_g)
+        }
       } else {
         $('#eth').removeClass('is-valid')
         $('#eth').addClass('is-invalid')
@@ -309,7 +314,11 @@ function completeForm(e){
       if (isSolana){
         $('.spinner9').remove()
         //submit(project_id_g, csrf_token_g)
-        checkwalletbalance(project_id_g, csrf_token_g)
+        if (least_balance_g != 0){
+          checkwalletbalance(project_id_g, csrf_token_g)
+        }else {
+          submit(project_id_g, csrf_token_g)
+        }
       } else {
         $('#sol').removeClass('is-valid')
         $('#sol').addClass('is-invalid')
