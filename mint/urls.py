@@ -39,6 +39,7 @@ urlpatterns = [
     path('checkcomment/<uuid:project_id>', views.checkcomment, name='checkcomment'),
     path('checkfollowers/<uuid:project_id>', views.checkfollowers, name='checkfollowers'),
     path('checkmonths/<uuid:project_id>', views.checkmonths, name='checkmonths'),
+    path('checkwalletbalance/<uuid:project_id>', views.checkwalletbalance, name='checkwalletbalance'),
     path('success', views.success, name='success'),
 ]
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

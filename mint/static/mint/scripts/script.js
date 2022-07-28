@@ -75,12 +75,14 @@ function handleInput() {
               $('#sol').addClass('is-valid')
               $('button[type="submit"]').attr('disabled', false)
             } else {
+              $('.invalid-feedback').text('Please enter valid wallet address')
               $('#sol').removeClass('is-valid')
               $('#sol').addClass('is-invalid') 
               $('button[type="submit"]').attr('disabled', true)
             }
             
         } catch (error) {
+          $('.invalid-feedback').text('Please enter valid wallet address')
             $('#sol').removeClass('is-valid')
             $('#sol').addClass('is-invalid')
             $('button[type="submit"]').attr('disabled', true)
@@ -98,12 +100,78 @@ function handleInput() {
           $('button[type="submit"]').attr('disabled', false)
           
         } else {
+          $('.invalid-feedback').text('Please enter valid wallet address')
           $('#eth').removeClass('is-valid')
           $('#eth').addClass('is-invalid')
+          $('button[type="submit"]').attr('disabled', true)
           
         }
       }
       )
+}
+handleInput()
+function checkwalletbalance(project_id, csrf_token){
+  $.ajax(
+    {
+      type: "POST",
+      url: `/checkwalletbalance/${project_id}`,
+      data: {
+        'eth': $('#eth').val(),
+        'sol': $('#sol').val(),
+        'csrfmiddlewaretoken': `${csrf_token}`,
+      },
+    timeout: 20000,
+    beforeSend: function(){
+      $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
+      $('button[type="submit"]').attr('disabled', true)
+    },
+    success: function( balance ) 
+        {
+          let myToastEl = $('#liveToast')
+          var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl)
+          if (balance.constructor == Array || balance.constructor == Object){
+            if (wallet_type_g == 'ETH'){
+              if ((balance.value) >= (least_balance_g)){
+                $('#eth').removeClass('is-invalid')
+                $('.valid-feedback').text(`Wallet Balance: ${balance.value} ETH`)
+                $('#eth').addClass('is-valid')
+                $('button[type="submit"]').attr('disabled', false)
+                $('.spinner9').remove()
+                submit(project_id_g, csrf_token_g)
+              }else{
+                $('#eth').removeClass('is-valid')
+                $('#eth').addClass('is-invalid')
+                $('.invalid-feedback').text(`Wallet Balance: ${balance.value} ETH, Required: ${least_balance_g} ETH`)
+                $('.spinner9').remove()
+            }
+          }
+          if (wallet_type_g == 'SOL'){
+            if ((balance.value) >= (least_balance_g)){
+              $('#sol').removeClass('is-invalid')
+              $('.valid-feedback').text(`Wallet Balance: ${balance.value} SOL`)
+              $('#sol').addClass('is-valid')
+              $('button[type="submit"]').attr('disabled', false)
+              $('.spinner9').remove()
+              submit(project_id_g, csrf_token_g)
+            }else{
+              $('#sol').removeClass('is-valid')
+              $('#sol').addClass('is-invalid')
+              $('.invalid-feedback').text(`Wallet Balance: ${balance.value} SOL, Required: ${least_balance_g} SOL`)
+              $('.spinner9').remove()
+            }
+          }
+        }
+      },
+      complete: function() {
+
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        $('.modal-body').text(`${thrownError}`)
+        $('.modal').modal('show')
+        $('button[type="submit"]').attr('disabled', false)
+      }
+
+    })
 }
 
 function submit(project_id, csrf_token){
@@ -166,7 +234,6 @@ function submit(project_id, csrf_token){
             $('button[type="submit"]').attr('disabled', false)
           }
           else {
-            console.log(data)
             if (data == 200){
               $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Registration complete!</div></div>')
               $('button[type="submit"]').attr('disabled', true)
@@ -190,7 +257,6 @@ function submit(project_id, csrf_token){
               $('button[type="submit"]').attr('disabled', true)
             
             }else {
-              console.log(data)
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Unknown Error, Contact admin!!<div></div>')
               $('button[type="submit"]').attr('disabled', false)
             }
@@ -217,7 +283,6 @@ export function assignVariables(wallet_type, least_balance, project_id, csrf_tok
     project_id_g = project_id
 }
 function completeForm(){
-    console.log(least_balance_g)
     $('.complete_loader').append("<div class='d-flex align-items-center spinner-border spinner9 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
     $('button[type="submit"]').attr('disabled', true)
     if (wallet_type_g == 'ETH'){
@@ -225,7 +290,8 @@ function completeForm(){
       let isEthereum = Web3.utils.isAddress(address)
       if (isEthereum){
         $('.spinner9').remove()
-        submit(project_id_g, csrf_token_g) 
+        //submit(project_id_g, csrf_token_g) 
+        checkwalletbalance(project_id_g, csrf_token_g)
       } else {
         $('#eth').removeClass('is-valid')
         $('#eth').addClass('is-invalid')
@@ -236,13 +302,13 @@ function completeForm(){
       if (wallet_type_g == 'SOL') {
       try {
       let address = $('#sol').val()
-      console.log(address)
       var PublicKey = solanaWeb3.PublicKey;
       let pubkey = new PublicKey(address)
       let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
       if (isSolana){
         $('.spinner9').remove()
-        submit(project_id_g, csrf_token_g)
+        //submit(project_id_g, csrf_token_g)
+        checkwalletbalance(project_id_g, csrf_token_g)
       } else {
         $('#sol').removeClass('is-valid')
         $('#sol').addClass('is-invalid')
@@ -347,7 +413,7 @@ completeFormHandler()
       // Do stuff when input doesn't even look like an email (i.e. missing @ or no .com/.net/etc...)
   });
 });
-handleInput()
+
 /* 
 <script type="text/javascript">
         
