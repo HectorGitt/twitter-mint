@@ -3,6 +3,7 @@ from twitter_api.twitter_api import TwitterAPI
 from .models import TwitterUser
 
 
+#create a user o
 def create_update_user_from_twitter(twitter_user_new):
     twitter_user = TwitterUser.objects.filter(twitter_id=twitter_user_new.twitter_id).first()
     if twitter_user is None:

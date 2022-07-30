@@ -21,7 +21,7 @@ from . import views
 
 from .views import ProjectListView
 
-
+#url patterns
 urlpatterns = [
     path('', views.home, name='home'),
     path('projects/<int:page>/', ProjectListView.as_view(), name='projects'),
@@ -42,5 +42,9 @@ urlpatterns = [
     path('checkwalletbalance/<uuid:project_id>', views.checkwalletbalance, name='checkwalletbalance'),
     path('success', views.success, name='success'),
 ]
+
+#added media upload root directory to url paths
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+#added static files root directory to url paths
 urlpatterns += staticfiles_urlpatterns()

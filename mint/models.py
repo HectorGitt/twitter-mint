@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 import json
 import requests
-from django.utils import timezone
+import datetime
 # Create your models here.
 
 class TwitterAuthToken(models.Model):
@@ -13,8 +13,6 @@ class TwitterAuthToken(models.Model):
 
     def __str__(self):
         return self.oauth_token
-
-
 
 class Project(models.Model):
     NONE = 'NIL'
@@ -71,15 +69,20 @@ class Project(models.Model):
         if (self.twitter_retweet) == (self.twitter_tweet_link is not None):
             pass
         else: count += 1
-        print(count)
         if count == 3 :
             raise ValidationError('Twitter link is required if tweets actions is/are checked.')
         if (self.twitter_followers) != (self.twitter_least_followers is not None):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
-        if (self.project_end_date is None):
-            self.project_end_date = timezone.now() + timezone.timedelta(hours=self.end_hours)
+        if (self.project_end_date is None and self.end_hours != 0):
+            self.project_end_date = datetime.datetime.now() + timezone.timedelta(hours=self.end_hours)
+            self.end_hours = 0
+        elif (self.end_hours != 0 and self.project_end_date is not None):
+            self.project_end_date = self.project_end_date + timezone.timedelta(hours=self.end_hours)
+            self.end_hours = 0
+        else:
+            self.end_hours = 0
     def __str__(self):
         return str(self.project_name)
     
