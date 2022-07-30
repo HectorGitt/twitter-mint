@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 import json
 import requests
-from django.utils import timezone
+import datetime
 # Create your models here.
 
 class TwitterAuthToken(models.Model):
@@ -13,8 +13,6 @@ class TwitterAuthToken(models.Model):
 
     def __str__(self):
         return self.oauth_token
-
-
 
 class Project(models.Model):
     NONE = 'NIL'
@@ -79,7 +77,7 @@ class Project(models.Model):
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
         if (self.project_end_date is None):
-            self.project_end_date = timezone.now() + timezone.timedelta(hours=self.end_hours)
+            self.project_end_date = datetime.datetime.now() + timezone.timedelta(hours=self.end_hours)
     def __str__(self):
         return str(self.project_name)
     
