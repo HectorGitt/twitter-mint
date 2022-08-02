@@ -99,8 +99,8 @@ class TwitterAPI:
         Check if user is following another twitter user
 
         Args:
-            access_token (_type_): _users_token_
-            access_token_secret (_type_): _users_token_secret_
+            access_token (_str_): _users_token_
+            access_token_secret (_str_): _users_token_secret_
             screen_name (_str_): _twitter_account_screen_name_to_check_if_user has followed_
 
         Returns:
@@ -123,8 +123,8 @@ class TwitterAPI:
         Check if tweet is retweeted by user
 
         Args:
-            access_token (_type_): _users_token_
-            access_token_secret (_type_): _users_token_secret_
+            access_token (_str_): _users_token_
+            access_token_secret (_str_): _users_token_secret_
             retweet_id (_int_): _tweet id of the tweet to be checked_
 
         Returns:
@@ -149,7 +149,7 @@ class TwitterAPI:
         Args:
             access_token (_str_): _users_token_
             access_token_secret (_str_): _users_token_secret_
-            tweet_id (_int_): _description_
+            tweet_id (_int_): _tweet id of the tweet to be checked_
 
         Returns:
              _Boolean_: _If user has commented on the tweet_
@@ -163,8 +163,11 @@ class TwitterAPI:
             api = tweepy.API(auth, wait_on_rate_limit=True)
             user = api.verify_credentials().screen_name
             tweet = api.get_status(tweet_id)
+            
+            #get 9 most recent status from users timeline
             timeline = api.user_timeline(since_id=tweet_id, count=9)
             for status in timeline:
+                #check if status is a reply to project tweet   
                 if status.in_reply_to_status_id == tweet_id and status.user.screen_name == user:
                     return True
             return False
@@ -172,6 +175,22 @@ class TwitterAPI:
             print(e)
             return False
     def check_followers(self, access_token, access_token_secret, min_follow):
+        """_summary_:
+        Check if user meets minimum followers requirement
+
+        Args:
+            access_token (_str_): _users_token_
+            access_token_secret (_str_): _users_token_secret_
+            min_follow (_int_): _minimum followers requirement for project_
+
+        Returns:
+             _Boolean_: _If user met minimum follower requirement_
+             _int_: _number of followers_
+            
+        Exception:
+            _Boolean_: _return False_
+            _None_: _return None
+        """
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(access_token, access_token_secret)
@@ -185,6 +204,22 @@ class TwitterAPI:
             print(e)
             return False, None
     def check_created_at(self, access_token, access_token_secret, min_month):
+        """_summary_:
+        Check if user meets minimum creation period requirement
+
+        Args:
+            access_token (_str_): _users_token_
+            access_token_secret (_str_): _users_token_secret_
+            min_month (_int_): _minimum creation year/month requirement for project_
+
+        Returns:
+             _Boolean_: _If user met minimum creation period requirement_
+             _int_: _account age in months_
+            
+        Exception:
+            _Boolean_: _return False_
+            _None_: _return None
+        """
         try:
             auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(access_token, access_token_secret)
