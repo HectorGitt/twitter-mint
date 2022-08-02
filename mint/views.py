@@ -14,6 +14,7 @@ from decouple import config
 from .models import Project
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter
+from django.utils import timezone
 
 
 # Create your views here.
@@ -61,7 +62,11 @@ def project(request, project_id):
         estimated += 4
     if project.wallet_type == 'SOL' or project.wallet_type == 'ETH':
         estimated += 4
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated})
+    if project.project_end_date > timezone.now():
+        status = True
+    else:
+        status = False
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status})
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('home')
