@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse, Http404, HttpResponseForbidd
 from django.core.exceptions import ValidationError
 from django.views.generic.list import ListView
 from twitter_api.twitter_api import TwitterAPI
-from web3api.web3api import Web3
+from web3api.web3api import Web3api
 from web3.exceptions import InvalidAddress
 from solana.rpc.api import Client
 from solana.publickey import PublicKey
@@ -158,7 +158,7 @@ def verify(request, project_id):
                 if form_email != twitter_user.email:
                     twitter_user.email = str(form_email)
                 if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
-                    web3 = Web3()
+                    web3 = Web3api()
                     try:
                         balance = web3.web3eth_balance(str(eth))
                     except InvalidAddress:
@@ -341,7 +341,7 @@ def checkwalletbalance(request,project_id):
         if eth is not None and twitter_user.eth_wallet_id != eth:
             twitter_user.eth_wallet_id = str(eth)
         if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
-            web3 = Web3()
+            web3 = Web3api()
             try:
                 ui_balance = web3.web3eth_balance(str(eth))
             except InvalidAddress:
