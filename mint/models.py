@@ -74,13 +74,11 @@ class Project(models.Model):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
-        if (self.project_end_date is None and self.end_hours != 0):
+        if (self.end_hours != 0):
             self.project_end_date = timezone.now() + timezone.timedelta(hours=self.end_hours)
             self.end_hours = 0
-        elif (self.end_hours != 0 and self.project_end_date is not None):
-            self.project_end_date = self.project_end_date + timedelta(hours=self.end_hours)
-            self.end_hours = 0
         else:
+            self.project_end_date = timezone.now()
             self.end_hours = 0
     def __str__(self):
         return str(self.project_name)

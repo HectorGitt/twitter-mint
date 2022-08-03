@@ -10,7 +10,7 @@
 {% block content %}
 <div class='top-image-cont'><div 
 	style='
-	background-image: url({% static "mint/images/giveaway.jpg" %});
+	background-image: url("{{context.project_image.url}}");
 	height: 100%;
 	background-position: center;
 	background-repeat: no-repeat;
