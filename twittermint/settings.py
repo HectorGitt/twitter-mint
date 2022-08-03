@@ -28,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['twitter-mint.dreamhosters.com', 'www.twitter-mint.dreamhosters.com']
 
 
 # Application definition
@@ -87,16 +87,16 @@ DATABASES = {
 
     'default': {
 
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
 
-        'NAME': config('NAME'),
+        'NAME': config('DB_NAME'),
 
-        'USER': config('USER'),
+        'USER': config('DB_USER'),
 
-        'PASSWORD': config('PASSWORD'),
+        'PASSWORD': config('DB_PASSWORD'),
 
-        'HOST': config('HOST'),
-        'PORT': config('PORT', cast=int),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', cast=int),
 
     }
 
@@ -165,15 +165,15 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-django_heroku.settings(locals())
+STATIC_ROOT = '/home/dh_jae2ua/twitter-mint.dreamhosters.com/public/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL='media/uploads/'
+MEDIA_ROOT='/home/dh_jae2ua/twitter-mint.dreamhosters.com/public/'
+MEDIA_URL=''
 
 #EMAIL SETTINGS
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
