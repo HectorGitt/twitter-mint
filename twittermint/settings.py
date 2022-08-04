@@ -28,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['twitter-mint.dreamhosters.com', 'www.twitter-mint.dreamhosters.com']
+ALLOWED_HOSTS = [config('ALLOWED_HOST1'), config('ALLOWED_HOST2')]
 
 
 # Application definition
@@ -172,7 +172,7 @@ STATIC_ROOT = '/home/dh_jae2ua/twitter-mint.dreamhosters.com/public/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT='/home/dh_jae2ua/twitter-mint.dreamhosters.com/public/'
+MEDIA_ROOT=config('MEDIA_ROOT')
 MEDIA_URL=''
 
 #EMAIL SETTINGS
