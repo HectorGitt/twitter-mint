@@ -44,7 +44,7 @@ urlpatterns = [
 ]
 
 #added media upload root directory to url paths
-#urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 #added static files root directory to url paths
 urlpatterns += staticfiles_urlpatterns()
