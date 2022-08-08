@@ -160,7 +160,17 @@ function checkwalletbalance(project_id, csrf_token){
               $('.spinner9').remove()
             }
           }
+        } else{
+            if (balance == 501) {
+                $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Wallet Address!!!<div></div>')
+                $('button[type="submit"]').attr('disabled', true)
+                $('.spinner9').remove()
+            }
         }
+        myToast.show()
+        setTimeout(function () {
+        $('.toast-body').empty();
+        }, 6000)
       },
       complete: function() {
 
