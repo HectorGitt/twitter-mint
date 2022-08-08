@@ -150,7 +150,7 @@
                         <label for="email" class="form-label">Email address</label>
                         <div class="input-group">
                         <span class="input-group-text" id="basic-addon1"><i class="fa-regular fa-envelope"></i></span>
-                        <input maxlength='50' minlength='6' value="{{twitter_user.email}}" required pattern='.{6,}' type="email" class="form-control" id="email" name='email' aria-describedby="emailHelp">
+                        <input maxlength='50' minlength='6' {%if status is False%}disabled{%endif%} value="{%if twitter_user.email is not None%}{{twitter_user.email}}{%endif%}" required pattern='.{6,}' type="email" class="form-control" id="email" name='email' aria-describedby="emailHelp">
                         </div>
                         <div id="emailHelp" class="form-text">This email will be used to contact you when you win.</div>
                         
@@ -159,8 +159,8 @@
                         <label for="eth" class="form-label">Wallet address(ETH)</label>
                         <div class="input-group">
                           <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-wallet"></i></span>
-                          <input required pattern='.{5,}'
-                           maxlength='42' minlength='40' type="text" value="{{twitter_user.eth_wallet_id}}" class="form-control" id="eth" name='eth'>
+                          <input required pattern='.{5,}' {%if status is False%}disabled{%endif%}
+                           maxlength='42' minlength='40' type="text" value="{%if twitter_user.eth_wallet_id is not None%}{{twitter_user.eth_wallet_id}}{%endif%}" class="form-control" id="eth" name='eth'>
                         <div class="valid-feedback">
                           Looks good!
                         </div>
@@ -175,7 +175,7 @@
                         <label for="sol" class="form-label">Wallet address(SOL)</label>
                         <div class="input-group">
                           <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-wallet"></i></span>
-                          <input maxlength='44' minlength='32' type="text" pattern='.{5,}' required value="{{twitter_user.sol_wallet_id}}" class="form-control" id="sol" name='sol'>
+                          <input maxlength='44' minlength='32' {%if status is False%}disabled{%endif%} type="text" pattern='.{5,}' required value="{%if twitter_user.eth_wallet_id is not None%}{{twitter_user.eth_wallet_id}}{%endif%}" class="form-control" id="sol" name='sol'>
                         <div class="invalid-feedback">
                           Please enter valid wallet id.
                         </div>
