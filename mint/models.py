@@ -58,25 +58,36 @@ class Project(models.Model):
             raise ValidationError('Twitter follow link is required if twitter follow is checked.')
         count = 0
         
-        #Check If at least twitter action match the link
-        if (self.twitter_like) == (self.twitter_tweet_link is not None):
-            pass
-        else: count += 1    
-        if (self.twitter_comment) == (self.twitter_tweet_link is not None):
-                pass
-        else: count += 1
-        if (self.twitter_retweet) == (self.twitter_tweet_link is not None):
-            pass
-        else: count += 1
-        if count == 3 :
-            raise ValidationError('Twitter link is required if tweets actions is/are checked.')
+        if (self.twitter_tweet_link is not None):
+            #Check If at least twitter action match the link
+            if (self.twitter_like is False):
+                count += 1    
+            if (self.twitter_comment is False):
+                count += 1
+            if (self.twitter_retweet is False):
+                count += 1
+            if count == 3 :
+                raise ValidationError('Twitter action is required if tweets link is checked.')
+        else:
+            if (self.twitter_like or self.twitter_comment or self.twitter_retweet):
+                raise ValidationError('Twitter link is required if tweets actions is/are checked.')
         if (self.twitter_followers) != (self.twitter_least_followers is not None):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
-        if (self.end_hours != 0):
+        #when saving for the first time
+        if (self.end_hours != 0 and self.project_end_date is None):
             self.project_end_date = timezone.now() + timezone.timedelta(hours=self.end_hours)
             self.end_hours = 0
+        #when updating the project and end date is set
+        elif (self.project_end_date is not None and self.end_hours != 0):
+            self.project_end_date = self.project_end_date + timezone.timedelta(hours=self.end_hours)
+            self.end_hours = 0
+        
+        #when updating the project and end date is not set
+        elif (self.project_end_date is not None and self.end_hours == 0):
+            pass
+        #when saving the project for first end date is not set
         else:
             self.project_end_date = timezone.now()
             self.end_hours = 0
