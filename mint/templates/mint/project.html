@@ -168,8 +168,6 @@
                           Please enter valid wallet id.
                         </div>
                         </div>
-                        
-                        
                         {% endif %}
                         {% if context.wallet_type == 'SOL' %}
                         <label for="sol" class="form-label">Wallet address(SOL)</label>
@@ -308,6 +306,7 @@
         {% endif %}
         }, 1000)
       });
+      {% if status %}
       $(window).focus(function(){
         {% if context.twitter_follow %}
           handleAjax('checkfollow', 'spinner1', `{{context.project_id}}`)
@@ -328,6 +327,7 @@
           handleAjax('checkmonths', 'spinner6', `{{context.project_id}}`)
         {% endif %}
       });
+      {% endif %}
   </script>
  
   {% endif %}
