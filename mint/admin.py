@@ -96,10 +96,11 @@ class TwitterUserAdmin(admin.ModelAdmin):
             for i in pks:
                 winner = TwitterUser.objects.filter(twitter_id=i).first()
                 project.winners.add(winner)
-                subject = str(email.subject).replace('{{name}}', winner.name)
-                subject = subject.replace('{{project_name}}', project.project_name)
-                print(project, projects, winner.name, email)
-                #html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
+                if email is not None:
+                    subject = str(email.subject).replace('{{name}}', winner.name)
+                    subject = subject.replace('{{project_name}}', project.project_name)
+                    print(project, projects, winner.name, email)
+                    #html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
                 html_message = 'Congratulations ' + winner.name +' you have been selected for the Project ' + str(project.project_name)
                 plain_message = 'strip_tags(html_message)'
                 from_email = 'adeniyi.olaitanhector@yahoo.com'
