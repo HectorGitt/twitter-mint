@@ -99,22 +99,30 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 if email is not None:
                     subject = str(email.subject).replace('{{name}}', winner.name)
                     subject = subject.replace('{{project_name}}', project.project_name)
-                    print(project, projects, winner.name, email)
                     #html_message = render_to_string('mail_template.html', {'project': project, 'projects': projects,'name': winner.name, 'email':email})
-                html_message = 'Congratulations ' + winner.name +' you have been selected for the Project ' + str(project.project_name)
-                plain_message = 'strip_tags(html_message)'
-                from_email = 'adeniyi.olaitanhector@yahoo.com'
-                to = winner.email
-                send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
-                users_list += winner.screen_name + ','
-            project.status = False
-            project.save()
-            self.message_user(request, ngettext(
+                    html_message = 'Congratulations ' + winner.name +' you have been selected for the Project ' + str(project.project_name)
+                    plain_message = 'strip_tags(html_message)'
+                    from_email = 'adeniyi.olaitanhector@yahoo.com'
+                    to = winner.email
+                    if to is None:
+                        self.message_user(request, f'user {winner.screen_name} has no email specified', messages.ERROR)
+                    else:
+                        send_html_mail(subject,from_email,plain_message, [to], html_message=html_message, fail_silently=True, reply_to=from_email)
+                    users_list += winner.screen_name + ','
+                    
+                else:
+                    users_list += winner.screen_name + ','
+            if email is None:
+                self.message_user(request, f'No email message created, Reselect winners {users_list} to deliver email', messages.ERROR)  
+            else:
+                project.status = False
+                project.save()
+                self.message_user(request, ngettext(
                 '%d %s user was successfully picked as a winner for the project.',
                 '%d %s users were successfully picked as winners for the project..',
-                len(pks) ,
-            ) % (len(pks), action) , messages.SUCCESS)
-            self.message_user(request, users_list, messages.SUCCESS)
+                len(pks) ,) % (len(pks), action) , messages.SUCCESS)
+                self.message_user(request, users_list, messages.SUCCESS)
+            
         else:
             self.message_user(request, 'This project has already ended', messages.ERROR)    
     @admin.action(description='Generate Random Winner(s)')
