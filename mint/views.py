@@ -209,8 +209,11 @@ def comfirm(request, project_id):
                 like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
             else: like_state = None
             if project.twitter_comment:
-                comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
-            else: comment_state = None
+                mention_count = project.twitter_mention_count
+                comment_state, mention_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id, mention_count)
+            else: 
+                comment_state = None
+                mention_state = None
             if project.twitter_retweet:
                 retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
             else: retweet_state = None
@@ -233,13 +236,13 @@ def comfirm(request, project_id):
                     return True
                 else: return False
             #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
-            if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) :
+            if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) and check_none_true(mention_state):
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
                 data = 200
                 return HttpResponse(data)
             else:
-                context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state}
+                context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state}
                 return JsonResponse(context)
             
     except AttributeError as e:
@@ -256,7 +259,8 @@ def checkfollow(request, project_id):
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, username)
-        return HttpResponse(follow_state)
+        data = {'result': follow_state}
+        return JsonResponse(data)
     else: 
         return HttpResponse('')
 def checklike(request, project_id):
@@ -270,7 +274,8 @@ def checklike(request, project_id):
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
-        return HttpResponse(like_state)
+        data = {'result': like_state}
+        return JsonResponse(data)
     else: 
         return HttpResponse('')
      
@@ -284,20 +289,23 @@ def checkretweet(request, project_id):
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
-        return HttpResponse(retweet_state)
+        data = {'result': retweet_state}
+        return JsonResponse(retweet_state)
     else: 
         return HttpResponse('')
 def checkcomment(request, project_id):
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
-        
-        tweet_id = Project.objects.filter(project_id=project_id).first().twitter_tweet_id
+        project = Project.objects.filter(project_id=project_id).first()
+        tweet_id = project.twitter_tweet_id
         twitter_api = TwitterAPI()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
-        comment_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id)
-        return HttpResponse(comment_state)
+        mention_count = project.twitter_mention_count
+        comment_state, mention_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id, mention_count)
+        data = {'result': comment_state, 'mention_state': mention_state}
+        return JsonResponse(data)
     else: 
         return HttpResponse('')
     
@@ -311,7 +319,8 @@ def checkfollowers(request, project_id):
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         followers_state, followers_value = twitter_api.check_followers(oauth_token, oauth_token_secret, min_followers )
         twitter_user.followers = followers_value
-        return HttpResponse(followers_state)
+        data = {'result': followers_state}
+        return JsonResponse(data)
     else: 
         return HttpResponse('')
 def checkmonths(request, project_id):
@@ -324,7 +333,8 @@ def checkmonths(request, project_id):
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         months_state, months_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, min_months)
         twitter_user.account_months = months_value
-        return HttpResponse(months_state)
+        data = {'result': months_state}
+        return JsonResponse(data)
     else: 
         return HttpResponse('')
 def success(request):
