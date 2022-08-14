@@ -25,7 +25,6 @@ export function handleAjax(classNameVal, spinnerVal, project_id,mentions) {
         },
         success: function( data ) 
         {
-          console.log(data)
             if ((data.result === true) && !($(`.${classNameVal} .fa-circle-check`).length)) {
             $(`.${classNameVal} .fa-circle-exclamation`).remove()
             $(`.${classNameVal}`).append("<i class='fa-solid text-success fa-circle-check'></i>")
