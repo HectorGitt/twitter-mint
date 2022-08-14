@@ -290,7 +290,7 @@ def checkretweet(request, project_id):
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
         data = {'result': retweet_state}
-        return JsonResponse(retweet_state)
+        return JsonResponse(data)
     else: 
         return HttpResponse('')
 def checkcomment(request, project_id):
