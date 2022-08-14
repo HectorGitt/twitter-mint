@@ -14,6 +14,10 @@ class TwitterAuthToken(models.Model):
         return self.oauth_token
 
 class Project(models.Model):
+    ZERO = 0
+    ONE = 1
+    TWO = 2
+    THREE = 3
     NONE = 'NIL'
     ETHEREUM = 'ETH'
     SOLANA = 'SOL'
@@ -24,6 +28,7 @@ class Project(models.Model):
     OPTION4 = 1.0
     WALLET_TYPE = [(NONE, 'Nil'), (ETHEREUM, 'Ethereum'), (SOLANA, 'Solana')]
     WALLET_BALANCE = [(OPTION0, '0'),(OPTION1, '0.2'), (OPTION2, '0.5'),(OPTION3, '0.7'), (OPTION4, '1.0')]
+    TWITTER_MENTION = [(ZERO, '0'),(ONE, '1'), (TWO, '2'), (THREE, '3')]
     project_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
@@ -41,6 +46,7 @@ class Project(models.Model):
     twitter_like = models.BooleanField(default=False)
     twitter_retweet = models.BooleanField(default=False)
     twitter_comment = models.BooleanField(default=False)
+    twitter_mention_count = models.IntegerField(choices=TWITTER_MENTION, default=OPTION0)
     twitter_embed_html = models.TextField(editable=False,null=True, blank=True)
     twitter_account_created = models.BooleanField(default=False)
     twitter_account_months = models.PositiveIntegerField(default=None, null=True, blank=True)
@@ -75,6 +81,9 @@ class Project(models.Model):
             raise ValidationError('Twitter minimum follower values is required if twitter followers is checked.')
         if (self.twitter_account_created) != (self.twitter_account_months is not None):
             raise ValidationError('Twitter minumum account created years is required if twitter account created is checked.')
+        #raise validation error when mention count is greater than 0 but comment not required
+        if (self.twitter_mention_count) > 0 and (self.twitter_comment is False):
+            raise ValidationError('Twitter comment action is required if twitter mention count is checked.')
         #when saving for the first time
         if (self.end_hours != 0 and self.project_end_date is None):
             self.project_end_date = timezone.now() + timezone.timedelta(hours=self.end_hours)
