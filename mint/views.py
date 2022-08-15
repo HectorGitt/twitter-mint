@@ -205,7 +205,9 @@ def comfirm(request, project_id):
         elif not project.status:
             return HttpResponse('Nice try..... Project Ended!!!')
         else:
-            if project.twitter_like:
+            data = twitter_api.process(oauth_token, oauth_token_secret,project)
+            return JsonResponse(data)
+            ''' if project.twitter_like:
                 like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
             else: like_state = None
             if project.twitter_comment:
@@ -243,7 +245,7 @@ def comfirm(request, project_id):
                 return HttpResponse(data)
             else:
                 context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state}
-                return JsonResponse(context)
+                return JsonResponse(context) '''
             
     except AttributeError as e:
         print(e)
