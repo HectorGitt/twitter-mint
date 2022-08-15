@@ -282,9 +282,13 @@ class TwitterAPI:
         else: follow_state = None
         if project.twitter_account_created:
             month_state, month_value = self.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_months)
-        else: month_state = None
+        else:
+            month_state = None
+            month_value = None
         if project.twitter_followers:
             followers_state, followers_value = self.check_followers(oauth_token, oauth_token_secret, project.twitter_least_followers)
-        else: followers_state = None
-        context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state}
+        else: 
+            followers_state = None
+            followers_value = None
+        context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state,'followers_value': followers_value,'month_value': month_value}
         return context
