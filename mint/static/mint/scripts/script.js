@@ -17,6 +17,7 @@ export function handleAjax(project_id,mentions) {
     {
         type:"GET",
         url: `/project/${project_id}/check`,
+        cache:false,
         timeout: 20000,
         beforeSend: function(){
             //
@@ -138,6 +139,7 @@ function checkwalletbalance(project_id, csrf_token){
     {
       type: "POST",
       url: `/checkwalletbalance/${project_id}`,
+      cache:false,
       data: {
         'eth': $('#eth').val(),
         'sol': $('#sol').val(),
@@ -215,6 +217,7 @@ function submit(project_id, csrf_token){
       {
         type:"POST",
         url: `/project/${project_id}/verify`,
+        cache:false,
         data: {
           'email': $('#email').val(),
           'eth': $('#eth').val(),
