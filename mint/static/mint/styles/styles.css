@@ -28,6 +28,9 @@ body {
     margin: 2px 0;
     padding: 2px 0;
 }
+.checkfollow p {
+    width: 85%;
+}
 @media screen and (max-width: 1200px) {
     .input-group div{
         width: 80%;
