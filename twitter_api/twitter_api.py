@@ -273,11 +273,12 @@ class TwitterAPI:
         if project.twitter_follow:
             screen_names = project.twitter_follow_username.split(',')
             follow_states = {}
+            follow_state = True
             for screen_name in screen_names:
-                follow_state = self.check_follow(oauth_token, oauth_token_secret, screen_name)
-                follow_states[screen_name] = follow_state
-            
-            
+                state = self.check_follow(oauth_token, oauth_token_secret, screen_name)
+                follow_states[screen_name] = state
+                if state == False:
+                    follow_state = False
         else: follow_state = None
         if project.twitter_account_created:
             month_state, month_value = self.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_months)
