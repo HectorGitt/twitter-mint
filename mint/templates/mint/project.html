@@ -74,24 +74,24 @@
                         <span class='col-4 text-end'>{{ user.username }}</span>
                         
                         {% else %}
-						<p><i class="fa-solid fa-circle-dot text-primary"></i><span class='mx-2'>Connect Twitter</span></p>
+						            <p><i class="fa-solid fa-circle-dot text-primary"></i><span class='mx-2'>Connect Twitter</span></p>
                         <a href="/connect_twitter?next={{request.path}}" class="btn rounded-pill btn-success">Connect</a>
                         {% endif %}
                       </div>
                     </ul>
 					
                     {% if context.twitter_follow %}
-                    	<div class='checkfollow my-0 d-flex justify-content-between'>
-							<p>
-								<i class="fa-brands fa-twitter text-primary"></i>
-								Follow
-								<a href="https://twitter.com/intent/follow?screen_name={{context.twitter_follow_username}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>{{context.twitter_follow_username}}</a>
-							</p>					
-                        </div>
+                    	<div class='action checkfollow my-0 d-flex justify-content-between'>
+                        <p>
+                          <i class="fa-brands fa-twitter text-primary"></i>
+                          Follow
+                          <a href="https://twitter.com/intent/follow?screen_name={{context.twitter_follow_username}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>{{context.twitter_follow_username}}</a>
+                        </p>					
+                      </div>
 
                     {% endif %}
                     {% if context.twitter_like %}
-					<div class='checklike d-flex justify-content-between'>
+					<div class='action checklike d-flex justify-content-between'>
 						<p>
 							<i class="fa-brands fa-twitter text-primary"></i>
 							Like
@@ -100,7 +100,7 @@
 					</div>
                     {% endif %}
                     {% if context.twitter_retweet %}
-						<div class='checkretweet d-flex justify-content-between'>
+						<div class='action checkretweet d-flex justify-content-between'>
 							<p>
 								<i class="fa-brands fa-twitter text-primary"></i>
 								Retweet
@@ -109,7 +109,7 @@
 						</div>
                     {% endif %}
                     {% if context.twitter_comment %}
-						<div class='checkcomment d-flex justify-content-between'>
+						<div class='action checkcomment d-flex justify-content-between'>
 							<p>
 								<i class="fa-brands fa-twitter text-primary"></i>
 								Comment on
@@ -117,7 +117,7 @@
 							</p>					
 						</div>
               {% if context.twitter_mention_count > 0 %} 
-              <div class='checkmention d-flex justify-content-between'>
+              <div class='action checkmention d-flex justify-content-between'>
               <p>
                 <i class="fa-brands fa-twitter text-primary"></i>
                 Mention {{context.twitter_mention_count}} twitter user(s)</p>
@@ -125,7 +125,7 @@
               {%endif%}
               {% endif %}
                     {% if context.twitter_followers %}
-						<div class='checkfollowers d-flex justify-content-between'>
+						<div class='action checkfollowers d-flex justify-content-between'>
 							<p >
 								<i class="fa-brands fa-twitter text-primary"></i>
 								Min Followers: 
@@ -135,7 +135,7 @@
                       	
                     {% endif %}
                     {% if context.twitter_account_created %}
-                    <div class='checkmonths d-flex justify-content-between'>
+                    <div class='action checkmonths d-flex justify-content-between'>
 						<p>
 						<i class="fa-brands fa-twitter text-primary"></i>
                           Account Creation least Month: {{context.twitter_account_months}}
@@ -293,56 +293,22 @@
     assignVariables(`{{context.wallet_type}}`, `{{context.least_wallet_balance}}`, `{{context.project_id}}`, `{{csrf_token}}`)
     $(document).ready(function(){
       setTimeout(function () {
-        {% if context.twitter_follow %}
-          handleAjax('checkfollow', 'spinner1', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_like %}
-          handleAjax('checklike', 'spinner2', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_retweet %}
-          handleAjax('checkretweet', 'spinner3', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_comment %}
         {% if context.twitter_mention_count > 0 %}
-          handleAjax('checkcomment', 'spinner4', `{{context.project_id}}`,true)
+          handleAjax(`{{context.project_id}}`,true)
         {%else%}
-        handleAjax('checkcomment', 'spinner4', `{{context.project_id}}`,false)
-        {% endif %}
-        {% endif %}
-        {% if context.twitter_followers %}
-          handleAjax('checkfollowers', 'spinner5', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_account_created %}
-          handleAjax('checkmonths', 'spinner6', `{{context.project_id}}`)
+          handleAjax(`{{context.project_id}}`,false)
         {% endif %}
         }, 1000)
       });
       {% if status %}
       $(window).focus(function(){
-        {% if context.twitter_follow %}
-          handleAjax('checkfollow', 'spinner1', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_like %}
-          handleAjax('checklike', 'spinner2', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_retweet %}
-          handleAjax('checkretweet', 'spinner3', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_comment %}
         {% if context.twitter_mention_count > 0 %}
-          handleAjax('checkcomment', 'spinner4', `{{context.project_id}}`,true)
+          handleAjax(`{{context.project_id}}`,true)
         {%else%}
-        handleAjax('checkcomment', 'spinner4', `{{context.project_id}}`,false)
+          handleAjax(`{{context.project_id}}`,false)
         {% endif %}
-        {% endif %}
-        {% if context.twitter_followers %}
-          handleAjax('checkfollowers', 'spinner5', `{{context.project_id}}`)
-        {% endif %}
-        {% if context.twitter_account_created %}
-          handleAjax('checkmonths', 'spinner6', `{{context.project_id}}`)
-        {% endif %}
-      });
-      {% endif %}
+      })
+      {%endif%}
   </script>
  
   {% endif %}

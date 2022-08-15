@@ -253,3 +253,42 @@ class TwitterAPI:
         except Exception as e:
             print(e)
             return False, None
+    def process(self,oauth_token,oauth_token_secret,project):
+        tweet_url = project.twitter_tweet_link
+        if tweet_url:
+            tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
+        else: tweet_id = None
+        if project.twitter_like:
+            like_state = self.check_like(oauth_token, oauth_token_secret, tweet_id)
+        else: like_state = None
+        if project.twitter_comment:
+            mention_count = project.twitter_mention_count
+            comment_state, mention_state = self.check_comment(oauth_token, oauth_token_secret, tweet_id, mention_count)
+        else: 
+            comment_state = None
+            mention_state = None
+        if project.twitter_retweet:
+            retweet_state = self.check_retweet(oauth_token, oauth_token_secret, tweet_id)
+        else: retweet_state = None
+        if project.twitter_follow:
+            screen_names = project.twitter_follow_username.split(',')
+            follow_states = {}
+            follow_state = True
+            for screen_name in screen_names:
+                state = self.check_follow(oauth_token, oauth_token_secret, screen_name)
+                follow_states[screen_name] = state
+                if state == False:
+                    follow_state = False
+        else: follow_state = None
+        if project.twitter_account_created:
+            month_state, month_value = self.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_months)
+        else:
+            month_state = None
+            month_value = None
+        if project.twitter_followers:
+            followers_state, followers_value = self.check_followers(oauth_token, oauth_token_secret, project.twitter_least_followers)
+        else: 
+            followers_state = None
+            followers_value = None
+        context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state,'followers_value': followers_value,'month_value': month_value}
+        return context
