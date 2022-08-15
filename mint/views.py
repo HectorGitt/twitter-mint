@@ -51,7 +51,7 @@ def project(request, project_id):
     else: tweet_id = None
     estimated = 0
     if project.twitter_follow:
-        follow_list = project.twitter_follow_username.split(',')
+        follow_list = project.twitter_follow_username.split()
         estimated += (2*len(follow_list))
     else: follow_list = []
     if project.twitter_like:

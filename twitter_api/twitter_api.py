@@ -271,7 +271,7 @@ class TwitterAPI:
             retweet_state = self.check_retweet(oauth_token, oauth_token_secret, tweet_id)
         else: retweet_state = None
         if project.twitter_follow:
-            screen_names = project.twitter_follow_username.split(',')
+            screen_names = project.twitter_follow_username.split()
             follow_states = {}
             follow_state = True
             for screen_name in screen_names:
