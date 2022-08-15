@@ -1,6 +1,7 @@
 import tweepy
 from decouple import config
 import datetime
+import re
 
 '''Twitter Oauth login handler'''
 
@@ -142,17 +143,19 @@ class TwitterAPI:
         except Exception as e:
             print(e)
             return False
-    def check_comment(self, access_token, access_token_secret, tweet_id):
+    def check_comment(self, access_token, access_token_secret, tweet_id, mention_count):
         """_summary_:
-        Check if tweet is commented by user
+        Check if tweet is commented by user and also if user mentions require number of account
 
         Args:
             access_token (_str_): _users_token_
             access_token_secret (_str_): _users_token_secret_
             tweet_id (_int_): _tweet id of the tweet to be checked_
+            mention_count(_int_): _number of required mentions_
 
         Returns:
              _Boolean_: _If user has commented on the tweet_
+             _Boolean_: _If user has mentioned required number of account_
             
         Exception:
             _Boolean_: _return False_
@@ -163,17 +166,33 @@ class TwitterAPI:
             api = tweepy.API(auth, wait_on_rate_limit=True)
             user = api.verify_credentials().screen_name
             tweet = api.get_status(tweet_id)
-            
+            comment = False
+            mention_state = False
             #get 9 most recent status from users timeline
             timeline = api.user_timeline(since_id=tweet_id, count=9)
             for status in timeline:
                 #check if status is a reply to project tweet   
                 if status.in_reply_to_status_id == tweet_id and status.user.screen_name == user:
-                    return True
-            return False
+                    comment = True
+                    #get all mentions in the tweet
+                    mentions = set(re.findall('[@]\w+', status.text))
+                    valid_mentions = 0
+                    if mention_count > 0:
+                        if len(mentions) > 0:
+                            for mention in mentions:
+                                screen_name = mention[1:]
+                                if status.in_reply_to_screen_name != screen_name and screen_name != user:
+                                    mentioned = api.get_user(screen_name=screen_name)
+                                    if mentioned.screen_name == screen_name:
+                                        valid_mentions += 1
+                        if valid_mentions >= mention_count:
+                            mention_state = True
+                    else: mention_state = None
+                    return comment,mention_state
+            return comment,mention_state
         except Exception as e:
             print(e)
-            return False
+            return False,False
     def check_followers(self, access_token, access_token_secret, min_follow):
         """_summary_:
         Check if user meets minimum followers requirement

@@ -9,7 +9,8 @@ var project_id_g;
 
 
 
-export function handleAjax(classNameVal, spinnerVal, project_id){
+export function handleAjax(classNameVal, spinnerVal, project_id,mentions) {
+    mentions = mentions || false;
     $.ajax(
     {
         type:"GET",
@@ -17,25 +18,38 @@ export function handleAjax(classNameVal, spinnerVal, project_id){
         timeout: 20000,
         beforeSend: function(){
             $(`.${classNameVal}`).append(`<div class='d-flex spinner-border ${spinnerVal} text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>`)
+            if (mentions == true){
+              $(`.checkmention`).append(`<div class='d-flex spinner-border spinner10 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>`)
+            }
             $(`.${classNameVal}`).attr('disabled', true)
         },
         success: function( data ) 
         {
-            
-            if ((data === 'True') && !($(`.${classNameVal} .fa-circle-check`).length)) {
+            if ((data.result === true) && !($(`.${classNameVal} .fa-circle-check`).length)) {
             $(`.${classNameVal} .fa-circle-exclamation`).remove()
             $(`.${classNameVal}`).append("<i class='fa-solid text-success fa-circle-check'></i>")
-            
             } 
-            
-            else if ((data === 'False') && !($(`.${classNameVal} .fa-circle-exclamation`).length)) {
+            else if ((data.result === false) && !($(`.${classNameVal} .fa-circle-exclamation`).length)) {
                 $(`.${classNameVal} .fa-circle-check`).remove()
                 $(`.${classNameVal}`).append("<i class='fa-solid text-danger fa-circle-exclamation'></i>")
+            }
+            if (mentions == true){
+              if ((data.mention_state === true) && !($(`.checkmention .fa-circle-check`).length)) {
+                $(`.checkmention .fa-circle-exclamation`).remove()
+                $(`.checkmention`).append("<i class='fa-solid text-success fa-circle-check'></i>")
+                } 
+                else if ((data.mention_state === false) && !($(`.checkmention .fa-circle-exclamation`).length)) {
+                    $(`.checkmention .fa-circle-check`).remove()
+                    $(`.checkmention`).append("<i class='fa-solid text-danger fa-circle-exclamation'></i>")
+                }
             }
             
         },
         complete: function() {
             $(`.${spinnerVal}`).remove()
+            if (mentions == true){
+              $(`.spinner10`).remove()
+            }
             
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -165,12 +179,14 @@ function checkwalletbalance(project_id, csrf_token){
                 $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>Invalid Wallet Address!!!<div></div>')
                 $('button[type="submit"]').attr('disabled', true)
                 $('.spinner9').remove()
+                myToast.show()
+                setTimeout(function () {
+                $('.toast-body').empty();
+                }, 6000)
             }
+            
         }
-        myToast.show()
-        setTimeout(function () {
-        $('.toast-body').empty();
-        }, 6000)
+        
       },
       complete: function() {
 
@@ -229,6 +245,11 @@ function submit(project_id, csrf_token){
             }
             else if (data.comment_state == false) {
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You didnt comment on the tweet!<div></div>')
+            }
+            if (data.mention_state == true){
+              $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You mentioned twitter user(s) on the tweet!</div></div>')
+            }else if (data.mention_state == false) {
+              $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You didnt mention enough account on this tweet!')
             }
             if (data.followers_state == true){
               $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>You have the minimum number of followers!</div></div>')
