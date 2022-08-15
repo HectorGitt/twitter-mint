@@ -453,6 +453,7 @@ completeFormHandler()
       }
       else {
           // Do stuff for bad email
+          $('button[type="submit"]').attr('disabled', true)
           $('#sol').attr('disabled', true)
           $('#eth').attr('disabled', true)
       }
