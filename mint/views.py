@@ -51,7 +51,9 @@ def project(request, project_id):
     else: tweet_id = None
     estimated = 0
     if project.twitter_follow:
-        estimated += 2
+        follow_list = project.twitter_follow_username.split(',')
+        estimated += (2*len(follow_list))
+    else: follow_list = []
     if project.twitter_like:
         estimated += 2
     if project.twitter_retweet:
@@ -66,7 +68,7 @@ def project(request, project_id):
         status = True
     else:
         status = False
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status})
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status, 'screen_names': follow_list})
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('home')
