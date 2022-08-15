@@ -194,10 +194,6 @@ def comfirm(request, project_id):
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         twitter_api = TwitterAPI()
-        tweet_url = project.twitter_tweet_link
-        if tweet_url:
-            tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
-        else: tweet_id = None
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
         if registered is not None:
             data = 300
@@ -206,46 +202,22 @@ def comfirm(request, project_id):
             return HttpResponse('Nice try..... Project Ended!!!')
         else:
             data = twitter_api.process(oauth_token, oauth_token_secret,project)
-            return JsonResponse(data)
-            ''' if project.twitter_like:
-                like_state = twitter_api.check_like(oauth_token, oauth_token_secret, tweet_id)
-            else: like_state = None
-            if project.twitter_comment:
-                mention_count = project.twitter_mention_count
-                comment_state, mention_state = twitter_api.check_comment(oauth_token, oauth_token_secret, tweet_id, mention_count)
-            else: 
-                comment_state = None
-                mention_state = None
-            if project.twitter_retweet:
-                retweet_state = twitter_api.check_retweet(oauth_token, oauth_token_secret, tweet_id)
-            else: retweet_state = None
-            if project.twitter_follow:
-                screen_name = project.twitter_follow_username
-                follow_state = twitter_api.check_follow(oauth_token, oauth_token_secret, screen_name)
-                
-            else: follow_state = None
             if project.twitter_account_created:
-                month_state, month_value = twitter_api.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_months)
-                twitter_user.account_months = month_value
-            else: month_state = None
+                twitter_user.account_months = data['month_value']
             if project.twitter_followers:
-                followers_state, followers_value = twitter_api.check_followers(oauth_token, oauth_token_secret, project.twitter_least_followers)
-                twitter_user.followers = followers_value
-            else: followers_state = None
+                twitter_user.followers = data['followers_value']
             twitter_user.save()
             def check_none_true(value):
                 if value is None or value:
                     return True
                 else: return False
-            #print(check_none_true(like_state) , check_none_true(retweet_state) , check_none_true(follow_state) , check_none_true(month_state) , check_none_true(followers_state) , check_none_true(comment_state))
-            if check_none_true(like_state) and check_none_true(retweet_state) and check_none_true(follow_state) and check_none_true(month_state) and check_none_true(followers_state) and check_none_true(comment_state) and check_none_true(mention_state):
+            if check_none_true(data['like_state']) and check_none_true(data['retweet_state']) and check_none_true(data['follow_state']) and check_none_true(data['month_state']) and check_none_true(data['followers_state']) and check_none_true(data['comment_state']) and check_none_true(data['mention_state']):
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
-                data = 200
-                return HttpResponse(data)
+                dataVal = 200
+                return HttpResponse(dataVal)
             else:
-                context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state}
-                return JsonResponse(context) '''
+                return JsonResponse(data)
             
     except AttributeError as e:
         print(e)
