@@ -24,8 +24,8 @@ from .views import ProjectListView
 #url patterns
 urlpatterns = [
     path('', views.home, name='home'),
-    path('projects/<int:page>/', ProjectListView.as_view(), name='projects'),
-    path('project/<uuid:project_id>/', views.project, name='project'),
+    path('projects/<int:page>', ProjectListView.as_view(), name='projects'),
+    path('project/<uuid:project_id>', views.project, name='project'),
     path('login/', views.login_user, name='login'),
     path('twitter_login', views.twitter_login, name='twitter_login'),
     path('connect_twitter', views.connect_twitter, name='connect_twitter'),
@@ -33,12 +33,7 @@ urlpatterns = [
     path('callback', views.callback, name='callback'),
     path('project/<uuid:project_id>/verify',views.verify, name='verify'),
     path('project/<uuid:project_id>/comfirm', views.comfirm, name='comfirm'),
-    path('checkfollow/<uuid:project_id>', views.checkfollow, name='checkfollow'),
-    path('checklike/<uuid:project_id>', views.checklike, name='checklike'),
-    path('checkretweet/<uuid:project_id>', views.checkretweet, name='checkretweet'),
-    path('checkcomment/<uuid:project_id>', views.checkcomment, name='checkcomment'),
-    path('checkfollowers/<uuid:project_id>', views.checkfollowers, name='checkfollowers'),
-    path('checkmonths/<uuid:project_id>', views.checkmonths, name='checkmonths'),
+    path('project/<uuid:project_id>/check', views.checkactions, name='checkactions'),
     path('checkwalletbalance/<uuid:project_id>', views.checkwalletbalance, name='checkwalletbalance'),
     path('success', views.success, name='success'),
 ]
