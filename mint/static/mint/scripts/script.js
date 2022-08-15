@@ -279,6 +279,7 @@ function submit(project_id, csrf_token){
               $('.toast-body').append('<div class=" container-fluid alert alert-success d-flex align-items-center" role="alert"><svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg><div>Registration complete!</div></div>')
               $('button[type="submit"]').attr('disabled', true)
               $('button[type="submit"]').text('Registered')
+              $('#email').attr('disabled', true)
               $('#sol').attr('disabled', true)
               $('#eth').attr('disabled', true)
               
@@ -286,6 +287,7 @@ function submit(project_id, csrf_token){
               $('.toast-body').append('<div class="alert alert-danger d-flex align-items-center" role="alert" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg><div>You are already registered!!!<div></div>')
               $('button[type="submit"]').attr('disabled', true)
               $('button[type="submit"]').text('Registered')
+              $('#email').attr('disabled', true)
               $('#sol').attr('disabled', true)
               $('#eth').attr('disabled', true)
             } else if (data == 501) {
