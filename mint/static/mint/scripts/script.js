@@ -1,52 +1,61 @@
-//neverbounce settings
+//init neverbounce state
 var auto_lookup = false;
 
-
+//initialize global variables
 var csrf_token_g;
 var wallet_type_g;
 var least_balance_g;
 var project_id_g;
 
 
-
-export function handleAjax(classNameVal, spinnerVal, project_id,mentions) {
+//Handles page focus event and load event for project page
+export function handleAjax(project_id,mentions) {
+    //mention default value is false until otherwise specified
     mentions = mentions || false;
+    //sends an ajax request to verify actions
     $.ajax(
     {
         type:"GET",
-        url: `/${classNameVal}/${project_id}`,
+        url: `/project/${project_id}/check`,
         timeout: 20000,
         beforeSend: function(){
-            $(`.${classNameVal}`).append(`<div class='d-flex spinner-border ${spinnerVal} text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>`)
+            //
+            $(`.action`).append(`<div class='d-flex spinner-border spinner1 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>`)
             if (mentions == true){
               $(`.checkmention`).append(`<div class='d-flex spinner-border spinner10 text-dark position-absolute' role='status' style='right: 10%;'><span class='sr-only'>Loading...</span></div>`)
             }
-            $(`.${classNameVal}`).attr('disabled', true)
         },
         success: function( data ) 
         {
-            if ((data.result === true) && !($(`.${classNameVal} .fa-circle-check`).length)) {
-            $(`.${classNameVal} .fa-circle-exclamation`).remove()
-            $(`.${classNameVal}`).append("<i class='fa-solid text-success fa-circle-check'></i>")
-            } 
-            else if ((data.result === false) && !($(`.${classNameVal} .fa-circle-exclamation`).length)) {
-                $(`.${classNameVal} .fa-circle-check`).remove()
-                $(`.${classNameVal}`).append("<i class='fa-solid text-danger fa-circle-exclamation'></i>")
-            }
-            if (mentions == true){
-              if ((data.mention_state === true) && !($(`.checkmention .fa-circle-check`).length)) {
-                $(`.checkmention .fa-circle-exclamation`).remove()
-                $(`.checkmention`).append("<i class='fa-solid text-success fa-circle-check'></i>")
-                } 
-                else if ((data.mention_state === false) && !($(`.checkmention .fa-circle-exclamation`).length)) {
-                    $(`.checkmention .fa-circle-check`).remove()
-                    $(`.checkmention`).append("<i class='fa-solid text-danger fa-circle-exclamation'></i>")
-                }
-            }
+          console.log(data)
+          function checkbuttons(state, classNameVal){
+            if ((state === true) && !($(`.${classNameVal} .fa-circle-check`).length)) {
+              $(`.${classNameVal} .fa-circle-exclamation`).remove()
+              $(`.${classNameVal}`).append("<i class='fa-solid text-success fa-circle-check'></i>")
+              }
+              else if ((state === false) && !($(`.${classNameVal} .fa-circle-exclamation`).length)) {
+                  $(`.${classNameVal} .fa-circle-check`).remove()
+                  $(`.${classNameVal}`).append("<i class='fa-solid text-danger fa-circle-exclamation'></i>")
+              }
+          }
+          if (data.constructor == Array || data.constructor == Object){
+            checkbuttons(data.retweet_state,'checkretweet')
+            checkbuttons(data.comment_state,'checkcomment')
+            checkbuttons(data.mention_state,'checkmention')
+            checkbuttons(data.follow_state,'checkfollow')
+            checkbuttons(data.like_state,'checklike')
+            checkbuttons(data.month_state,'checkmonth')
+            checkbuttons(data.followers_state,'checkfollowers')
+              if (mentions == true){
+                checkbuttons(data.mention_state,'checkmention')
+              }
+
+          }
+            
             
         },
         complete: function() {
-            $(`.${spinnerVal}`).remove()
+            $(`.spinner1`).remove()
             if (mentions == true){
               $(`.spinner10`).remove()
             }
