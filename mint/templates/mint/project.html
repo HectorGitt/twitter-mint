@@ -81,17 +81,21 @@
                     </ul>
 					
                     {% if context.twitter_follow %}
-                    	<div class='action checkfollow my-0 d-flex justify-content-between'>
-                        <p>
+                    	<div class='action checkfollow my-0 d-flex justify-content-between align-items-center'>
+                        <div class='d-flex flex-row align-items-center'>
                           <i class="fa-brands fa-twitter text-primary"></i>
+                        <p class='w-75 d-inline-block mx-1'>
                           Follow
-                          <a href="https://twitter.com/intent/follow?screen_name={{context.twitter_follow_username}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>{{context.twitter_follow_username}}</a>
-                        </p>					
+                          {% for screen_name in screen_names %}
+                          <a href="https://twitter.com/intent/follow?screen_name={{screen_name}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>{{screen_name}}</a>,
+                          {% endfor %}
+                        </p>
+                      </div>					
                       </div>
 
                     {% endif %}
                     {% if context.twitter_like %}
-					<div class='action checklike d-flex justify-content-between'>
+					<div class='action checklike d-flex justify-content-between align-items-center'>
 						<p>
 							<i class="fa-brands fa-twitter text-primary"></i>
 							Like
@@ -100,7 +104,7 @@
 					</div>
                     {% endif %}
                     {% if context.twitter_retweet %}
-						<div class='action checkretweet d-flex justify-content-between'>
+						<div class='action checkretweet d-flex justify-content-between align-items-center'>
 							<p>
 								<i class="fa-brands fa-twitter text-primary"></i>
 								Retweet
@@ -109,7 +113,7 @@
 						</div>
                     {% endif %}
                     {% if context.twitter_comment %}
-						<div class='action checkcomment d-flex justify-content-between'>
+						<div class='action checkcomment d-flex justify-content-between align-items-center'>
 							<p>
 								<i class="fa-brands fa-twitter text-primary"></i>
 								Comment on
@@ -117,7 +121,7 @@
 							</p>					
 						</div>
               {% if context.twitter_mention_count > 0 %} 
-              <div class='action checkmention d-flex justify-content-between'>
+              <div class='action checkmention d-flex justify-content-between align-items-center'>
               <p>
                 <i class="fa-brands fa-twitter text-primary"></i>
                 Mention {{context.twitter_mention_count}} twitter user(s)</p>
@@ -125,7 +129,7 @@
               {%endif%}
               {% endif %}
                     {% if context.twitter_followers %}
-						<div class='action checkfollowers d-flex justify-content-between'>
+						<div class='action checkfollowers d-flex justify-content-between align-items-center'>
 							<p >
 								<i class="fa-brands fa-twitter text-primary"></i>
 								Min Followers: 
@@ -135,7 +139,7 @@
                       	
                     {% endif %}
                     {% if context.twitter_account_created %}
-                    <div class='action checkmonths d-flex justify-content-between'>
+                    <div class='action checkmonths d-flex justify-content-between align-items-center'>
 						<p>
 						<i class="fa-brands fa-twitter text-primary"></i>
                           Account Creation least Month: {{context.twitter_account_months}}
