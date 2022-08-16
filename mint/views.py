@@ -160,7 +160,7 @@ def verify(request, project_id):
                 form_email = request.POST.get('email')
                 eth = request.POST.get('eth')
                 sol = request.POST.get('sol')
-                if form_email != twitter_user.email:
+                if project.email_required and form_email != twitter_user.email:
                     twitter_user.email = str(form_email)
                 if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
                     web3 = Web3api()
