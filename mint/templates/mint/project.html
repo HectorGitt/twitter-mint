@@ -109,22 +109,22 @@
 								<a href="https://twitter.com/intent/retweet?tweet_id={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>Tweet</a>
 							</p>					
 						</div>
-                    {% endif %}
-                    {% if context.twitter_comment %}
-						<div class='action checkcomment d-flex justify-content-between align-items-center'>
-							<p>
-								<i class="fa-brands fa-twitter text-primary"></i>
-								Comment on
-								<a href="https://twitter.com/intent/tweet?in_reply_to={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>Tweet</a>
-							</p>					
-						</div>
+            {% endif %}
+            
               {% if context.twitter_mention_count > 0 %} 
               <div class='action checkmention d-flex justify-content-between align-items-center'>
               <p>
                 <i class="fa-brands fa-twitter text-primary"></i>
                 Mention {{context.twitter_mention_count}} twitter user{{context.twitter_mention_count |pluralize }}</p>
               </div>
-              {%endif%}
+              {% elif context.twitter_comment %}
+              <div class='action checkcomment d-flex justify-content-between align-items-center'>
+                <p>
+                  <i class="fa-brands fa-twitter text-primary"></i>
+                  Comment on
+                  <a href="https://twitter.com/intent/tweet?in_reply_to={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>Tweet</a>
+                </p>					
+              </div>
               {% endif %}
                     {% if context.twitter_followers %}
 						<div class='action checkfollowers d-flex justify-content-between align-items-center'>
