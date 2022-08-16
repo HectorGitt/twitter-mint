@@ -7,7 +7,7 @@ body {
 .register-card .card {
     position: absolute;
     top: -50% ;
-    transform: scale(0.9);
+    transform: scale(0.86);
 }
 .card {
     border-radius: 10px;
@@ -31,9 +31,9 @@ body {
 .checkfollow p {
     width: 85%;
 }
-@media screen and (max-width: 1200px) {
-    .input-group div{
-        width: 80%;
+@media screen and (max-width: 120px) {
+    .register-card .card {
+        transform: scale(0.9);
     }
 }
 @media screen and (max-width: 992px) {
@@ -48,6 +48,9 @@ body {
     }   
     .input-group div{
         width: 85%;
+    }
+    .checkfollow p {
+        width: 100%;
     }
 }
 
