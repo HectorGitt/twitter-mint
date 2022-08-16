@@ -56,7 +56,7 @@
               
             </div>
         </div>
-        <div class="col-xs-12 register-card col-lg-4 col-md-6">
+        <div class="col-xs-12 register-card col-lg-4 col-md-6 mt-4 mt-lg-0">
             <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Register</h5>
@@ -115,7 +115,8 @@
               <div class='action checkmention d-flex justify-content-between align-items-center'>
               <p>
                 <i class="fa-brands fa-twitter text-primary"></i>
-                Mention {{context.twitter_mention_count}} twitter user{{context.twitter_mention_count |pluralize }}</p>
+                Mention {{context.twitter_mention_count}} twitter user{{context.twitter_mention_count |pluralize }} on
+                <a href="https://twitter.com/intent/tweet?in_reply_to={{tweet_id}}" onclick='window.open(this.href,"targetWindow","menubar=1,resizable=yes,width=600,height=550"); return false;' data-show-count='false' data-show-screen-name='false' class='fw-bold'>Tweet</a></p>
               </div>
               {% elif context.twitter_comment %}
               <div class='action checkcomment d-flex justify-content-between align-items-center'>
@@ -216,7 +217,7 @@
 				</div>
 				<div class='card mt-4'>
 					<div class="card-text">
-						<div class="accordion shadow-lg" id="accordionFlushExample">
+						<div class="accordion" id="accordionFlushExample">
 							<div class="accordion-item">
 								<h2 class="accordion-header" id="flush-headingOne">
 									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
