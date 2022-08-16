@@ -15,6 +15,7 @@ from .models import Project
 from .models import TwitterAuthToken, TwitterUser
 from .authorization import create_update_user_from_twitter
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 
 
 # Create your views here.
@@ -76,6 +77,8 @@ def login_user(request):
     else:
         request.session['next'] = request.GET.get('next', '/')
         return render(request, 'mint/login.html', {'next': next})
+    
+@never_cache
 def twitter_login(request):
     twitter_api = TwitterAPI()
     url, oauth_token, oauth_token_secret = twitter_api.twitter_login()
