@@ -29,6 +29,8 @@ class ProjectListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+    
+@never_cache  
 def project(request, project_id):
     username = request.user
     project = get_object_or_404(Project, project_id=project_id)
