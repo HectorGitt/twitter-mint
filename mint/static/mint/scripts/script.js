@@ -372,7 +372,6 @@ function completeForm(e){
       
      } catch (error) {
         $('#sol').removeClass('is-valid')
-        alert(error)
         $('#sol').addClass('is-invalid')
         $('button[type="submit"]').attr('disabled', true)
         $('.spinner9').remove()
