@@ -300,6 +300,21 @@ def verify(request, project_id):
         raise Http404()     
 @login_required
 def comfirm(request, project_id):
+    """_summary_
+
+    Args:
+        request (_type_): _description_
+        project_id (_type_): _description_
+
+    Raises:
+        Http404: _description_
+    
+    Exception:
+        AttributeError: _Raises when logged in user is not a twitter user_
+
+    Returns:
+        _type_: _description_
+    """
     try:
         project = Project.objects.filter(project_id=project_id).first()
         username = request.user
