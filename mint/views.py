@@ -20,7 +20,8 @@ from django.views.decorators.cache import never_cache
 
 # Create your views here.
 def home(request):
-    projects_all = Project.objects.all().order_by('-project_date')[0:6]
+    project_per_page = 6
+    projects_all = Project.objects.all().order_by('-project_date')[0:project_per_page]
     return render(request, 'mint/home.html', {'context': projects_all})
 class ProjectListView(ListView):
     model = Project
