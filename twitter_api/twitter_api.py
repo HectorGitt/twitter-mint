@@ -254,41 +254,67 @@ class TwitterAPI:
             print(e)
             return False, None
     def process(self,oauth_token,oauth_token_secret,project):
+        """_Processes all the action required by project and sends dict as response
+            Returns none for each actions that are not required_
+
+        Args:
+            oauth_token (_string_): _users_token_
+            oauth_token_secret (_string_): _user token secret_
+            project (_query_set_): _active project object_
+
+        Returns:
+            _dictionary_: _Contained booleans of user actions_
+        """
+        #get tweet url from project
         tweet_url = project.twitter_tweet_link
+        #if tweet url is not empty
         if tweet_url:
+            #get tweet id from tweet url
             tweet_id = int(tweet_url.split('/')[-1].split('?')[0])
         else: tweet_id = None
+    
         if project.twitter_like:
+            #check if user has liked the tweet and get the like state
             like_state = self.check_like(oauth_token, oauth_token_secret, tweet_id)
         else: like_state = None
         if project.twitter_comment:
+            #get minimum number of mentions from project
             mention_count = project.twitter_mention_count
+            #get the comment state and mention state
             comment_state, mention_state = self.check_comment(oauth_token, oauth_token_secret, tweet_id, mention_count)
         else: 
             comment_state = None
             mention_state = None
         if project.twitter_retweet:
+            #check if user has retweeted the tweet and get the retweet state
             retweet_state = self.check_retweet(oauth_token, oauth_token_secret, tweet_id)
         else: retweet_state = None
         if project.twitter_follow:
+            #get all screen names from project and convert to list
             screen_names = project.twitter_follow_username.split()
             follow_states = {}
             follow_state = True
+            #loop through all screen names
             for screen_name in screen_names:
+                #check if user has followed the account and get the follow state
                 state = self.check_follow(oauth_token, oauth_token_secret, screen_name)
                 follow_states[screen_name] = state
-                if state == False:
+                #change follow state to false if any screen name is not followed
+                if state is not True:
                     follow_state = False
         else: follow_state = None
         if project.twitter_account_created:
+            #check if user account is older than the required project month and get month state and age
             month_state, month_value = self.check_created_at(oauth_token, oauth_token_secret, project.twitter_account_months)
         else:
             month_state = None
             month_value = None
         if project.twitter_followers:
+            #check if user has enough followers and get the follower state and number of followers
             followers_state, followers_value = self.check_followers(oauth_token, oauth_token_secret, project.twitter_least_followers)
         else: 
             followers_state = None
             followers_value = None
+        #return dict of all states
         context = {'like_state': like_state, 'retweet_state': retweet_state, 'follow_state': follow_state, 'month_state': month_state, 'comment_state': comment_state, 'followers_state': followers_state, 'mention_state': mention_state,'followers_value': followers_value,'month_value': month_value}
         return context
