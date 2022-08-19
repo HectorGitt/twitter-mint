@@ -300,7 +300,7 @@ class TwitterAPI:
                 state = self.check_follow(oauth_token, oauth_token_secret, screen_name)
                 follow_states[screen_name] = state
                 #change follow state to false if any screen name is not followed
-                if state == False:
+                if state is not True:
                     follow_state = False
         else: follow_state = None
         if project.twitter_account_created:
