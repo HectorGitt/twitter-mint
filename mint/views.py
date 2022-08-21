@@ -300,7 +300,9 @@ def verify(request, project_id):
         raise Http404()     
 @login_required
 def comfirm(request, project_id):
-    """_summary_
+    """_called to process action verification for projects and adds user to project actions
+        if every requirements are met
+        _
 
     Args:
         request (_type_): _description_
@@ -376,7 +378,7 @@ def comfirm(request, project_id):
     except ValidationError:
         raise Http404('Project does not exist')
 def checkactions(request, project_id):
-    """_called to process action verification for projects_
+    """_check actions and return json data of action state_
 
     Args:
         request (_request_object_): _description_
