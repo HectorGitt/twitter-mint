@@ -300,7 +300,9 @@ def verify(request, project_id):
         raise Http404()     
 @login_required
 def comfirm(request, project_id):
-    """_summary_
+    """_called to process action verification for projects and adds user to project actions
+        if every requirements are met
+        _
 
     Args:
         request (_type_): _description_
@@ -313,7 +315,7 @@ def comfirm(request, project_id):
         AttributeError: _Raises when logged in user is not a twitter user_
 
     Returns:
-        _type_: _description_
+        _Json_response_: _json of all actions_
     """
     try:
         project = Project.objects.filter(project_id=project_id).first()
@@ -323,28 +325,51 @@ def comfirm(request, project_id):
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         twitter_api = TwitterAPI()
         registered = twitter_user.projects.all().filter(project_id=project_id).first()
+        #check if user is registered to a project
         if registered is not None:
+            #return response code 300
             data = 300
             return HttpResponse(data)
         elif not project.status:
+            #if project has ended
             return HttpResponse('Nice try..... Project Ended!!!')
         else:
             data = twitter_api.process(oauth_token, oauth_token_secret,project)
+            """if proect minimum account creation and least follow is specified,
+                update user followers and account month
+            """
             if project.twitter_account_created:
                 twitter_user.account_months = data['month_value']
             if project.twitter_followers:
                 twitter_user.followers = data['followers_value']
             twitter_user.save()
+            #if value is true or none return true
             def check_none_true(value):
+                """_This function process check if a value is None, true or false
+                    if the value is none or true it returns true, if the value is false it retuns false.
+                    This is intended to be used to check actions value.
+                    action value returns none when not required but true or false when actions is either
+                    performed or not, respectively.
+                _
+
+                Args:
+                    value (_boolean_): _action value_
+
+                Returns:
+                    _boolean_: _whether action is true or None, or false_
+                """
                 if value is None or value:
                     return True
                 else: return False
+            #all values returning true indicate the actions are either not required or are performed
             if check_none_true(data['like_state']) and check_none_true(data['retweet_state']) and check_none_true(data['follow_state']) and check_none_true(data['month_state']) and check_none_true(data['followers_state']) and check_none_true(data['comment_state']) and check_none_true(data['mention_state']):
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
+                #return a response code
                 dataVal = 200
                 return HttpResponse(dataVal)
             else:
+                #if not all actions are performed returns actions json data
                 return JsonResponse(data)
             
     except AttributeError as e:
@@ -353,6 +378,15 @@ def comfirm(request, project_id):
     except ValidationError:
         raise Http404('Project does not exist')
 def checkactions(request, project_id):
+    """_check actions and return json data of action state_
+
+    Args:
+        request (_request_object_): _description_
+        project_id (_string_): _description_
+
+    Returns:
+        _json_respone_: _json data of actions state_
+    """
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
         project = Project.objects.filter(project_id=project_id).first()
@@ -367,6 +401,15 @@ def success(request):
     
     return render(request, 'mint/home2.html', {'context': projects_all})
 def checkwalletbalance(request,project_id):
+    """_check wallet balance of user if project has a least wallet balance_
+
+    Args:
+        request (_request_object_): _description_
+        project_id (_string_): _description_
+
+    Returns:
+        _json responese_: _returns the balance and response code_
+    """
     auth_user = request.user
     project = Project.objects.filter(project_id=project_id).first()
     twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
@@ -374,24 +417,32 @@ def checkwalletbalance(request,project_id):
         eth = request.POST.get('eth')
         sol = request.POST.get('sol')
         if eth is not None and twitter_user.eth_wallet_id != eth:
+            #if input is not None and input is not equal to wallet in db. update
             twitter_user.eth_wallet_id = str(eth)
         if project.least_wallet_balance != 0 and project.wallet_type == 'ETH':
+            #if project least balance is greater than zero and wallet type is ETH
             web3 = Web3api()
             try:
                 ui_balance = web3.web3eth_balance(str(eth))
             except InvalidAddress:
                 return HttpResponse(501)
         if sol is not None and twitter_user.sol_wallet_id != sol:
+            #if input is not None and input is not equal to wallet in db. update
             twitter_user.sol_wallet_id = str(sol)
         if project.least_wallet_balance != 0 and project.wallet_type == 'SOL':
+            #if project least balance is greater than zero and wallet type is SOL
             solana_client = Client(config('SOLANA_PROVIDER'))
             obj = solana_client.get_balance(PublicKey(str(sol)))
+            #get balance for user from obj json
             balance = obj['result']['value']
+            #balance returns big Int e.g(9349843934 instead of 9.349843934) so should be converted 
             ui_balance = round((balance * (10**-9) ), 9)
         twitter_user.save()
+        #return json object
         obj = {'response': 200, 'value': ui_balance}
         return JsonResponse(obj)
     else:
+        #if request method is not post
         return HttpResponse('Denied')
         
         
