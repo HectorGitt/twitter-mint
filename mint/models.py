@@ -134,6 +134,8 @@ class TwitterUser(models.Model):
     email = models.CharField(max_length=255, null=True, blank=True)
     eth_wallet_id = models.CharField(max_length=42, null=True, blank=True)
     sol_wallet_id = models.CharField(max_length=44, null=True, blank=True)
+    referred_by = models.ForeignKey('mint.TwitterUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='referrals')
+    
     def __str__(self):
         return self.screen_name
 class EmailNotification(models.Model):
