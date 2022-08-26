@@ -12,7 +12,7 @@ from solana.rpc.api import Client
 from solana.publickey import PublicKey
 from decouple import config
 from .models import Project
-from .models import TwitterAuthToken, TwitterUser
+from .models import TwitterAuthToken, TwitterUser, Referral
 from .authorization import create_update_user_from_twitter
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
@@ -302,7 +302,7 @@ def verify(request, project_id):
 def comfirm(request, project_id):
     """_called to process action verification for projects and adds user to project actions
         if every requirements are met
-        _
+_
 
     Args:
         request (_type_): _description_
@@ -444,5 +444,29 @@ def checkwalletbalance(request,project_id):
     else:
         #if request method is not post
         return HttpResponse('Denied')
-        
-        
+    
+@login_required       
+def request_referral_code(request, project_id):
+    """_referral code handler_
+    
+    Args:
+        request (_request_object_): _description_
+        project (_string_): _description_
+    """
+    auth_user = request.user
+    if request.method == "GET":
+        return render(request, 'mint/mock.html')
+    elif request.method == "POST" and auth_user.is_authenticated:
+        twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
+        project = Project.objects.filter(project_id=project_id).first()
+        referral = Referral.objects.filter(user=twitter_user.user,project=project).first()
+        if referral is None:
+            referral = Referral(user=twitter_user.user, project=project)
+            referral.save()
+            referral_code = referral.referral_code
+            return HttpResponse(f'Created Referral Code is {referral.referral_code}')
+        else:
+            referral_code = referral.referral_code
+        return HttpResponse(f'Referral Code is {referral.referral_code}')
+    else:
+        return HttpResponse('Denied')
