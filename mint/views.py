@@ -365,6 +365,14 @@ _
             if check_none_true(data['like_state']) and check_none_true(data['retweet_state']) and check_none_true(data['follow_state']) and check_none_true(data['month_state']) and check_none_true(data['followers_state']) and check_none_true(data['comment_state']) and check_none_true(data['mention_state']):
                 project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
+                if project.referral_required:
+                    if twitter_user.projects.count() == 1:
+                        try:
+                            referral_code = request.session['referral_code']
+                            referral = Referral.objects.filter(referral_code=referral_code).first()
+                            referral.referrals.add(twitter_user)
+                        except Exception as e:
+                            print(e)
                 #return a response code
                 dataVal = 200
                 return HttpResponse(dataVal)
@@ -451,14 +459,14 @@ def request_referral_code(request, project_id):
     
     Args:
         request (_request_object_): _description_
-        project (_string_): _description_
+        project_id (_uuid_): _description_
     """
     auth_user = request.user
-    if request.method == "GET":
+    project = get_object_or_404(Project, project_id=project_id)
+    if request.method == "GET" and project.referral_required:
         return render(request, 'mint/mock.html')
-    elif request.method == "POST" and auth_user.is_authenticated:
+    elif request.method == "POST" and auth_user.is_authenticated and project.referral_required:
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
-        project = Project.objects.filter(project_id=project_id).first()
         referral = Referral.objects.filter(user=twitter_user.user,project=project).first()
         if referral is None:
             referral = Referral(user=twitter_user.user, project=project)
@@ -470,3 +478,24 @@ def request_referral_code(request, project_id):
         return HttpResponse(f'Referral Code is {referral.referral_code}')
     else:
         return HttpResponse('Denied')
+    
+def verify_referral(request):
+    """_verify referral code_
+    
+    Args:
+        request (_request_object_): _description_
+        project_id (_uuid_): _description_
+    """
+    try:
+        referral_code = request.GET.get('ref',None)
+        
+        referral_obj = Referral.objects.filter(referral_code=referral_code).first()
+        if referral_obj is None:
+            return HttpResponse('Referral Code is not found')
+        else:
+            request.session['referral_code'] = referral_code
+            project = referral_obj.project
+            url = f'/project/{project.project_id}'
+        return redirect(url)
+    except:
+        return HttpResponse('Referral Code is not found')
