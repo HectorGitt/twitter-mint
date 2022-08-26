@@ -57,6 +57,8 @@ class Project(models.Model):
     email_required = models.BooleanField(default=True)
     status = models.BooleanField(default=True)
     winners = models.ManyToManyField('TwitterUser', editable=False, blank=True, symmetrical=False, related_name='winners')
+    referral_required = models.BooleanField(default=False)
+    minimum_referral = models.PositiveIntegerField(default=0)
     
     def clean(self):
         # check if the booleans fields ticked have a corresponding link
@@ -134,7 +136,6 @@ class TwitterUser(models.Model):
     email = models.CharField(max_length=255, null=True, blank=True)
     eth_wallet_id = models.CharField(max_length=42, null=True, blank=True)
     sol_wallet_id = models.CharField(max_length=44, null=True, blank=True)
-    referred_by = models.ForeignKey('mint.TwitterUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='referrals')
     
     def __str__(self):
         return self.screen_name
@@ -148,3 +149,14 @@ class EmailNotification(models.Model):
         ordering = (["-date"])
     def __str__(self):
         return self.subject
+
+class Referral(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    referral_code = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    referrals = models.ManyToManyField('mint.TwitterUser', blank=True, related_name='refered_by')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, editable=False)
+    class Meta:
+        ordering = (["-date"])
+    def __str__(self):
+        return f'{self.user.username} referral for {self.project.project_name}'
