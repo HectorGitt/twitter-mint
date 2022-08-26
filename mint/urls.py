@@ -37,6 +37,7 @@ urlpatterns = [
     path('checkwalletbalance/<uuid:project_id>', views.checkwalletbalance, name='checkwalletbalance'),
     path('success', views.success, name='success'),
     path('project/<uuid:project_id>/referral', views.request_referral_code, name='referral'),
+    path('referral', views.verify_referral, name='verify_referral'),
 ]
 
 #added media upload root directory to url paths
