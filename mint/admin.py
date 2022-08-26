@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, TwitterUser, EmailNotification
+from .models import Project, TwitterUser, EmailNotification, Referral
 from .methods import methods, send_html_mail
 from django.contrib import messages
 from django.utils.translation import ngettext
@@ -201,3 +201,4 @@ class TwitterUserAdmin(admin.ModelAdmin):
             #if project is not selected, send an error message
             self.message_user(request, 'No project was selected', messages.ERROR)
         
+admin.site.register(Referral)
