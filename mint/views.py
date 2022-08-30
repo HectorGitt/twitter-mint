@@ -94,8 +94,10 @@ def project(request, project_id):
     else:referral_code = None
     try:
         session = request.session['referral_code']
-        referral = Referral.objects.filter(referral_code=session, project=project).first()
-        referee_name = referral.user
+        if request.session['referral_code']:
+            referral = Referral.objects.filter(referral_code=session, project=project).first()
+            referee_name = referral.user
+        else:referee_name = None
     except:
         referee_name = None
     #estimated time of action completion
@@ -377,16 +379,15 @@ _
                 else: return False
             #all values returning true indicate the actions are either not required or are performed
             if check_none_true(data['like_state']) and check_none_true(data['retweet_state']) and check_none_true(data['follow_state']) and check_none_true(data['month_state']) and check_none_true(data['followers_state']) and check_none_true(data['comment_state']) and check_none_true(data['mention_state']):
-                project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
                 if project.referral_required:
-                    if twitter_user.projects.count() == 1:
-                        try:
-                            referral_code = request.session['referral_code']
-                            referral = Referral.objects.filter(referral_code=referral_code).first()
+                    try:
+                        referral_code = request.session['referral_code']
+                        referral = Referral.objects.filter(referral_code=referral_code).first()
+                        if referral.project.project_id == project.project_id:
                             referral.referrals.add(twitter_user)
-                        except Exception as e:
-                            print(e)
+                    except Exception as e:
+                        print(e)
                 #return a response code
                 dataVal = 200
                 return HttpResponse(dataVal)
@@ -490,10 +491,13 @@ def request_referral_code(request, project_id):
             referral = Referral(user=twitter_user.user, project=project)
             referral.save()
             referral_code = referral.referral_code
-            return HttpResponse(f'Created Referral Code is {referral.referral_code}')
+            host = config('ALLOWED_HOST2')
+            referral_code = f"{host}/referral?ref={referral.referral_code}"
+            obj = {'response': 200, 'value': referral_code}
+            return JsonResponse(obj)
         else:
             referral_code = referral.referral_code
-        return HttpResponse(f'Referral Code is {referral.referral_code}')
+        return JsonResponse(referral.referral_code)
     else:
         return HttpResponse('Denied')
     
