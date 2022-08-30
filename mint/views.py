@@ -89,7 +89,7 @@ def project(request, project_id):
     referral_obj = Referral.objects.filter(project=project, user=twitter_user.user).first()
     if referral_obj is not None:
         host = config('ALLOWED_HOST2')
-        referral_code = f"{host}/referral?ref={referral_obj.referral_code}"
+        referral_code = f"https://{host}/referral?ref={referral_obj.referral_code}"
         
     else:referral_code = None
     try:
@@ -492,7 +492,7 @@ def request_referral_code(request, project_id):
             referral.save()
             referral_code = referral.referral_code
             host = config('ALLOWED_HOST2')
-            referral_code = f"{host}/referral?ref={referral.referral_code}"
+            referral_code = f"https://{host}/referral?ref={referral.referral_code}"
             obj = {'response': 200, 'value': referral_code}
             return JsonResponse(obj)
         else:
