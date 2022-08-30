@@ -78,12 +78,28 @@ def project(request, project_id):
             email = ''
             eth_wallet_id = ''
             sol_wallet_id = ''
+            user = None
         twitter_user = twitter_user()
         registered = False
     if project.twitter_tweet_link:
         #get tweet id from project
         tweet_id = project.twitter_tweet_id
     else: tweet_id = None
+    #check if a user has a referral code for this project
+    referral_obj = Referral.objects.filter(project=project, user=twitter_user.user).first()
+    if referral_obj is not None:
+        host = config('ALLOWED_HOST2')
+        referral_code = f"{host}/referral?ref={referral_obj.referral_code}"
+        
+    else:referral_code = None
+    try:
+        session = request.session['referral_code']
+        if request.session['referral_code']:
+            referral = Referral.objects.filter(referral_code=session, project=project).first()
+            referee_name = referral.user
+        else:referee_name = None
+    except:
+        referee_name = None
     #estimated time of action completion
     estimated = 0
     if project.twitter_follow:
@@ -105,7 +121,7 @@ def project(request, project_id):
         status = True
     else:
         status = False
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status, 'screen_names': follow_list})
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status, 'screen_names': follow_list, 'referral_code': referral_code, 'referee_name': referee_name,'referral': referral_obj})
 def login_user(request):
     """_handle login request_
 
@@ -363,16 +379,15 @@ _
                 else: return False
             #all values returning true indicate the actions are either not required or are performed
             if check_none_true(data['like_state']) and check_none_true(data['retweet_state']) and check_none_true(data['follow_state']) and check_none_true(data['month_state']) and check_none_true(data['followers_state']) and check_none_true(data['comment_state']) and check_none_true(data['mention_state']):
-                project = Project.objects.filter(project_id=project_id).first()
                 twitter_user.projects.add(project)
                 if project.referral_required:
-                    if twitter_user.projects.count() == 1:
-                        try:
-                            referral_code = request.session['referral_code']
-                            referral = Referral.objects.filter(referral_code=referral_code).first()
+                    try:
+                        referral_code = request.session['referral_code']
+                        referral = Referral.objects.filter(referral_code=referral_code).first()
+                        if referral.project.project_id == project.project_id:
                             referral.referrals.add(twitter_user)
-                        except Exception as e:
-                            print(e)
+                    except Exception as e:
+                        print(e)
                 #return a response code
                 dataVal = 200
                 return HttpResponse(dataVal)
@@ -385,6 +400,8 @@ _
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
     except ValidationError:
         raise Http404('Project does not exist')
+
+@login_required
 def checkactions(request, project_id):
     """_check actions and return json data of action state_
 
@@ -408,6 +425,8 @@ def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     
     return render(request, 'mint/home2.html', {'context': projects_all})
+
+@login_required
 def checkwalletbalance(request,project_id):
     """_check wallet balance of user if project has a least wallet balance_
 
@@ -472,10 +491,13 @@ def request_referral_code(request, project_id):
             referral = Referral(user=twitter_user.user, project=project)
             referral.save()
             referral_code = referral.referral_code
-            return HttpResponse(f'Created Referral Code is {referral.referral_code}')
+            host = config('ALLOWED_HOST2')
+            referral_code = f"{host}/referral?ref={referral.referral_code}"
+            obj = {'response': 200, 'value': referral_code}
+            return JsonResponse(obj)
         else:
             referral_code = referral.referral_code
-        return HttpResponse(f'Referral Code is {referral.referral_code}')
+        return JsonResponse(referral.referral_code)
     else:
         return HttpResponse('Denied')
     

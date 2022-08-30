@@ -206,6 +206,20 @@
                         {% endif %}
                       </div>
                     </form>
+                    {% if context.referral_required and user.is_authenticated %}
+                    <div class="card-body text-center referral_loader position-relative">
+                    {% if referral_code %}
+                    <input type="text" class="form-control" value="{{referral_code}}" id="referral_code" readonly>
+                    <a href='https://twitter.com/intent/tweet?text={{referral_code}}' class="mt-3 btn btn-primary btn-block btn-large"> <span class='my-2'>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a>
+                    <p>{{referral.referrals.all.count}} {{ referral.referrals.all.count|pluralize:"person,people" }} joined using your referral code.</p>
+                    {% else %}
+                    {% if referee_name %}
+                    <p class='text-center'>{{referee_name}} is referring you.</p>
+                    {% endif %}
+                    <button class="referral_request text-center btn btn-danger btn-block btn-large">Request referral code</button>
+                    {% endif %}
+                    </div>
+                    {% endif %}
                   </div>                
                 </div>
               </div>
@@ -232,7 +246,7 @@
 					</div>
 				</div>
 			
-	</div>
+	    </div>
       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
