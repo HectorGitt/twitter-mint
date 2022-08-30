@@ -393,6 +393,34 @@ function completeFormHandler(){
 }
 completeFormHandler()
 
+$('.referral_request').click(function(e){
+    e.preventDefault()
+    $.ajax({
+      url: `/project/${project_id_g}/referral`,
+      type: 'POST',
+      data: {
+        'csrfmiddlewaretoken': csrf_token_g
+      },
+      beforeSend: function() {
+        $('.referral_loader').append("<div class='d-flex align-items-center spinner-border spinner13 text-dark position-absolute' role='status' style='right: 5%; top: 20px; '><span class='sr-only'>Loading...</span></div>")
+        $('.referral_request').attr('disabled', true)
+      },
+      success: function(data){
+        if (data.response == 200){
+          $('.referral_request').remove()
+          $('.referral_loader').append(`<input type="text" class="form-control" value="${data.value}" id="referral_code" readonly><a href="https://twitter.com/intent/tweet?text=${data.value}" class="mt-3 btn btn-primary btn-block btn-large">Share<i class="fa-brands fa-twitter text-white pl-2"></i></a>`)
+        }
+      },
+      error: function (thrownError) {
+        $('.modal-body').text(`${thrownError}`)
+        $('.modal').modal('show')
+        $('.referral_request').attr('disabled', false)
+      },
+      complete: function() {
+        $('.spinner13').remove()
+      },
+    })
+  })
 /**
  * Hook into field registration events
  * The nb:registered event is fired on the body every time
