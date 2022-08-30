@@ -384,7 +384,7 @@ _
                     try:
                         referral_code = request.session['referral_code']
                         referral = Referral.objects.filter(referral_code=referral_code).first()
-                        if referral.project.project_id == project.project_id:
+                        if referral.project.project_id == project.project_id and referral.user != twitter_user.user:
                             referral.referrals.add(twitter_user)
                     except Exception as e:
                         print(e)
