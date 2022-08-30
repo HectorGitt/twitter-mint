@@ -111,7 +111,7 @@ def project(request, project_id):
     if project.twitter_retweet:
         estimated += 2
     if project.twitter_comment:
-        estimated += 4 
+        estimated += (4 +(project.twitter_mention_count*2))
     if project.email_required:
         estimated += 4
     if project.wallet_type == 'SOL' or project.wallet_type == 'ETH':
