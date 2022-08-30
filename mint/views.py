@@ -385,6 +385,8 @@ _
         return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
     except ValidationError:
         raise Http404('Project does not exist')
+
+@login_required
 def checkactions(request, project_id):
     """_check actions and return json data of action state_
 
@@ -408,6 +410,8 @@ def success(request):
     projects_all = Project.objects.all().order_by('-project_date').first()
     
     return render(request, 'mint/home2.html', {'context': projects_all})
+
+@login_required
 def checkwalletbalance(request,project_id):
     """_check wallet balance of user if project has a least wallet balance_
 
