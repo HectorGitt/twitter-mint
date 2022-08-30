@@ -78,12 +78,26 @@ def project(request, project_id):
             email = ''
             eth_wallet_id = ''
             sol_wallet_id = ''
+            user = None
         twitter_user = twitter_user()
         registered = False
     if project.twitter_tweet_link:
         #get tweet id from project
         tweet_id = project.twitter_tweet_id
     else: tweet_id = None
+    #check if a user has a referral code for this project
+    referral_obj = Referral.objects.filter(project=project, user=twitter_user.user).first()
+    if referral_obj is not None:
+        host = config('ALLOWED_HOST2')
+        referral_code = f"{host}/referral?ref={referral_obj.referral_code}"
+        
+    else:referral_code = None
+    try:
+        session = request.session['referral_code']
+        referral = Referral.objects.filter(referral_code=session, project=project).first()
+        referee_name = referral.user
+    except:
+        referee_name = None
     #estimated time of action completion
     estimated = 0
     if project.twitter_follow:
@@ -105,7 +119,7 @@ def project(request, project_id):
         status = True
     else:
         status = False
-    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status, 'screen_names': follow_list})
+    return render(request, 'mint/project.html', {'context': project, 'registered': registered, 'count': registered_count, 'tweet_id': tweet_id, 'twitter_user': twitter_user, 'estimated': estimated, 'status': status, 'screen_names': follow_list, 'referral_code': referral_code, 'referee_name': referee_name,'referral': referral_obj})
 def login_user(request):
     """_handle login request_
 
