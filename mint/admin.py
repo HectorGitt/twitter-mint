@@ -201,4 +201,3 @@ class TwitterUserAdmin(admin.ModelAdmin):
             #if project is not selected, send an error message
             self.message_user(request, 'No project was selected', messages.ERROR)
         
-admin.site.register(Referral)
