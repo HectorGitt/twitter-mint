@@ -79,17 +79,33 @@ class ProjectAdmin(admin.ModelAdmin, methods):
 def winners_changed(sender,**kwargs):
     print('added winner')
 m2m_changed.connect(winners_changed, sender=Project.winners,dispatch_uid='uuid.uuid4')
-   
+
 #register twitter user model in admin dashboard
 @admin.register(TwitterUser)
 class TwitterUserAdmin(admin.ModelAdmin):
     """
     Controls model fields to be displayed in the admin dashboard
     """
-    list_display = ['screen_name', 'email', 'account_months', 'followers']
+    def __init__(self, model, admin_site): 
+        self.request = None
+        super().__init__(model, admin_site)
+
+    def get_queryset(self, request):
+        self.request = request      
+        return super().get_queryset(request)
+    list_display = ['screen_name', 'email', 'account_months', 'followers','referrals']
     actions = ['generate_winner', 'pick_winner']
     list_filter = ( AccountMonthBornListFilter,)
     
+    @admin.display(description='referrals')
+    def referrals(self,twitter_user):
+        id = self.request.GET.get('projects__project_id')
+        project = Project.objects.filter(project_id=id).first()
+        if project is not None:
+            count = Referral.objects.filter(project=project,user=twitter_user.user).count()
+        else:
+            count = Referral.objects.filter(user=twitter_user.user).count()
+        return count
 
     def register_winner(self,request, project, pks, action):
         """_It _
@@ -201,4 +217,3 @@ class TwitterUserAdmin(admin.ModelAdmin):
             #if project is not selected, send an error message
             self.message_user(request, 'No project was selected', messages.ERROR)
         
-admin.site.register(Referral)
