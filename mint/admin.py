@@ -111,10 +111,15 @@ class TwitterUserAdmin(admin.ModelAdmin):
         id = self.request.GET.get('projects__project_id')
         project = Project.objects.filter(project_id=id).first()
         if project is not None:
-            count = Referral.objects.filter(project=project,user=twitter_user.user).count()
+            referral = Referral.objects.filter(project=project,user=twitter_user.user).first()
+            if referral is not None:
+                count = referral.referrals.count()
+                return count
         else:
-            count = Referral.objects.filter(user=twitter_user.user).count()
-        return count
+            referral = Referral.objects.filter(user=twitter_user.user).first()
+            if referral is not None:
+                count = referral.referrals.count()
+                return count
 
     def register_winner(self,request, project, pks, action):
         """_It _
