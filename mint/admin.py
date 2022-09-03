@@ -216,13 +216,10 @@ class TwitterUserAdmin(admin.ModelAdmin):
             #get project id from request object
             project_id = (request.GET.get('projects__project_id', ''))
             project = Project.objects.filter(project_id=project_id).first()
-            if len(queryset) == project.no_of_winners:
+            if len(queryset) > 0:
                 #if number of winners is equal to the number of winners in the project, process the winners
                 self.register_winner(request, project, pks, '')
-            elif len(queryset) < project.no_of_winners:
-                #if number of winners selected is less than the number of project winners, send an error message
-                self.message_user(request, 'No of picked winners less than no of desired winners', messages.ERROR)
-            else:
+            elif len(queryset) > project.no_of_winners:
                 #if number of winners selected is more than the number of project winners, send an error message
                 self.message_user(request, 'No of picked winners more than no of desired winners', messages.ERROR)
         except ValidationError:
