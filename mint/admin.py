@@ -99,6 +99,15 @@ class TwitterUserAdmin(admin.ModelAdmin):
     
     @admin.display(description='referrals')
     def referrals(self,twitter_user):
+        """_get the current project referrals per user and if no user 
+            is selected, return overall referrals of each user_
+
+        Args:
+            twitter_user (_type_): _user object of each twitter account_
+
+        Returns:
+            _int_: _number of referral for each twitter user for each project_
+        """
         id = self.request.GET.get('projects__project_id')
         project = Project.objects.filter(project_id=id).first()
         if project is not None:
@@ -153,7 +162,9 @@ class TwitterUserAdmin(admin.ModelAdmin):
                 self.message_user(request, f'No email message created, Reselect winners {users_list} to deliver email', messages.ERROR)  
             else:
                 #if email template is found, send a success message, display the winners and end the project
-                project.status = False
+                print(project.no_of_winners ,project.winners.count())
+                if project.no_of_winners == project.winners.count():
+                    project.status = False
                 project.save()
                 self.message_user(request, ngettext(
                 '%d %s user was successfully picked as a winner for the project.',
@@ -181,14 +192,15 @@ class TwitterUserAdmin(admin.ModelAdmin):
             project_id = (request.GET.get('projects__project_id', ''))
             project = Project.objects.filter(project_id=project_id).first()
             #randomly select winner from the queryset based on project number of winners
-            winner_pks = random.sample(sorted(pks), k=project.no_of_winners)
-            self.register_winner(request, project, winner_pks, 'Random')
+            winner_num = project.no_of_winners - project.winners.count()
+            if winner_num > 0:    
+                winner_pks = random.sample(sorted(pks), k=winner_num)
+                self.register_winner(request, project, winner_pks, 'Random')
+            else:
+                self.message_user(request, 'All winners have been selected', messages.ERROR) 
         except ValidationError:
             #if project is not selected, send an error message
             self.message_user(request, 'No project was selected', messages.ERROR)
-                
-            
-            
     @admin.action(description='Pick Winner(s)')
     def pick_winner(self, request, queryset):
         """_Get the query set(winners) of all selected users for a selected project and process the winners
