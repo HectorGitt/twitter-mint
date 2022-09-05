@@ -163,7 +163,7 @@ LOGIN_URL = 'login'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 STATIC_URL = 'static/'
 STATIC_ROOT = '/home/dh_jae2ua/twitter-mint.dreamhosters.com/public/static/'
 
