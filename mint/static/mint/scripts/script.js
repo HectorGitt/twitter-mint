@@ -421,6 +421,24 @@ $('.referral_request').click(function(e){
       },
     })
   })
+  $('#copyToClipboard').click(
+    function myFunction() {
+      /* Get the text field */
+      var copyText = document.getElementById("referral_link");
+    
+      /* Select the text field */
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /* For mobile devices */
+    
+        /* Copy the text inside the text field */
+      navigator.clipboard.writeText(copyText.value);
+    
+      /* Alert the copied text */
+      $('#copyToClipboard').html("<span class='mx-2'>Copied</span><i class='fa-solid fa-clipboard-check my-2'></i>")
+      $('#copyToClipboard').attr('disabled', true);
+    }
+  )
+  
 /**
  * Hook into field registration events
  * The nb:registered event is fired on the body every time
