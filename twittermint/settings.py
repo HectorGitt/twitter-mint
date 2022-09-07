@@ -44,7 +44,13 @@ INSTALLED_APPS = [
     'mint',
 ]
 
-
+#SECURITY SETTINGS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_SECONDS = 60
+SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_HSTS_PRELOAD = True
 
 
 MIDDLEWARE = [
@@ -129,17 +135,33 @@ JAZZMIN_SETTINGS = {
     "copyright": "Mint Ltd",
 }
 JAZZMIN_UI_TWEAKS = {
-    'theme': 'darkly',
-    "accent": "accent-lime",
-    "navbar": "navbar-dark",
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": True,
+    "brand_small_text": False,
+    "brand_colour": "navbar-white",
+    "accent": "accent-info",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": True,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-light-warning",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": True,
     "sidebar_nav_flat_style": True,
+    "theme": "united",
+    "dark_mode_theme": None,
     "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
         "info": "btn-outline-info",
-        "warning": "btn-outline-warning",
-        "danger": "btn-outline-danger",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
         "success": "btn-success"
     },
     "body_small_text": True,
@@ -165,7 +187,7 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = '/home/dh_jae2ua/twitter-mint.dreamhosters.com/public/static/'
+STATIC_ROOT = '/home/dh_jae2ua/app.dropmint.com/public/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
