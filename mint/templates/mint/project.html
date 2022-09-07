@@ -209,8 +209,9 @@
                     {% if context.referral_required and user.is_authenticated %}
                     <div class="card-body text-center referral_loader position-relative">
                     {% if referral_code %}
-                    <input type="text" class="form-control" value="{{referral_code}}" id="referral_code" readonly>
-                    <a href='https://twitter.com/intent/tweet?text={{referral_code}}' class="mt-3 btn btn-primary btn-block btn-large"> <span class='my-2'>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a>
+                    <input type="text" id="referral_link" class="form-control" value="{{referral_code}}" id="referral_code" readonly>
+                    <a href='https://twitter.com/intent/tweet?text={{referral_code}}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a>
+                    <button class="mt-3 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>
                     <p>{{referral.referrals.all.count}} {{ referral.referrals.all.count|pluralize:"person,people" }} joined using your referral code.</p>
                     {% else %}
                     {% if referee_name %}
