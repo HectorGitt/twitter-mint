@@ -96,6 +96,7 @@ class TwitterUserAdmin(admin.ModelAdmin):
     list_display = ['screen_name', 'email', 'account_months', 'followers','referrals']
     actions = ['generate_winner', 'pick_winner']
     list_filter = ( AccountMonthBornListFilter,)
+    exclude = ('twitter_oauth_token',)
     
     @admin.display(description='referrals')
     def referrals(self,twitter_user):
