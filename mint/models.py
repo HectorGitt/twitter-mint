@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 import json
 import requests
+from sorl.thumbnail import ImageField
 # Create your models here.
 
 class TwitterAuthToken(models.Model):
@@ -38,7 +39,7 @@ class Project(models.Model):
     project_price = models.PositiveIntegerField(default=1)
     project_link = models.URLField(max_length=255)
     project_description = models.TextField()
-    project_image = models.ImageField(upload_to='media/uploads/', null=False)
+    project_image = ImageField(upload_to='media/uploads/', null=False)
     twitter_follow = models.BooleanField(default=False)
     twitter_follow_username = models.CharField(max_length=255, null=True, blank=True)
     twitter_tweet_link = models.URLField(max_length=255, null=True, blank=True)
