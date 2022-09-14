@@ -8,7 +8,7 @@ Home
 {% comment %} <div class="container my-5">
   <div class="d-flex flex-column align-items-center ">
     {% for project in context  %}
-        <div class="card my-5 text-center shadow-lg" style="max-width:700px">
+        <div class="card my-5 text-center shadow-lg">
           <img class="card_img card-img-top" src="{% thumbnail project.project_image '600x400' as im %}{{ im.url }}{% endthumbnail %}" alt="{{project.project_name}} dropmint project image"/>
           <div class="card-header">
             {{project.project_name}}
@@ -40,7 +40,7 @@ Home
       </div>
   <div id='projects' class="container-fluid d-flex flex-row flex-wrap justify-content-around align-items-center">
     {% for project in page_obj  %}
-        <div class="card my-5 text-center shadow-lg" style="max-width:300px">
+        <div class="card my-5 text-center shadow-lg p-2">
           <img class="card_img card-img-top" src="{% thumbnail project.project_image '600x400' as im %}{{ im.url }}{% endthumbnail %}" alt="{{project.project_name}} dropmint project image"/>
           <div class="card-header">
             
