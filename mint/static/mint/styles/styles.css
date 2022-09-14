@@ -9,6 +9,11 @@ body {
     top: -50% ;
     transform: scale(0.86);
 }
+.card_img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+}
 .card {
     border-radius: 10px;
     box-shadow: 0 0 2rem 0.3rem rgba(0, 0, 0, 0.171);
