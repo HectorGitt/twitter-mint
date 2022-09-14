@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load thumbnail %}
 {% block title %}
 Home
 {% endblock  %}
@@ -8,7 +9,7 @@ Home
   <div class="d-flex flex-column align-items-center ">
     {% for project in context  %}
         <div class="card my-5 text-center shadow-lg" style="max-width:700px">
-          <img src="{{project.project_image.url}}" class="card-img-top" alt="...">
+          <img class="card_img card-img-top" src="{% thumbnail project.project_image '600x400' as im %}{{ im.url }}{% endthumbnail %}" alt="{{project.project_name}} dropmint project image"/>
           <div class="card-header">
             {{project.project_name}}
           </div>
@@ -40,7 +41,7 @@ Home
   <div id='projects' class="container-fluid d-flex flex-row flex-wrap justify-content-around align-items-center">
     {% for project in page_obj  %}
         <div class="card my-5 text-center shadow-lg" style="max-width:300px">
-            <img src="{{project.project_image.url}}" class="card-img-top" alt="...">
+          <img class="card_img card-img-top" src="{% thumbnail project.project_image '600x400' as im %}{{ im.url }}{% endthumbnail %}" alt="{{project.project_name}} dropmint project image"/>
           <div class="card-header">
             
             {{project.no_of_winners}} Winner(s)
