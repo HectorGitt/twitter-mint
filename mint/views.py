@@ -41,7 +41,7 @@ class ProjectListView(ListView):
         _type_: _description_
     """
     model = Project
-    paginate_by = 3
+    paginate_by = 12
     template_name = 'projects.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
