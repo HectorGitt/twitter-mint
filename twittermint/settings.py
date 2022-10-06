@@ -93,7 +93,7 @@ DATABASES = {
 
     'default': {
 
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': config('DB_ENGINE'),
 
         'NAME': config('DB_NAME'),
 
