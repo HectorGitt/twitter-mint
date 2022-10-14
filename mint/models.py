@@ -30,7 +30,7 @@ class Project(models.Model):
     WALLET_TYPE = [(NONE, 'Nil'), (ETHEREUM, 'Ethereum'), (SOLANA, 'Solana')]
     WALLET_BALANCE = [(OPTION0, '0'),(OPTION1, '0.2'), (OPTION2, '0.5'),(OPTION3, '0.7'), (OPTION4, '1.0')]
     TWITTER_MENTION = [(ZERO, '0'),(ONE, '1'), (TWO, '2'), (THREE, '3')]
-    project_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    project_id = models.AutoField(primary_key=True, editable=False)
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
     project_date = models.DateTimeField(auto_now_add=True)
