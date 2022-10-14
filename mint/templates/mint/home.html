@@ -6,22 +6,6 @@
 Home
 {% endblock  %}
 {% block content %}
-<div class="bg-dark text-secondary px-4 py-5 text-center">
-  <div class="py-5">
-    <h1 class="display-5 fw-bold text-white">Useful information goes here</h1>
-    <div class="col-lg-6 mx-auto">
-      <p class="fs-5 mb-4">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit voluptate incidunt quaerat quibusdam deserunt est in praesentium aliquid tenetur ab. Facilis modi delectus unde assumenda, iure vel consequuntur corporis laudantium possimus quam a, sed officia molestias. Pariatur quisquam nemo esse!</p>
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a href='#projects' class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Recent Projects</a>
-        {% if user.is_authenticated %}
-        {% else %}
-        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">Login</a>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="container my-5">
   <div id='projects' class="container-fluid d-flex flex-row flex-wrap justify-content-around align-items-center">
     {% for project in context  %}
