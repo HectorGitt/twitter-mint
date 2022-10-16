@@ -24,19 +24,19 @@ from .views import ProjectListView
 #url patterns
 urlpatterns = [
     path('', views.home, name='home'),
-    path('projects/<int:page>', ProjectListView.as_view(), name='projects'),
-    path('project/<int:project_id>', views.project, name='project'),
+    path('projects/<slug:page>', ProjectListView.as_view(), name='projects'),
+    path('project/<slug:slug>', views.project, name='project'),
     path('login/', views.login_user, name='login'),
     path('twitter_login', views.twitter_login, name='twitter_login'),
     path('connect_twitter', views.connect_twitter, name='connect_twitter'),
     path('twitter_logout', views.twitter_logout, name='logout'),
     path('callback', views.callback, name='callback'),
-    path('project/<int:project_id>/verify',views.verify, name='verify'),
-    path('project/<int:project_id>/comfirm', views.comfirm, name='comfirm'),
-    path('project/<int:project_id>/check', views.checkactions, name='checkactions'),
-    path('checkwalletbalance/<int:project_id>', views.checkwalletbalance, name='checkwalletbalance'),
+    path('project/<slug:slug>/verify',views.verify, name='verify'),
+    path('project/<slug:slug>/comfirm', views.comfirm, name='comfirm'),
+    path('project/<slug:slug>/check', views.checkactions, name='checkactions'),
+    path('checkwalletbalance/<slug:slug>', views.checkwalletbalance, name='checkwalletbalance'),
     path('success', views.success, name='success'),
-    path('project/<int:project_id>/referral', views.request_referral_code, name='referral'),
+    path('project/<slug:slug>/referral', views.request_referral_code, name='referral'),
     path('referral', views.verify_referral, name='verify_referral'),
 ]
 
