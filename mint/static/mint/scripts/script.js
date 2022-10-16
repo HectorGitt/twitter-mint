@@ -392,7 +392,21 @@ function completeFormHandler(){
   })
 }
 completeFormHandler()
+function copyReferralHandler() {
+  /* Get the text field */
+  var copyText = document.getElementById("referral_link");
 
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+    /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText.value);
+
+  /* Alert the copied text */
+  $('#copyToClipboard').html("<span class='mx-2'>Copied</span><i class='fa-solid fa-clipboard-check my-2'></i>")
+  $('#copyToClipboard').attr('disabled', true);
+}
 $('.referral_request').click(function(e){
     e.preventDefault()
     $.ajax({
@@ -409,7 +423,11 @@ $('.referral_request').click(function(e){
         if (data.response == 200){
           $('.referral_request').remove()
           $('.referral_loader').append(`<input type="text" class="form-control" value="${data.value}" id="referral_link" readonly><a href='https://twitter.com/intent/tweet?text=${data.value}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a><button class="mt-3 mx-2 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>`)
+          $('#copyToClipboard').click(function(){
+            copyReferralHandler()
+          })
         }
+
       },
       error: function (thrownError) {
         $('.modal-body').text(`${thrownError}`)
@@ -422,20 +440,8 @@ $('.referral_request').click(function(e){
     })
   })
   $('#copyToClipboard').click(
-    function myFunction() {
-      /* Get the text field */
-      var copyText = document.getElementById("referral_link");
-    
-      /* Select the text field */
-      copyText.select();
-      copyText.setSelectionRange(0, 99999); /* For mobile devices */
-    
-        /* Copy the text inside the text field */
-      navigator.clipboard.writeText(copyText.value);
-    
-      /* Alert the copied text */
-      $('#copyToClipboard').html("<span class='mx-2'>Copied</span><i class='fa-solid fa-clipboard-check my-2'></i>")
-      $('#copyToClipboard').attr('disabled', true);
+    function(){
+      copyReferralHandler()
     }
   )
   
