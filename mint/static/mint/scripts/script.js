@@ -408,7 +408,7 @@ $('.referral_request').click(function(e){
       success: function(data){
         if (data.response == 200){
           $('.referral_request').remove()
-          $('.referral_loader').append(`<input type="text" class="form-control" value="${data.value}" id="referral_code" readonly><a href='https://twitter.com/intent/tweet?text=${data.value}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a><button class="mt-3 mx-2 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>`)
+          $('.referral_loader').append(`<input type="text" class="form-control" value="${data.value}" id="referral_link" readonly><a href='https://twitter.com/intent/tweet?text=${data.value}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a><button class="mt-3 mx-2 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>`)
         }
       },
       error: function (thrownError) {
