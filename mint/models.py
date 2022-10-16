@@ -1,7 +1,10 @@
+from email.policy import default
+from enum import unique
 from django.db import models
 import uuid
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 import json
 import requests
 from sorl.thumbnail import ImageField
@@ -31,6 +34,7 @@ class Project(models.Model):
     WALLET_BALANCE = [(OPTION0, '0'),(OPTION1, '0.2'), (OPTION2, '0.5'),(OPTION3, '0.7'), (OPTION4, '1.0')]
     TWITTER_MENTION = [(ZERO, '0'),(ONE, '1'), (TWO, '2'), (THREE, '3')]
     project_id = models.AutoField(primary_key=True, editable=False)
+    slug = models.SlugField(default=None, null=True, editable=False, unique=True)
     project_name = models.CharField(max_length=255)
     no_of_winners = models.PositiveIntegerField(default=1)
     project_date = models.DateTimeField(auto_now_add=True)
@@ -115,6 +119,11 @@ class Project(models.Model):
         
         if self.twitter_tweet_link:
             self.twitter_tweet_id = self.twitter_tweet_link.split('/')[-1].split('?')[0]
+        if not self.slug:
+            model_count = Project.objects.filter(project_name=self.project_name).count()
+            slugged = str(slugify(self.project_name))
+            if model_count ==0: self.slug = slugged
+            else: self.slug = slugged + '-' + str(model_count+1)
         super(Project, self).save(*args, **kwargs)
     def get_tweet_embed_html(self, tweet_url):
         x = requests.get('https://publish.twitter.com/oembed?url={url}'.format(url=tweet_url))
