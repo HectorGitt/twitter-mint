@@ -209,7 +209,7 @@
                     {% if context.referral_required and user.is_authenticated %}
                     <div class="card-body text-center referral_loader position-relative">
                     {% if referral_code %}
-                    <input type="text" id="referral_link" class="form-control" value="{{referral_code}}" id="referral_code" readonly>
+                    <input type="text" id="referral_link" class="form-control" value="{{referral_code}}" readonly>
                     <a href='https://twitter.com/intent/tweet?text={{referral_code}}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a>
                     <button class="mt-3 mx-2 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>
                     <p>{{referral.referrals.all.count}} {{ referral.referrals.all.count|pluralize:"person,people" }} joined using your referral code.</p>
@@ -308,22 +308,22 @@
   <script type='module' src="{% static 'mint/scripts/script.js' %}"></script>
   <script type='module'>
     import {assignVariables, handleAjax} from '{% static 'mint/scripts/script.js' %}'
-    assignVariables(`{{context.wallet_type}}`, `{{context.least_wallet_balance}}`, `{{context.project_id}}`, `{{csrf_token}}`)
+    assignVariables(`{{context.wallet_type}}`, `{{context.least_wallet_balance}}`, `{{context.slug}}`, `{{csrf_token}}`)
     $(document).ready(function(){
       setTimeout(function () {
         {% if context.twitter_mention_count > 0 %}
-          handleAjax(`{{context.project_id}}`,true)
+          handleAjax(`{{context.slug}}`,true)
         {%else%}
-          handleAjax(`{{context.project_id}}`,false)
+          handleAjax(`{{context.slug}}`,false)
         {% endif %}
         }, 1000)
       });
       {% if status %}
       $(window).focus(function(){
         {% if context.twitter_mention_count > 0 %}
-          handleAjax(`{{context.project_id}}`,true)
+          handleAjax(`{{context.slug}}`,true)
         {%else%}
-          handleAjax(`{{context.project_id}}`,false)
+          handleAjax(`{{context.slug}}`,false)
         {% endif %}
       })
       {%endif%}

@@ -48,27 +48,27 @@ class ProjectListView(ListView):
         return context
     
 @never_cache  
-def project(request, project_id):
+def project(request, slug):
     """_Processes the project contect data and render dynnamic data based on
         project details_
 
     Args:
         request (_type_): _description_
-        project_id (_type_): _product id of selected project_
+        slug (_type_): _product id of selected project_
 
     Returns:
         _http_response_: _description_
     """
     #get user from request object
     username = request.user
-    project = get_object_or_404(Project, project_id=project_id)
+    project = get_object_or_404(Project, slug=slug)
     registered_count = project.registered.all().count()
     #check if user is authenticated
     if username.is_authenticated:
         try:
             #get user object and check if user is registered
             twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-            registered = twitter_user.projects.all().filter(project_id=project_id).first()
+            registered = twitter_user.projects.all().filter(slug=slug).first()
         except:
             return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
         
@@ -259,12 +259,12 @@ def connect_twitter(request):
     
 
 @login_required
-def verify(request, project_id):
+def verify(request, slug):
     """_Verify forms and walle_
 
     Args:
         request (_request_object_): _description_
-        project_id (_int_): _description_
+        slug (_int_): _description_
 
     Raises:
         Http404: _description_
@@ -279,7 +279,7 @@ def verify(request, project_id):
         username = request.user
         try:
             twitter_user = TwitterUser.objects.filter(screen_name=username).first()
-            project = Project.objects.filter(project_id=project_id).first()
+            project = Project.objects.filter(slug=slug).first()
             if request.method == 'POST':
                 form_email = request.POST.get('email')
                 eth = request.POST.get('eth')
@@ -306,23 +306,23 @@ def verify(request, project_id):
                 if sol is not None and twitter_user.sol_wallet_id != sol:
                     twitter_user.sol_wallet_id = str(sol)
                 twitter_user.save()
-                return redirect('comfirm', project_id)
+                return redirect('comfirm', slug)
             else:
-                return redirect('comfirm', project_id)    
+                return redirect('comfirm', slug)    
         except AttributeError as e:
             print(e)
             return HttpResponse('You are logged in as a Staff and not a twitter user!!!')
     else:
         raise Http404()     
 @login_required
-def comfirm(request, project_id):
+def comfirm(request, slug):
     """_called to process action verification for projects and adds user to project actions
         if every requirements are met
 _
 
     Args:
         request (_type_): _description_
-        project_id (_type_): _description_
+        slug (_type_): _description_
 
     Raises:
         Http404: _description_
@@ -334,13 +334,13 @@ _
         _Json_response_: _json of all actions_
     """
     try:
-        project = Project.objects.filter(project_id=project_id).first()
+        project = Project.objects.filter(slug=slug).first()
         username = request.user
         twitter_user = TwitterUser.objects.filter(screen_name=username).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
         twitter_api = TwitterAPI()
-        registered = twitter_user.projects.all().filter(project_id=project_id).first()
+        registered = twitter_user.projects.all().filter(slug=slug).first()
         #check if user is registered to a project
         if registered is not None:
             #return response code 300
@@ -384,7 +384,7 @@ _
                     try:
                         referral_code = request.session['referral_code']
                         referral = Referral.objects.filter(referral_code=referral_code).first()
-                        if referral.project.project_id == project.project_id and referral.user != twitter_user.user:
+                        if referral.project.slug == project.slug and referral.user != twitter_user.user:
                             referral.referrals.add(twitter_user)
                     except Exception as e:
                         print(e)
@@ -402,19 +402,19 @@ _
         raise Http404('Project does not exist')
 
 @login_required
-def checkactions(request, project_id):
+def checkactions(request, slug):
     """_check actions and return json data of action state_
 
     Args:
         request (_request_object_): _description_
-        project_id (_string_): _description_
+        slug (_string_): _description_
 
     Returns:
         _json_respone_: _json data of actions state_
     """
     auth_user = request.user
     if request.method == "GET" and auth_user.is_authenticated :
-        project = Project.objects.filter(project_id=project_id).first()
+        project = Project.objects.filter(slug=slug).first()
         twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
         oauth_token = str(twitter_user.twitter_oauth_token)
         oauth_token_secret = str(TwitterAuthToken.objects.filter(oauth_token=oauth_token).first().oauth_token_secret)
@@ -427,18 +427,18 @@ def success(request):
     return render(request, 'mint/home2.html', {'context': projects_all})
 
 @login_required
-def checkwalletbalance(request,project_id):
+def checkwalletbalance(request,slug):
     """_check wallet balance of user if project has a least wallet balance_
 
     Args:
         request (_request_object_): _description_
-        project_id (_string_): _description_
+        slug (_string_): _description_
 
     Returns:
         _json responese_: _returns the balance and response code_
     """
     auth_user = request.user
-    project = Project.objects.filter(project_id=project_id).first()
+    project = Project.objects.filter(slug=slug).first()
     twitter_user = TwitterUser.objects.filter(screen_name=auth_user).first()
     if request.method == "POST" and auth_user.is_authenticated :
         eth = request.POST.get('eth')
@@ -473,15 +473,15 @@ def checkwalletbalance(request,project_id):
         return HttpResponse('Denied')
     
 @login_required       
-def request_referral_code(request, project_id):
+def request_referral_code(request, slug):
     """_referral code handler_
     
     Args:
         request (_request_object_): _description_
-        project_id (_uuid_): _description_
+        slug (_uuid_): _description_
     """
     auth_user = request.user
-    project = get_object_or_404(Project, project_id=project_id)
+    project = get_object_or_404(Project, slug=slug)
     if request.method == "GET" and project.referral_required:
         return render(request, 'mint/mock.html')
     elif request.method == "POST" and auth_user.is_authenticated and project.referral_required:
@@ -506,7 +506,7 @@ def verify_referral(request):
     
     Args:
         request (_request_object_): _description_
-        project_id (_uuid_): _description_
+        slug (_uuid_): _description_
     """
     try:
         referral_code = request.GET.get('ref',None)
@@ -517,7 +517,7 @@ def verify_referral(request):
         else:
             request.session['referral_code'] = referral_code
             project = referral_obj.project
-            url = f'/project/{project.project_id}'
+            url = f'/project/{project.slug}'
         return redirect(url)
     except:
         return HttpResponse('Referral Code is not found')

@@ -5,18 +5,18 @@ var auto_lookup = false;
 var csrf_token_g;
 var wallet_type_g;
 var least_balance_g;
-var project_id_g;
+var slug_g;
 
 
 //Handles page focus event and load event for project page
-export function handleAjax(project_id,mentions) {
+export function handleAjax(slug,mentions) {
     //mention default value is false until otherwise specified
     mentions = mentions || false;
     //sends an ajax request to verify actions
     $.ajax(
     {
         type:"GET",
-        url: `/project/${project_id}/check`,
+        url: `/project/${slug}/check`,
         cache:false,
         timeout: 20000,
         beforeSend: function(){
@@ -134,11 +134,11 @@ function handleInput() {
       )
 }
 handleInput()
-function checkwalletbalance(project_id, csrf_token){
+function checkwalletbalance(slug, csrf_token){
   $.ajax(
     {
       type: "POST",
-      url: `/checkwalletbalance/${project_id}`,
+      url: `/checkwalletbalance/${slug}`,
       cache:false,
       data: {
         'eth': $('#eth').val(),
@@ -162,7 +162,7 @@ function checkwalletbalance(project_id, csrf_token){
                 $('#eth').addClass('is-valid')
                 $('button[type="submit"]').attr('disabled', false)
                 $('.spinner9').remove()
-                submit(project_id_g, csrf_token_g)
+                submit(slug_g, csrf_token_g)
               }else{
                 $('#eth').removeClass('is-valid')
                 $('#eth').addClass('is-invalid')
@@ -177,7 +177,7 @@ function checkwalletbalance(project_id, csrf_token){
               $('#sol').addClass('is-valid')
               $('button[type="submit"]').attr('disabled', false)
               $('.spinner9').remove()
-              submit(project_id_g, csrf_token_g)
+              submit(slug_g, csrf_token_g)
             }else{
               $('#sol').removeClass('is-valid')
               $('#sol').addClass('is-invalid')
@@ -212,11 +212,11 @@ function checkwalletbalance(project_id, csrf_token){
     })
 }
 
-function submit(project_id, csrf_token){
+function submit(slug, csrf_token){
     $.ajax(
       {
         type:"POST",
-        url: `/project/${project_id}/verify`,
+        url: `/project/${slug}/verify`,
         cache:false,
         data: {
           'email': $('#email').val(),
@@ -322,11 +322,11 @@ function submit(project_id, csrf_token){
         }
       })} 
 
-export function assignVariables(wallet_type, least_balance, project_id, csrf_token){
+export function assignVariables(wallet_type, least_balance, slug, csrf_token){
     wallet_type_g = wallet_type
     csrf_token_g = csrf_token
     least_balance_g = least_balance
-    project_id_g = project_id
+    slug_g = slug
 }
 function completeForm(e){
     e.preventDefault()
@@ -337,11 +337,11 @@ function completeForm(e){
       let isEthereum = Web3.utils.isAddress(address)
       if (isEthereum){
         $('.spinner9').remove()
-        //submit(project_id_g, csrf_token_g) 
+        //submit(slug_g, csrf_token_g) 
         if (least_balance_g != 0){
-          checkwalletbalance(project_id_g, csrf_token_g)
+          checkwalletbalance(slug_g, csrf_token_g)
         }else {
-          submit(project_id_g, csrf_token_g)
+          submit(slug_g, csrf_token_g)
         }
       } else {
         $('#eth').removeClass('is-valid')
@@ -358,11 +358,11 @@ function completeForm(e){
       let  isSolana =  PublicKey.isOnCurve(pubkey.toBuffer())
       if (isSolana){
         $('.spinner9').remove()
-        //submit(project_id_g, csrf_token_g)
+        //submit(slug_g, csrf_token_g)
         if (least_balance_g != 0){
-          checkwalletbalance(project_id_g, csrf_token_g)
+          checkwalletbalance(slug_g, csrf_token_g)
         }else {
-          submit(project_id_g, csrf_token_g)
+          submit(slug_g, csrf_token_g)
         }
       } else {
         $('#sol').removeClass('is-valid')
@@ -378,7 +378,7 @@ function completeForm(e){
     }
     }
     if (wallet_type_g == 'NIL') {
-      submit(project_id_g, csrf_token_g)
+      submit(slug_g, csrf_token_g)
     }
 }
 function completeFormHandler(){
@@ -392,11 +392,25 @@ function completeFormHandler(){
   })
 }
 completeFormHandler()
+function copyReferralHandler() {
+  /* Get the text field */
+  var copyText = document.getElementById("referral_link");
 
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+    /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText.value);
+
+  /* Alert the copied text */
+  $('#copyToClipboard').html("<span class='mx-2'>Copied</span><i class='fa-solid fa-clipboard-check my-2'></i>")
+  $('#copyToClipboard').attr('disabled', true);
+}
 $('.referral_request').click(function(e){
     e.preventDefault()
     $.ajax({
-      url: `/project/${project_id_g}/referral`,
+      url: `/project/${slug_g}/referral`,
       type: 'POST',
       data: {
         'csrfmiddlewaretoken': csrf_token_g
@@ -408,8 +422,12 @@ $('.referral_request').click(function(e){
       success: function(data){
         if (data.response == 200){
           $('.referral_request').remove()
-          $('.referral_loader').append(`<input type="text" class="form-control" value="${data.value}" id="referral_code" readonly><a href='https://twitter.com/intent/tweet?text=${data.value}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a><button class="mt-3 mx-2 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>`)
+          $('.referral_loader').append(`<input type="text" class="form-control" value="${data.value}" id="referral_link" readonly><a href='https://twitter.com/intent/tweet?text=${data.value}' class="mt-3 btn btn-primary btn-block btn-large"> <span>Share </span> <i class="fa-brands fa-twitter text-white my-2"></i></a><button class="mt-3 mx-2 btn btn-secondary btn-block btn-large" id="copyToClipboard"><span class='mx-2'>Copy</span><i class="fa-solid fa-clipboard my-2"></i></button>`)
+          $('#copyToClipboard').click(function(){
+            copyReferralHandler()
+          })
         }
+
       },
       error: function (thrownError) {
         $('.modal-body').text(`${thrownError}`)
@@ -422,20 +440,8 @@ $('.referral_request').click(function(e){
     })
   })
   $('#copyToClipboard').click(
-    function myFunction() {
-      /* Get the text field */
-      var copyText = document.getElementById("referral_link");
-    
-      /* Select the text field */
-      copyText.select();
-      copyText.setSelectionRange(0, 99999); /* For mobile devices */
-    
-        /* Copy the text inside the text field */
-      navigator.clipboard.writeText(copyText.value);
-    
-      /* Alert the copied text */
-      $('#copyToClipboard').html("<span class='mx-2'>Copied</span><i class='fa-solid fa-clipboard-check my-2'></i>")
-      $('#copyToClipboard').attr('disabled', true);
+    function(){
+      copyReferralHandler()
     }
   )
   
